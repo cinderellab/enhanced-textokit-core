@@ -12,4 +12,6 @@
     <logger name="java" level="INFO"/>
     <logger name="javax" level="INFO"/>
     <root level="TRACE">
-        <a
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>
