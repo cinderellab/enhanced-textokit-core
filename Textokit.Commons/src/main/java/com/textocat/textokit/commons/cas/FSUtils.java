@@ -88,4 +88,66 @@ public class FSUtils {
         StringArray result = new StringArray(cas, srcCol.size());
         int i = 0;
         for (String gr : srcCol) {
-            result.set(i, gr
+            result.set(i, gr);
+            i++;
+        }
+        return result;
+    }
+
+    public static Set<String> toSet(StringArrayFS fsArr) {
+        if (fsArr == null)
+            return ImmutableSet.of();
+        ImmutableSet.Builder<String> resultBuilder = ImmutableSet.builder();
+        for (int i = 0; i < fsArr.size(); i++) {
+            resultBuilder.add(fsArr.get(i));
+        }
+        return resultBuilder.build();
+    }
+
+    public static List<String> toList(StringArrayFS fsArr) {
+        if (fsArr == null)
+            return ImmutableList.of();
+        ImmutableList.Builder<String> resultBuilder = ImmutableList.builder();
+        for (int i = 0; i < fsArr.size(); i++) {
+            resultBuilder.add(fsArr.get(i));
+        }
+        return resultBuilder.build();
+    }
+
+    public static FSTypeConstraint getTypeConstraint(Type firstType, Type... otherTypes) {
+        FSTypeConstraint constr = ConstraintFactory.instance().createTypeConstraint();
+        constr.add(firstType);
+        for (Type t : otherTypes) {
+            constr.add(t);
+        }
+        return constr;
+    }
+
+    public static FSTypeConstraint getTypeConstraint(String firstType, String... otherTypes) {
+        FSTypeConstraint constr = ConstraintFactory.instance().createTypeConstraint();
+        constr.add(firstType);
+        for (String t : otherTypes) {
+            constr.add(t);
+        }
+        return constr;
+    }
+
+    public static <FST extends FeatureStructure> List<FST> filterToList(CAS cas,
+                                                                        FSIterator<FST> srcIter, FSMatchConstraint... constraints) {
+        FSIterator<FST> resultIter = filter(cas, srcIter, constraints);
+        return toList(resultIter);
+    }
+
+    public static <F extends FeatureStructure> FSIterator<F> filter(CAS cas,
+                                                                    FSIterator<F> srcIter, FSMatchConstraint... constraints) {
+        if (constraints.length == 0) {
+            return srcIter;
+        }
+        FSMatchConstraint resultConstr = and(constraints);
+        return cas.createFilteredIterator(srcIter, resultConstr);
+    }
+
+    public static <F extends FeatureStructure> List<F> filter(List<F> srcList,
+                                                              FSMatchConstraint... constraints) {
+        if (constraints.length == 0) {
+            return ImmutableList.copyOf
