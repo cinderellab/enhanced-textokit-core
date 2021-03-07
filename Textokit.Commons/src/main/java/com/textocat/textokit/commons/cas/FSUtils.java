@@ -150,4 +150,75 @@ public class FSUtils {
     public static <F extends FeatureStructure> List<F> filter(List<F> srcList,
                                                               FSMatchConstraint... constraints) {
         if (constraints.length == 0) {
-            return ImmutableList.copyOf
+            return ImmutableList.copyOf(srcList);
+        }
+        ArrayList<F> resultList = Lists.newArrayListWithCapacity(srcList.size());
+        FSMatchConstraint conj = and(constraints);
+        for (F fs : srcList) {
+            if (conj.match(fs)) {
+                resultList.add(fs);
+            }
+        }
+        return Collections.unmodifiableList(resultList);
+    }
+
+    public static FSMatchConstraint and(FSMatchConstraint... constraints) {
+        if (constraints.length == 0) {
+            throw new IllegalArgumentException("Constraints array are empty");
+        }
+        ConstraintFactory cf = ConstraintFactory.instance();
+        FSMatchConstraint resultConstr = constraints[0];
+        for (int i = 1; i < constraints.length; i++) {
+            resultConstr = cf.and(resultConstr, constraints[i]);
+        }
+        return resultConstr;
+    }
+
+    public static <FST extends FeatureStructure> List<FST> toList(FSIterator<FST> iter) {
+        LinkedList<FST> result = newLinkedList();
+        fill(iter, result);
+        return result;
+    }
+
+    public static <FST extends FeatureStructure> Set<FST> toSet(FSIterator<FST> iter) {
+        HashSet<FST> result = newHashSet();
+        fill(iter, result);
+        return result;
+    }
+
+    public static <FST extends FeatureStructure> void fill(FSIterator<FST> srcIter,
+                                                           Collection<FST> destCol) {
+        srcIter.moveToFirst();
+        while (srcIter.isValid()) {
+            destCol.add(srcIter.get());
+            srcIter.moveToNext();
+        }
+    }
+
+    /*
+     * Note that getIntValue will return 0 if feature value is not set.
+     */
+    public static int intMinBy(Iterable<? extends FeatureStructure> fsCollection, Feature intFeat) {
+        Integer min = Integer.MAX_VALUE;
+        boolean hasResult = false;
+        for (FeatureStructure fs : fsCollection) {
+            int intValue = fs.getIntValue(intFeat);
+            hasResult = true;
+            if (intValue < min) {
+                min = intValue;
+            }
+        }
+        if (!hasResult) {
+            throw new IllegalArgumentException("fsCollection is empty");
+        }
+        return min;
+    }
+
+    /*
+     * Note that getIntValue will return 0 if feature value is not set.
+     */
+    public static int intMaxBy(Iterable<? extends FeatureStructure> fsCollection, Feature intFeat) {
+        Integer max = Integer.MIN_VALUE;
+        boolean hasResult = false;
+        for (FeatureStructure fs : fsCollection) {
+          
