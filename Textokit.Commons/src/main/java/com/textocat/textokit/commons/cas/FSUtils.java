@@ -221,4 +221,40 @@ public class FSUtils {
         Integer max = Integer.MIN_VALUE;
         boolean hasResult = false;
         for (FeatureStructure fs : fsCollection) {
-          
+            int intValue = fs.getIntValue(intFeat);
+            hasResult = true;
+            if (intValue > max) {
+                max = intValue;
+            }
+        }
+        if (!hasResult) {
+            throw new IllegalArgumentException("fsCollection is empty");
+        }
+        return max;
+    }
+
+    public static Function<FeatureStructure, String> stringFeatureFunction(Type fsType, String featName) {
+        final Feature feat = fsType.getFeatureByBaseName(featName);
+        if (feat == null) throw new IllegalStateException(
+                format("%s does not have feature %s", fsType.getName(), featName));
+        return new Function<FeatureStructure, String>() {
+            @Override
+            public String apply(FeatureStructure fs) {
+                return fs.getStringValue(feat);
+            }
+        };
+    }
+
+    public static Function<FeatureStructure, String> stringFeaturePathFunc(
+            CAS cas, Type inputFSType, String featurePath) throws CASException {
+        final FeaturePath path = cas.createFeaturePath();
+        path.initialize(featurePath);
+        path.typeInit(inputFSType);
+        return new Function<FeatureStructure, String>() {
+            @Override
+            public String apply(FeatureStructure fs) {
+                return path.getStringValue(fs);
+            }
+        };
+    }
+}
