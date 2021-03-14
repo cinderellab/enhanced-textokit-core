@@ -17,24 +17,23 @@
 
 package com.textocat.textokit.commons.cas;
 
-import com.google.common.base.Objects;
 import org.apache.uima.cas.FSMatchConstraint;
 import org.apache.uima.cas.FeatureStructure;
 
 /**
  * @author Rinat Gareev
  */
-class IdentityConstraint implements FSMatchConstraint {
+class NotConstraint implements FSMatchConstraint {
 
-    private static final long serialVersionUID = -2827846978417612056L;
-    private FeatureStructure fs;
+    private static final long serialVersionUID = -2673253566146696649L;
+    private FSMatchConstraint argConstraint;
 
-    private IdentityConstraint(FeatureStructure fs) {
-        this.fs = fs;
+    private NotConstraint(FSMatchConstraint argConstraint) {
+        this.argConstraint = argConstraint;
     }
 
-    public static IdentityConstraint of(FeatureStructure fs) {
-        return new IdentityConstraint(fs);
+    public static NotConstraint of(FSMatchConstraint argConstraint) {
+        return new NotConstraint(argConstraint);
     }
 
     /**
@@ -42,7 +41,6 @@ class IdentityConstraint implements FSMatchConstraint {
      */
     @Override
     public boolean match(FeatureStructure fs) {
-        return Objects.equal(this.fs, fs);
+        return !argConstraint.match(fs);
     }
-
 }
