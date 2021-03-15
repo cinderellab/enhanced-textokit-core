@@ -17,4 +17,30 @@
 
 package com.textocat.textokit.commons.cas;
 
-import org.apache.uima.cas.text.Ann
+import org.apache.uima.cas.text.AnnotationFS;
+import org.apache.uima.cas.text.AnnotationIndex;
+
+import java.util.Set;
+
+/**
+ * Provides the contract to efficiently deal with search of overlapping
+ * annotations. Use
+ * {@link AnnotationUtils#createOverlapIndex(java.util.Iterator)} to get default
+ * implementation.
+ *
+ * @author Rinat Gareev
+ */
+public interface OverlapIndex<A extends AnnotationFS> {
+
+    /**
+     * @param begin first character of an annotation
+     * @param end   the first character after the annotation
+     * @return set of annotations that overlap with annotation whose offsets are
+     * given by parameters. Result ordering is defined by offsets
+     * (according to {@link AnnotationIndex}. If offsets are equals then
+     * source iterator ordering is used.
+     * @see AnnotationUtils#overlap(AnnotationFS, AnnotationFS)
+     */
+    Set<A> getOverlapping(int begin, int end);
+
+}
