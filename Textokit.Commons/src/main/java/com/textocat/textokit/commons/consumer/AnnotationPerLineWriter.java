@@ -98,4 +98,14 @@ public class AnnotationPerLineWriter extends CasAnnotator_ImplBase {
         }
         Path outputPath = outputDir.resolve(docUriPath);
         outputPath = IoUtils.addExtension(outputPath, outputFileSuffix);
-   
+        try (PrintWriter out = IoUtils.openPrintWriter(outputPath.toFile())) {
+            for (AnnotationFS anno : CasUtil.select(cas, targetType)) {
+                String text = anno.getCoveredText();
+                text = StringUtils.replaceChars(text, "\r\n", "  ");
+                out.println(text);
+            }
+        } catch (IOException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+    }
+}
