@@ -33,4 +33,69 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.util.CasUtil;
 import org.apache.uima.resource.ResourceInitializationException;
 
-import java.io.IOExce
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+/**
+ * @author Rinat Gareev
+ */
+public class AnnotationPerLineWriter extends CasAnnotator_ImplBase {
+
+    public static AnalysisEngineDescription createDescription(
+            String targetTypeName, Path outputDir, String outputFileSuffix) throws ResourceInitializationException {
+        return AnalysisEngineFactory.createEngineDescription(AnnotationPerLineWriter.class,
+                PARAM_TARGET_TYPE, targetTypeName,
+                PARAM_OUTPUT_DIR, outputDir.toString(),
+                PARAM_OUTPUT_FILE_SUFFIX, outputFileSuffix);
+    }
+
+    private static final String PARAM_TARGET_TYPE = "targetType";
+    private static final String PARAM_OUTPUT_DIR = "outputDir";
+    private static final String PARAM_OUTPUT_FILE_SUFFIX = "outputFileSuffix";
+
+    @ConfigurationParameter(name = PARAM_TARGET_TYPE)
+    private String targetTypeName;
+    @ConfigurationParameter(name = PARAM_OUTPUT_DIR)
+    private String _outputDir;
+    @ConfigurationParameter(name = PARAM_OUTPUT_FILE_SUFFIX)
+    private String outputFileSuffix;
+    // state fields
+    private Type targetType;
+    private Path outputDir;
+
+    @Override
+    public void initialize(UimaContext ctx) throws ResourceInitializationException {
+        super.initialize(ctx);
+        //
+        outputDir = Paths.get(_outputDir);
+        try {
+            outputDir = Files.createDirectories(outputDir);
+        } catch (IOException e) {
+            throw new ResourceInitializationException(e);
+        }
+    }
+
+    @Override
+    public void typeSystemInit(TypeSystem ts) throws AnalysisEngineProcessException {
+        super.typeSystemInit(ts);
+        //
+        targetType = ts.getType(targetTypeName);
+        AnnotatorUtils.annotationTypeExist(targetTypeName, targetType);
+    }
+
+    @Override
+    public void process(CAS cas) throws AnalysisEngineProcessException {
+        String docUriStr = DocumentUtils.getDocumentUri(cas);
+        if (docUriStr == null) {
+            throw new IllegalStateException("Can't extract document URI");
+        }
+        Path docUriPath = IoUtils.extractPathFromURI(docUriStr);
+        if (docUriPath.isAbsolute()) {
+            docUriPath = Paths.get("/").relativize(docUriPath);
+        }
+        Path outputPath = outputDir.resolve(docUriPath);
+        outputPath = IoUtils.addExtension(outputPath, outputFileSuffix);
+   
