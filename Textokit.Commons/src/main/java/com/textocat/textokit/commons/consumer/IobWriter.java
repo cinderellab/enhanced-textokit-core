@@ -49,4 +49,56 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static com.textocat.textokit.commons.cas.AnnotationUtils.toPrettyString;
-import static c
+import static com.textocat.textokit.commons.util.AnnotatorUtils.annotationTypeExist;
+import static com.textocat.textokit.commons.util.DocumentUtils.getDocumentUri;
+
+/**
+ * @author Rinat Gareev
+ */
+public class IobWriter extends CasAnnotator_ImplBase {
+
+    // parameter names
+    public static final String PARAM_ENCODE_TYPES = "encodeTypes";
+    public static final String PARAM_ENCODE_TYPE_LABELS = "encodeTypeLabels";
+    public static final String PARAM_TOKEN_TYPE = "tokenType";
+    public static final String PARAM_OUTPUT_DIR = "outputDir";
+    //
+    public static final String BEGIN_PREFIX = "B-";
+    public static final String INSIDE_PREFIX = "I-";
+    public static final String OUTSIDE_LABEL = "O";
+    //
+    public static final String OUTPUT_FILE_EXTENSION = ".iob";
+    private static final Joiner tabJoiner = Joiner.on('\t');
+    @ConfigurationParameter(name = PARAM_ENCODE_TYPES, mandatory = true)
+    private List<String> encodeTypeNames;
+    @ConfigurationParameter(name = PARAM_ENCODE_TYPE_LABELS, mandatory = false)
+    private List<String> encodeTypeLabels;
+    @ConfigurationParameter(name = PARAM_TOKEN_TYPE, mandatory = true)
+    private String tokenTypeName;
+    @ConfigurationParameter(name = PARAM_OUTPUT_DIR, mandatory = true)
+    private File outputDir;
+    // derived
+    private Map<Type, String> encodeTypesMap; // type => label
+    private Type tokenType;
+    // per-CAS state
+    private URI docURI;
+
+    public static AnalysisEngineDescription createDescription(Iterable<String> encodeTypes,
+                                                              File outputDir) throws ResourceInitializationException {
+        return AnalysisEngineFactory.createEngineDescription(IobWriter.class,
+                PARAM_ENCODE_TYPES, newArrayList(encodeTypes),
+                PARAM_OUTPUT_DIR, outputDir);
+    }
+
+    public static AnalysisEngineDescription createDescription(
+            Iterable<String> encodeTypes, Iterable<String> encodeTypeLabels,
+            File outputDir) throws ResourceInitializationException {
+        return AnalysisEngineFactory.createEngineDescription(IobWriter.class,
+                PARAM_ENCODE_TYPES, newArrayList(encodeTypes),
+                PARAM_ENCODE_TYPE_LABELS, newArrayList(encodeTypeLabels),
+                PARAM_OUTPUT_DIR, outputDir);
+    }
+
+    @Override
+    public void initialize(UimaContext ctx) throws ResourceInitializationException {
+        super.initialize(ct
