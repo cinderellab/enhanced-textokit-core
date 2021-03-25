@@ -101,4 +101,67 @@ public class IobWriter extends CasAnnotator_ImplBase {
 
     @Override
     public void initialize(UimaContext ctx) throws ResourceInitializationException {
-        super.initialize(ct
+        super.initialize(ctx);
+        try {
+            FileUtils.forceMkdir(outputDir);
+        } catch (IOException e) {
+            throw new ResourceInitializationException(e);
+        }
+        if (encodeTypeLabels != null && encodeTypeLabels.isEmpty()) {
+            encodeTypeLabels = null;
+        }
+        if (encodeTypeLabels != null && encodeTypeNames.size() != encodeTypeLabels.size()) {
+            throw new IllegalArgumentException(
+                    "encodeTypeLabels must have the same length with encodeTypes");
+        }
+    }
+
+    @Override
+    public void typeSystemInit(TypeSystem ts) throws AnalysisEngineProcessException {
+        super.typeSystemInit(ts);
+        //
+        tokenType = ts.getType(tokenTypeName);
+        annotationTypeExist(tokenTypeName, tokenType);
+        //
+        encodeTypesMap = Maps.newHashMap();
+        for (int i = 0; i < encodeTypeNames.size(); i++) {
+            String etn = encodeTypeNames.get(i);
+            Type et = ts.getType(etn);
+            annotationTypeExist(etn, et);
+            //
+            String etLabel = encodeTypeLabels != null ? encodeTypeLabels.get(i) : getTypeLabel(et);
+            encodeTypesMap.put(et, etLabel);
+        }
+        encodeTypesMap = ImmutableMap.copyOf(encodeTypesMap);
+    }
+
+    @Override
+    public void process(CAS cas) throws AnalysisEngineProcessException {
+        String docURIStr = getDocumentUri(cas);
+        if (docURIStr == null) {
+            throw new UnsupportedOperationException("Document URI is not specified in a CAS");
+        }
+        // phase 0 - open output stream
+        try {
+            docURI = new URI(docURIStr);
+        } catch (URISyntaxException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+        String outFileName = new File(docURI).getName() + OUTPUT_FILE_EXTENSION;
+        File outFile = new File(outputDir, outFileName);
+        PrintWriter out;
+        try {
+            out = IoUtils.openPrintWriter(outFile);
+        } catch (IOException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+        try {
+            process(cas, out);
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+    }
+
+    private void process(CAS cas, PrintWriter out) {
+        AnnotationIndex<AnnotationFS> tokenIdx = cas.getAnnotationIndex(tokenType);
+        Multimap<AnnotationFS, String> tokLabelsMap = HashMultimap.create(tokenIdx.size(), 1);
