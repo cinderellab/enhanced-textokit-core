@@ -78,4 +78,9 @@ public class XmiFileWriter extends XmiWriterBase {
     protected OutputStream getOutputStream(DocumentMetadata meta) throws IOException {
         Path outRelativePath = outPathFunc.apply(meta);
         Path resultPath = outBasePath.resolve(outRelativePath);
-        resultPath = IoUtils.ad
+        resultPath = IoUtils.addExtension(resultPath, XMI_FILE_EXTENSION);
+        // does not create missing parents
+        // return Files.newOutputStream(resultPath);
+        return FileUtils.openOutputStream(resultPath.toFile());
+    }
+}
