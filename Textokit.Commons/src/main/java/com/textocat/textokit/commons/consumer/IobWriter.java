@@ -165,3 +165,42 @@ public class IobWriter extends CasAnnotator_ImplBase {
     private void process(CAS cas, PrintWriter out) {
         AnnotationIndex<AnnotationFS> tokenIdx = cas.getAnnotationIndex(tokenType);
         Multimap<AnnotationFS, String> tokLabelsMap = HashMultimap.create(tokenIdx.size(), 1);
+        // phase 1 - initialize map <token => label>
+        for (Type et : encodeTypesMap.keySet()) {
+            String typeLabel = encodeTypesMap.get(et);
+            for (AnnotationFS encAnno : cas.getAnnotationIndex(et)) {
+                Iterator<AnnotationFS> encAnnoTokens =
+                        CasUtil.selectCovered(tokenType, encAnno).iterator();
+                if (!encAnnoTokens.hasNext()) {
+                    getLogger().warn(format("%s: %s does not cover any tokens",
+                            docURI, toPrettyString(encAnno)));
+                    continue;
+                }
+                // handle first token of encAnno
+                tokLabelsMap.put(encAnnoTokens.next(), BEGIN_PREFIX + typeLabel);
+                // handle other tokens
+                while (encAnnoTokens.hasNext()) {
+                    tokLabelsMap.put(encAnnoTokens.next(), INSIDE_PREFIX + typeLabel);
+                }
+            }
+        }
+        // phase 2 - write token records into output stream
+        for (AnnotationFS tok : tokenIdx) {
+            List<String> recordFields = Lists.newLinkedList();
+            recordFields.add(tok.getCoveredText());
+            //
+            Collection<String> tokLabels = tokLabelsMap.get(tok);
+            if (tokLabels.isEmpty()) {
+                recordFields.add(OUTSIDE_LABEL);
+            } else {
+                recordFields.addAll(tokLabels);
+            }
+            //
+            out.println(tabJoiner.join(recordFields));
+        }
+    }
+
+    protected String getTypeLabel(Type t) {
+        return t.getShortName();
+    }
+}
