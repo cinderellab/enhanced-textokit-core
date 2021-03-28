@@ -50,4 +50,35 @@ public abstract class XmiWriterBase extends JCasAnnotator_ImplBase {
 
     @Override
     public void process(JCas jCas) throws AnalysisEngineProcessException {
-  
+        DocumentMetadata meta = JCasUtil.selectSingle(jCas, DocumentMetadata.class);
+        OutputStream out = null;
+        try {
+            out = getOutputStream(meta);
+            writeXmi(jCas.getCas(), out);
+        } catch (IOException | SAXException e) {
+            throw new AnalysisEngineProcessException(e);
+        } finally {
+            afterXMIWritten(out);
+        }
+    }
+
+    protected abstract OutputStream getOutputStream(DocumentMetadata meta) throws IOException;
+
+    /**
+     * Subclasses may override this to prevent closing the stream.
+     *
+     * @param out an output stream
+     */
+    protected void afterXMIWritten(OutputStream out) {
+        IOUtils.closeQuietly(out);
+    }
+
+    private void writeXmi(CAS aCas, OutputStream out) throws IOException,
+            SAXException {
+        // seems like it is not necessary to buffer outputStream for SAX TransformationHandler
+        // out = new BufferedOutputStream(out);
+        XmiCasSerializer ser = new XmiCasSerializer(aCas.getTypeSystem());
+        XMLSerializer xmlSer = new XMLSerializer(out, xmlFormatted);
+        ser.serialize(aCas, xmlSer.getContentHandler());
+    }
+}
