@@ -1,2 +1,61 @@
 /*
- *    Copyrigh
+ *    Copyright 2015 Textocat
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+package com.textocat.textokit.commons.cpe;
+
+import com.google.common.collect.Collections2;
+import org.apache.commons.io.FileUtils;
+import org.apache.uima.UimaContext;
+import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.factory.CollectionReaderFactory;
+import org.apache.uima.resource.ResourceConfigurationException;
+import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.resource.metadata.TypeSystemDescription;
+import org.springframework.core.io.Resource;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+
+import static org.apache.commons.io.filefilter.FileFilterUtils.suffixFileFilter;
+import static org.apache.commons.io.filefilter.FileFilterUtils.trueFileFilter;
+
+/**
+ * A simple collection reader that reads CASes in XMI format from a directory
+ * and its subdirectories in the filesystem.
+ */
+public class XmiCollectionReader extends XmiCollectionReaderBase {
+
+    /**
+     * Name of configuration parameter that must be set to the path of a
+     * directory containing the XMI files.
+     */
+    public static final String PARAM_INPUTDIR = "InputDirectory";
+    @ConfigurationParameter(name = PARAM_INPUTDIR, mandatory = true)
+    private File inputDir;
+    // derived
+    private Collection<Resource> xmiResources;
+
+    public static CollectionReaderDescription createDescription(
+            File inputDir, TypeSystemDescription inputTSD) throws ResourceInitializationException {
+        return CollectionReaderFactory.createReaderDescription(XmiCollectionReader.class,
+                inputTSD,
+                PARAM_INPUTDIR, inputDir);
+    }
+
+    @Override
+    protected Iterable<Resource> getResources(UimaContext ctx) throws IOExcept
