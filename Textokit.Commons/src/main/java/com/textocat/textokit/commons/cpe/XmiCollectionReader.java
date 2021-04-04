@@ -58,4 +58,25 @@ public class XmiCollectionReader extends XmiCollectionReaderBase {
     }
 
     @Override
-    protected Iterable<Resource> getResources(UimaContext ctx) throws IOExcept
+    protected Iterable<Resource> getResources(UimaContext ctx) throws IOException,
+            ResourceInitializationException {
+        // if input directory does not exist or is not a directory, throw exception
+        if (!inputDir.isDirectory()) {
+            throw new ResourceInitializationException(
+                    ResourceConfigurationException.DIRECTORY_NOT_FOUND,
+                    new Object[]{PARAM_INPUTDIR, this.getMetaData().getName(),
+                            inputDir.getPath()});
+        }
+        // get list of .xmi files in the specified directory
+        Collection<File> mFiles = FileUtils.listFiles(inputDir,
+                suffixFileFilter(".xmi"), trueFileFilter());
+        xmiResources = Collections2.transform(mFiles, PUtils.file2Resource);
+        return xmiResources;
+    }
+
+    @Override
+    protected Integer getResourcesNumber() {
+        return xmiResources.size();
+    }
+
+}
