@@ -93,4 +93,6 @@ public class AXML2XMI {
 
     private File getOutputFile(File inputFile) {
         String baseName = FilenameUtils.getBaseName(inputFile.getPath());
-     
+        return new File(outputDir, baseName + ".xmi");
+    }
+}
