@@ -35,4 +35,26 @@ public class ManifestUtils {
     /**
      * @return manifests that contains a main attribute with the specified key
      */
-    public static List<Manifest> searchByAttributeKey(String key
+    public static List<Manifest> searchByAttributeKey(String key) {
+        try {
+            Enumeration<URL> resEnum = Thread.currentThread().getContextClassLoader().getResources(JarFile.MANIFEST_NAME);
+            List<Manifest> resultList = Lists.newLinkedList();
+            while (resEnum.hasMoreElements()) {
+                URL url = resEnum.nextElement();
+                try (InputStream is = url.openStream()) {
+                    Manifest manifest = new Manifest(is);
+                    Attributes mainAttribs = manifest.getMainAttributes();
+                    if (mainAttribs.getValue(key) != null) {
+                        resultList.add(manifest);
+                    }
+                }
+            }
+            return resultList;
+        } catch (IOException e) {
+            throw new IllegalStateException("manifest lookup error", e);
+        }
+    }
+
+    private ManifestUtils() {
+    }
+}
