@@ -1,3 +1,4 @@
+
 /*
  *    Copyright 2015 Textocat
  *
@@ -14,66 +15,45 @@
  *    limitations under the License.
  */
 
-
 package com.textocat.textokit.commons.util;
-
-import org.apache.uima.cas.text.AnnotationFS;
 
 import java.util.Objects;
 
 /**
- * Represents annotation offsets, i.e., a left-closed right-closed integer interval.
- *
  * @author Rinat Gareev
  */
-public class Offsets {
-    private int begin;
-    private int end;
+public class OffsetsWithValue<V> extends Offsets {
+    private V value;
 
-    public Offsets(AnnotationFS anno) {
-        this(anno.getBegin(), anno.getEnd());
+    public OffsetsWithValue(int begin, int end, V value) {
+        super(begin, end);
+        this.value = value;
     }
 
-    public Offsets(int begin, int end) {
-        this.begin = begin;
-        this.end = end;
-    }
-
-    public int getBegin() {
-        return begin;
-    }
-
-    public int getEnd() {
-        return end;
-    }
-
-    public boolean isIdenticalWith(AnnotationFS anno) {
-        return anno.getBegin() == begin && anno.getEnd() == end;
-    }
-
-    public boolean overlaps(Offsets that) {
-        return this.begin < that.end && that.begin < this.end;
+    public V getValue() {
+        return value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Offsets offsets = (Offsets) o;
-        return Objects.equals(begin, offsets.begin) &&
-                Objects.equals(end, offsets.end);
+        if (!super.equals(o)) return false;
+        OffsetsWithValue<?> that = (OffsetsWithValue<?>) o;
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
-                .add("begin", begin)
-                .add("end", end)
+                .add("begin", getBegin())
+                .add("end", getEnd())
+                .add("value", value)
                 .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(begin, end);
+        return Objects.hash(super.hashCode(), value);
     }
 }
