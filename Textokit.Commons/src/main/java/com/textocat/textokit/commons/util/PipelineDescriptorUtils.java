@@ -50,4 +50,52 @@ public class PipelineDescriptorUtils {
 
     /**
      * Do the same things as the method
-     * {@link AnalysisEngineFactory#createAggr
+     * {@link AnalysisEngineFactory#createAggregate(List, List, org.apache.uima.resource.metadata.TypeSystemDescription, org.apache.uima.resource.metadata.TypePriorities, org.apache.uima.analysis_engine.metadata.SofaMapping[])}
+     * but allow {@link Import} objects in a description list.
+     *
+     * @param analysisEngineDescriptions
+     * @param componentNames
+     * @return UIMA description object
+     * @throws UIMAException
+     * @throws IOException
+     */
+    public static AnalysisEngineDescription createAggregateDescription(
+            List<MetaDataObject> analysisEngineDescriptions,
+            List<String> componentNames)
+            throws UIMAException, IOException {
+
+        // create the descriptor and set configuration parameters
+        AnalysisEngineDescription desc = new AnalysisEngineDescription_impl();
+        desc.setFrameworkImplementation(Constants.JAVA_FRAMEWORK_NAME);
+        desc.setPrimitive(false);
+
+        // if any of the aggregated analysis engines does not allow multiple
+        // deployment, then the aggregate engine may also not be multiply deployed
+        boolean allowMultipleDeploy = true;
+        for (MetaDataObject mdo : analysisEngineDescriptions) {
+            AnalysisEngineDescription d;
+            if (mdo instanceof AnalysisEngineDescription) {
+                d = (AnalysisEngineDescription) mdo;
+            } else {
+                Import aedImport = (Import) mdo;
+                URL aedUrl = aedImport.findAbsoluteUrl(UIMAFramework.newDefaultResourceManager());
+                d = (AnalysisEngineDescription) createResourceCreationSpecifier(aedUrl, null);
+            }
+            allowMultipleDeploy &= d.getAnalysisEngineMetaData().getOperationalProperties()
+                    .isMultipleDeploymentAllowed();
+        }
+        desc.getAnalysisEngineMetaData().getOperationalProperties()
+                .setMultipleDeploymentAllowed(allowMultipleDeploy);
+
+        List<String> flowNames = new ArrayList<String>();
+
+        for (int i = 0; i < analysisEngineDescriptions.size(); i++) {
+            MetaDataObject aed = analysisEngineDescriptions.get(i);
+            String componentName = componentNames.get(i);
+            desc.getDelegateAnalysisEngineSpecifiersWithImports().put(componentName, aed);
+            flowNames.add(componentName);
+        }
+
+        FixedFlow fixedFlow = new FixedFlow_impl();
+        fixedFlow.setFixedFlow(flowNames.toArray(new String[flowNames.size()]));
+        desc.getAnalysisEngineMetaData().setFlowConstraints(fi
