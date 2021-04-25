@@ -98,4 +98,51 @@ public class PipelineDescriptorUtils {
 
         FixedFlow fixedFlow = new FixedFlow_impl();
         fixedFlow.setFixedFlow(flowNames.toArray(new String[flowNames.size()]));
-        desc.getAnalysisEngineMetaData().setFlowConstraints(fi
+        desc.getAnalysisEngineMetaData().setFlowConstraints(fixedFlow);
+
+        return desc;
+    }
+
+    public static AnalysisEngineDescription createAggregateDescription(
+            Map<String, MetaDataObject> namedDescriptions) throws UIMAException, IOException {
+        return createAggregateDescription(
+                ImmutableList.copyOf(namedDescriptions.values()),
+                ImmutableList.copyOf(namedDescriptions.keySet()));
+    }
+
+    /**
+     * <ol>
+     * <li>Add the specified parameter declaration into the specified aggregate
+     * descriptor
+     * <li>Set it to override the specified parameter of the specified delegate
+     * </ol>
+     *
+     * @param resultParam            parameter declaration with name, type, isMultivalued &
+     *                               isMandatory set
+     * @param aggrDesc               pipeline descriptor
+     * @param delegateParameterNames map which keys are delegate names (called 'key' in
+     *                               'delegateAnalysisEngine' XML element). For each delegate in
+     *                               this map its parameter (a value of this map) will be
+     *                               referenced by the result override
+     */
+    public static void createOverrideParameterDeclaration(
+            ConfigurationParameter resultParam, AnalysisEngineDescription aggrDesc,
+            Map<String, String> delegateParameterNames) {
+        AnalysisEngineMetaData aggrMeta = aggrDesc.getAnalysisEngineMetaData();
+        if (aggrDesc.isPrimitive()) {
+            throw new IllegalArgumentException(String.format(
+                    "The provided AE descriptor (name=%s) is primitive",
+                    aggrMeta.getName()));
+        }
+        // check that each specified delegate is actually declared
+        for (String delegateKey : delegateParameterNames.keySet()) {
+            // do not resolve imports, just check existence of the delegate.
+            if (!aggrDesc.getDelegateAnalysisEngineSpecifiersWithImports().containsKey(delegateKey)) {
+                throw new IllegalArgumentException(String.format(
+                        "There is no delegate with key '%s' in the description named '%s'",
+                        delegateKey, aggrMeta.getName()));
+            }
+        }
+        ConfigurationParameterDeclarations cfgParamDecls = aggrMeta
+                .getConfigurationParameterDeclarations();
+        if (cfgParamDecls.getConfigurationParameter(null, resultParam.
