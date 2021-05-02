@@ -145,4 +145,36 @@ public class PipelineDescriptorUtils {
         }
         ConfigurationParameterDeclarations cfgParamDecls = aggrMeta
                 .getConfigurationParameterDeclarations();
-        if (cfgParamDecls.getConfigurationParameter(null, resultParam.
+        if (cfgParamDecls.getConfigurationParameter(null, resultParam.getName()) != null) {
+            throw new IllegalArgumentException(String.format(
+                    "Parameter with name = '%s' exists already"));
+        }
+        for (Map.Entry<String, String> delegateAndItsParam : delegateParameterNames.entrySet()) {
+            String delegateKey = delegateAndItsParam.getKey();
+            String delegateParamName = delegateAndItsParam.getValue();
+            resultParam.addOverride(delegateKey + "/" + delegateParamName);
+        }
+        cfgParamDecls.addConfigurationParameter(resultParam);
+    }
+
+    /**
+     * Simplified signature for
+     * {@link #createOverrideParameterDeclaration(ConfigurationParameter, AnalysisEngineDescription, Map)}
+     */
+    public static void createOverrideParameterDeclaration(
+            ConfigurationParameter resultParam, AnalysisEngineDescription aggrDesc,
+            String delegateKey, String delegateParamName) {
+        createOverrideParameterDeclaration(resultParam, aggrDesc,
+                Collections.singletonMap(delegateKey, delegateParamName));
+    }
+
+    public static ResourceManagerConfiguration getResourceManagerConfiguration(
+            ResourceCreationSpecifier aDesc) {
+        ResourceManagerConfiguration resMgrCfg = aDesc.getResourceManagerConfiguration();
+        if (resMgrCfg == null) {
+            resMgrCfg = new ResourceManagerConfiguration_impl();
+            aDesc.setResourceManagerConfiguration(resMgrCfg);
+        }
+        return resMgrCfg;
+    }
+}
