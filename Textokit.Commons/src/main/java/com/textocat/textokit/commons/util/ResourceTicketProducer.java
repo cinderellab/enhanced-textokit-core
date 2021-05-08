@@ -16,12 +16,12 @@
 
 package com.textocat.textokit.commons.util;
 
-import java.io.Closeable;
-
 /**
  * @author Rinat Gareev
  */
-public interface ResourceTicket extends Closeable {
-    @Override
-    void close();
+public interface ResourceTicketProducer {
+    /**
+     * Notify this resource about a new client.
+     */
+    ResourceTicket acquire();
 }
