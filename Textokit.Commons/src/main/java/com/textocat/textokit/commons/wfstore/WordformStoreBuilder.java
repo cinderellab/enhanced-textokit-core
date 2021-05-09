@@ -1,3 +1,4 @@
+
 /*
  *    Copyright 2015 Textocat
  *
@@ -17,18 +18,11 @@
 
 package com.textocat.textokit.commons.wfstore;
 
-import java.io.File;
-
 /**
  * @author Rinat Gareev
  */
-public interface WordformStore<TagType> {
+public interface WordformStoreBuilder<TagType> {
+    void increment(String wordString, TagType tag);
 
-    TagType getTag(String wf);
-
-    <T> T getProperty(String key, Class<T> valueClass);
-
-    void setProperty(String key, Object value);
-
-    void persist(File outFile) throws Exception;
+    WordformStore<TagType> build();
 }
