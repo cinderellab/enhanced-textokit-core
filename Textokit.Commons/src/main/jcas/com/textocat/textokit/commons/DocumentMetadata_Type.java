@@ -51,4 +51,73 @@ public class DocumentMetadata_Type extends Annotation_Type {
   			   return fs;
   		     }
   		     return fs;
-        } else return
+        } else return new DocumentMetadata(addr, DocumentMetadata_Type.this);
+  	  }
+    };
+  /** @generated */
+  @SuppressWarnings ("hiding")
+  public final static int typeIndexID = DocumentMetadata.typeIndexID;
+  /** @generated
+     @modifiable */
+  @SuppressWarnings ("hiding")
+  public final static boolean featOkTst = JCasRegistry.getFeatOkTst("com.textocat.textokit.commons.DocumentMetadata");
+
+  /** @generated */
+  final Feature casFeat_sourceUri;
+  /** @generated */
+  final int     casFeatCode_sourceUri;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value
+   */
+  public String getSourceUri(int addr) {
+        if (featOkTst && casFeat_sourceUri == null)
+      jcas.throwFeatMissing("sourceUri", "com.textocat.textokit.commons.DocumentMetadata");
+    return ll_cas.ll_getStringValue(addr, casFeatCode_sourceUri);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set
+   */
+  public void setSourceUri(int addr, String v) {
+        if (featOkTst && casFeat_sourceUri == null)
+      jcas.throwFeatMissing("sourceUri", "com.textocat.textokit.commons.DocumentMetadata");
+    ll_cas.ll_setStringValue(addr, casFeatCode_sourceUri, v);}
+
+
+
+  /** @generated */
+  final Feature casFeat_offsetInSource;
+  /** @generated */
+  final int     casFeatCode_offsetInSource;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value
+   */
+  public long getOffsetInSource(int addr) {
+        if (featOkTst && casFeat_offsetInSource == null)
+      jcas.throwFeatMissing("offsetInSource", "com.textocat.textokit.commons.DocumentMetadata");
+    return ll_cas.ll_getLongValue(addr, casFeatCode_offsetInSource);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set
+   */
+  public void setOffsetInSource(int addr, long v) {
+        if (featOkTst && casFeat_offsetInSource == null)
+      jcas.throwFeatMissing("offsetInSource", "com.textocat.textokit.commons.DocumentMetadata");
+    ll_cas.ll_setLongValue(addr, casFeatCode_offsetInSource, v);}
+
+
+
+  /** @generated */
+  final Feature casFeat_documentSize;
+  /** @generated */
+  final int     casFeatCode_documentSize;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value
+   */
+  public long getDocumentSize(int addr) {
+        if (featOkTst && casFeat_documentSize == null)
+      j
