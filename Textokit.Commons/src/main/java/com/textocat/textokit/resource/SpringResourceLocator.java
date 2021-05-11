@@ -58,4 +58,13 @@ public abstract class SpringResourceLocator extends Resource_ImplBase implements
             // try to resolve against UIMA datapath
             try {
                 File resourceFile = resourceMeta.getFile();
-                resourceFile = UimaResourceUtils.resolveFile(resourceFile.getPath(), getResourceManager(
+                resourceFile = UimaResourceUtils.resolveFile(resourceFile.getPath(), getResourceManager());
+                resourceMeta = new FileSystemResource(resourceFile);
+            } catch (Exception e) {
+                throw new ResourceInitializationException(e);
+            }
+        }
+        return true;
+    }
+
+}
