@@ -120,4 +120,63 @@ public class DocumentMetadata_Type extends Annotation_Type {
    */
   public long getDocumentSize(int addr) {
         if (featOkTst && casFeat_documentSize == null)
-      j
+      jcas.throwFeatMissing("documentSize", "com.textocat.textokit.commons.DocumentMetadata");
+    return ll_cas.ll_getLongValue(addr, casFeatCode_documentSize);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set
+   */
+  public void setDocumentSize(int addr, long v) {
+        if (featOkTst && casFeat_documentSize == null)
+      jcas.throwFeatMissing("documentSize", "com.textocat.textokit.commons.DocumentMetadata");
+    ll_cas.ll_setLongValue(addr, casFeatCode_documentSize, v);}
+
+
+
+  /** @generated */
+  final Feature casFeat_startProcessingTime;
+  /** @generated */
+  final int     casFeatCode_startProcessingTime;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value
+   */
+  public long getStartProcessingTime(int addr) {
+        if (featOkTst && casFeat_startProcessingTime == null)
+      jcas.throwFeatMissing("startProcessingTime", "com.textocat.textokit.commons.DocumentMetadata");
+    return ll_cas.ll_getLongValue(addr, casFeatCode_startProcessingTime);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set
+   */
+  public void setStartProcessingTime(int addr, long v) {
+        if (featOkTst && casFeat_startProcessingTime == null)
+      jcas.throwFeatMissing("startProcessingTime", "com.textocat.textokit.commons.DocumentMetadata");
+    ll_cas.ll_setLongValue(addr, casFeatCode_startProcessingTime, v);}
+
+
+
+
+
+  /** initialize variables to correspond with Cas Type and Features
+	 * @generated
+	 * @param jcas JCas
+	 * @param casType Type
+	 */
+  public DocumentMetadata_Type(JCas jcas, Type casType) {
+    super(jcas, casType);
+    casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl)this.casType, getFSGenerator());
+
+
+    casFeat_sourceUri = jcas.getRequiredFeatureDE(casType, "sourceUri", "uima.cas.String", featOkTst);
+    casFeatCode_sourceUri  = (null == casFeat_sourceUri) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_sourceUri).getCode();
+
+
+    casFeat_offsetInSource = jcas.getRequiredFeatureDE(casType, "offsetInSource", "uima.cas.Long", featOkTst);
+    casFeatCode_offsetInSource  = (null == casFeat_offsetInSource) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_offsetInSource).getCode();
+
+
+    casFeat_documentSize = jcas.getRequiredFeatureDE(casType, "documentSize", "uima.cas.Long", featOkTst);
+    casFeatCode_documentSize  = (null == casFeat_documentSize) ? JCas.INVALID_FEATURE_CO
