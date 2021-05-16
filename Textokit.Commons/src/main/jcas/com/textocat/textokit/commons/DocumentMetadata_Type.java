@@ -179,4 +179,15 @@ public class DocumentMetadata_Type extends Annotation_Type {
 
 
     casFeat_documentSize = jcas.getRequiredFeatureDE(casType, "documentSize", "uima.cas.Long", featOkTst);
-    casFeatCode_documentSize  = (null == casFeat_documentSize) ? JCas.INVALID_FEATURE_CO
+    casFeatCode_documentSize  = (null == casFeat_documentSize) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_documentSize).getCode();
+
+
+    casFeat_startProcessingTime = jcas.getRequiredFeatureDE(casType, "startProcessingTime", "uima.cas.Long", featOkTst);
+    casFeatCode_startProcessingTime  = (null == casFeat_startProcessingTime) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_startProcessingTime).getCode();
+
+  }
+}
+
+
+
+    
