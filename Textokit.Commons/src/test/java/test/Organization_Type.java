@@ -38,4 +38,56 @@ public class Organization_Type extends Annotation_Type {
         } else return new Organization(addr, Organization_Type.this);
   	  }
     };
-  /
+  /** @generated */
+  @SuppressWarnings ("hiding")
+  public final static int typeIndexID = Organization.typeIndexID;
+  /** @generated 
+     @modifiable */
+  @SuppressWarnings ("hiding")
+  public final static boolean featOkTst = JCasRegistry.getFeatOkTst("test.Organization");
+ 
+  /** @generated */
+  final Feature casFeat_canonical;
+  /** @generated */
+  final int     casFeatCode_canonical;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public String getCanonical(int addr) {
+        if (featOkTst && casFeat_canonical == null)
+      jcas.throwFeatMissing("canonical", "test.Organization");
+    return ll_cas.ll_getStringValue(addr, casFeatCode_canonical);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setCanonical(int addr, String v) {
+        if (featOkTst && casFeat_canonical == null)
+      jcas.throwFeatMissing("canonical", "test.Organization");
+    ll_cas.ll_setStringValue(addr, casFeatCode_canonical, v);}
+    
+  
+
+
+
+  /** initialize variables to correspond with Cas Type and Features
+	 * @generated
+	 * @param jcas JCas
+	 * @param casType Type 
+	 */
+  public Organization_Type(JCas jcas, Type casType) {
+    super(jcas, casType);
+    casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl)this.casType, getFSGenerator());
+
+ 
+    casFeat_canonical = jcas.getRequiredFeatureDE(casType, "canonical", "uima.cas.String", featOkTst);
+    casFeatCode_canonical  = (null == casFeat_canonical) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_canonical).getCode();
+
+  }
+}
+
+
+
+    
