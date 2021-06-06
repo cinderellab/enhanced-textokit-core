@@ -41,4 +41,23 @@ public class Time_Type extends Annotation_Type {
   public final static int typeIndexID = Time.typeIndexID;
   /** @generated 
      @modifiable */
-  @SuppressWarnings ("h
+  @SuppressWarnings ("hiding")
+  public final static boolean featOkTst = JCasRegistry.getFeatOkTst("test.Time");
+
+
+
+  /** initialize variables to correspond with Cas Type and Features
+	 * @generated
+	 * @param jcas JCas
+	 * @param casType Type 
+	 */
+  public Time_Type(JCas jcas, Type casType) {
+    super(jcas, casType);
+    casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl)this.casType, getFSGenerator());
+
+  }
+}
+
+
+
+    
