@@ -1,0 +1,20 @@
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>UIMA.Ext.Commons-Testing</name>
+    <description>TS for testing</description>
+    <types>
+        <typeDescription>
+            <name>test.Word</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>test.PersonName</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>test.Person</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+            <features>
+                <featureDescription>
