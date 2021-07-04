@@ -62,4 +62,29 @@ public class XmiCorpusUnitsExtractor {
                 XmiFileTreeCorpusDAOResource.class, extractorParams.corpus);
         tsd = XmiFileTreeCorpusDAO.getTypeSystem(extractorParams.corpus);
         reader = CollectionReaderFactory.createReaderDescription(
-                CorpusDAOCo
+                CorpusDAOCollectionReader.class, tsd,
+                CorpusDAOCollectionReader.CORPUS_DAO_KEY, daoDesc);
+
+        tokenizerSentenceSplitter = AnalysisEngineFactory
+                .createEngineDescription(Unitizer
+                        .createTokenizerSentenceSplitterAED());
+
+        unitAnnotator = AnalysisEngineFactory.createEngineDescription(
+                UnitAnnotator.class, UnitAnnotator.PARAM_UNIT_TYPE_NAMES,
+                extractorParams.units);
+        unitClassifier = AnalysisEngineFactory.createEngineDescription(
+                UnitClassifier.class, UnitClassifier.PARAM_CLASS_TYPE_NAMES,
+                extractorParams.classes);
+
+        unitsDAOWriter = AnalysisEngineFactory.createEngineDescription(
+                UnitsDAOWriter.class, UnitsDAOWriter.UNITS_TSV_PATH,
+                extractorParams.output);
+        aggregate = AnalysisEngineFactory.createEngineDescription(
+                tokenizerSentenceSplitter, unitAnnotator, unitClassifier,
+                unitsDAOWriter);
+    }
+
+    public void process() throws UIMAException, IOException {
+        SimplePipeline.runPipeline(reader, aggregate);
+    }
+}
