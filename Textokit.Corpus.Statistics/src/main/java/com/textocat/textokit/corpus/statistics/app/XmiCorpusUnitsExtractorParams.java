@@ -32,3 +32,5 @@ public class XmiCorpusUnitsExtractorParams {
     public List<String> classes = new ArrayList<String>();
 
     @Parameter(names = "-output", description = "Output TSV file.")
+    public String output;
+}
