@@ -50,4 +50,33 @@ public class UnitLocation {
         result = prime * result
                 + ((documentURI == null) ? 0 : documentURI.hashCode());
         result = prime * result + end;
-   
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UnitLocation other = (UnitLocation) obj;
+        if (begin != other.begin)
+            return false;
+        if (documentURI == null) {
+            if (other.documentURI != null)
+                return false;
+        } else if (!documentURI.equals(other.documentURI))
+            return false;
+        if (end != other.end)
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s\t%d\t%d", documentURI, begin, end);
+    }
+
+}
