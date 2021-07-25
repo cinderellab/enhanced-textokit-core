@@ -17,40 +17,41 @@
 
 package com.textocat.textokit.corpus.statistics.cpe;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.textocat.textokit.corpus.statistics.dao.corpus.XmiFileTreeCorpusDAO;
 import com.textocat.textokit.segmentation.SentenceSplitterAPI;
 import com.textocat.textokit.tokenizer.TokenizerAPI;
 import org.apache.uima.UIMAException;
-import org.apache.uima.analysis_engine.AnalysisEngineDescription;
+import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.cas.CAS;
-import org.apache.uima.cas.Feature;
-import org.apache.uima.cas.Type;
-import org.apache.uima.cas.text.AnnotationFS;
-import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.cas.CASRuntimeException;
+import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.factory.ExternalResourceFactory;
 import org.apache.uima.fit.factory.TypeSystemDescriptionFactory;
-import org.apache.uima.fit.pipeline.JCasIterable;
-import org.apache.uima.fit.util.CasUtil;
-import org.apache.uima.jcas.JCas;
+import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ExternalResourceDescription;
 import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.apache.uima.util.CasCreationUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Set;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.junit.Assert.assertEquals;
 
-public class UnitClassifierTest {
+public class UnitsDAOWriterTest {
     String corpusPathString = Thread.currentThread().getContextClassLoader()
             .getResource("corpus_example").getPath();
+
     Set<String> unitTypes = Sets
             .newHashSet("com.textocat.textokit.tokenizer.fstype.W");
     Set<String> classTypes = Sets.newHashSet("ru.kfu.itis.issst.evex.Person",
@@ -58,10 +59,15 @@ public class UnitClassifierTest {
             "ru.kfu.itis.issst.evex.Weapon");
     ExternalResourceDescription daoDesc;
     TypeSystemDescription tsd;
-    CollectionReaderDescription reader;
-    AnalysisEngineDescription tokenizerSentenceSplitter;
-    AnalysisEngineDescription unitAnnotator;
-    AnalysisEngineDescription unitClassifier;
+    CollectionReader reader;
+    AnalysisEngine tokenizerSentenceSplitter;
+    AnalysisEngine unitAnnotator;
+    AnalysisEngine unitClassifier;
+    AnalysisEngine unitsDAOWriter;
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+    private File unitsTSV;
 
     @Before
     public void setUp() throws Exception {
@@ -74,44 +80,50 @@ public class UnitClassifierTest {
                                 .createTypeSystemDescription(),
                         TokenizerAPI.getTypeSystemDescription(),
                         SentenceSplitterAPI.getTypeSystemDescription()));
-        reader = CollectionReaderFactory.createReaderDescription(
+        reader = CollectionReaderFactory.createReader(
                 CorpusDAOCollectionReader.class, tsd,
                 CorpusDAOCollectionReader.CORPUS_DAO_KEY, daoDesc);
         CAS aCAS = CasCreationUtils.createCas(tsd, null, null, null);
-        tokenizerSentenceSplitter = Unitizer.createTokenizerSentenceSplitterAED();
-        unitAnnotator = AnalysisEngineFactory.createEngineDescription(
+        reader.typeSystemInit(aCAS.getTypeSystem());
+        tokenizerSentenceSplitter = AnalysisEngineFactory
+                .createEngine(Unitizer.createTokenizerSentenceSplitterAED());
+        unitAnnotator = AnalysisEngineFactory.createEngine(
                 UnitAnnotator.class, UnitAnnotator.PARAM_UNIT_TYPE_NAMES,
                 unitTypes);
-        unitClassifier = AnalysisEngineFactory.createEngineDescription(
+        unitClassifier = AnalysisEngineFactory.createEngine(
                 UnitClassifier.class, UnitClassifier.PARAM_CLASS_TYPE_NAMES,
                 classTypes);
+
+        unitsTSV = tempFolder.newFile();
+        unitsDAOWriter = AnalysisEngineFactory.createEngine(
+                UnitsDAOWriter.class, UnitsDAOWriter.UNITS_TSV_PATH,
+                unitsTSV.getPath());
     }
 
     @Test
-    public void test() throws UIMAException, IOException {
-        SetMultimap<String, String> unitsByClass = HashMultimap.create();
-        for (JCas jCas : new JCasIterable(reader, tokenizerSentenceSplitter,
-                unitAnnotator, unitClassifier)) {
-            CAS aCas = jCas.getCas();
-            Type unitType = aCas.getTypeSystem().getType(
-                    UnitAnnotator.UNIT_TYPE_NAME);
-            Feature classFeature = unitType
-                    .getFeatureByBaseName(UnitClassifier.CLASS_FEAT_NAME);
-            for (AnnotationFS unitAnnotation : CasUtil.select(aCas, unitType)) {
-                if (unitAnnotation.getStringValue(classFeature) != null) {
-                    unitsByClass.put(
-                            unitAnnotation.getStringValue(classFeature),
-                            unitAnnotation.getCoveredText());
+    public void test() throws CASRuntimeException, UIMAException, IOException {
+        SimplePipeline.runPipeline(reader, tokenizerSentenceSplitter,
+                unitAnnotator, unitClassifier, unitsDAOWriter);
+        Set<String> searchedStrings = Sets.newHashSet(
+                "65801.txt\t545\t549\t1\tru.kfu.itis.issst.evex.Organization",
+                "62007.txt\t1044\t1048\t1\tru.kfu.itis.issst.evex.Person",
+                "62007.txt\t1044\t1048\t5\tru.kfu.itis.issst.evex.Person",
+                "65801.txt\t0\t3\t1\tnull");
+        int founded = 0;
+        BufferedReader inputStream = null;
+        try {
+            inputStream = new BufferedReader(new FileReader(unitsTSV));
+            String l;
+            while ((l = inputStream.readLine()) != null) {
+                if (searchedStrings.contains(l)) {
+                    ++founded;
                 }
             }
+        } finally {
+            closeQuietly(inputStream);
         }
-        assertEquals(
-                Sets.newHashSet("Вагнер", "двое", "боевиков", "пособница"),
-                unitsByClass.get("ru.kfu.itis.issst.evex.Person"));
-        assertEquals(Sets.newHashSet("ЦСКА"),
-                unitsByClass.get("ru.kfu.itis.issst.evex.Organization"));
-        assertEquals(Sets.newHashSet("штурма", "квартиры"),
-                unitsByClass.get("ru.kfu.itis.issst.evex.Weapon"));
+        assertEquals(searchedStrings.size(), founded);
+
     }
 
 }
