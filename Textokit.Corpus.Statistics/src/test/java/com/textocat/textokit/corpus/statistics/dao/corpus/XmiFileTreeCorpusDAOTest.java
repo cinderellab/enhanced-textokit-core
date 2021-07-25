@@ -111,4 +111,40 @@ public class XmiFileTreeCorpusDAOTest {
                 CasUtil.select(
                         aCAS,
                         CasUtil.getAnnotationType(aCAS,
-                                
+                                "ru.kfu.itis.issst.evex.Weapon")).size());
+
+        aCAS = CasCreationUtils.createCas(
+                XmiFileTreeCorpusDAO.getTypeSystem(corpusPathString), null,
+                null, null);
+        corpusDAO.getDocumentCas(new URI("62007.txt"), "5", aCAS);
+        assertThat(aCAS.getDocumentText(), containsString("РИА Новости"));
+        assertThat(CasUtil.selectAll(aCAS).size(), equalTo(5));
+        assertEquals(
+                0,
+                CasUtil.select(
+                        aCAS,
+                        CasUtil.getAnnotationType(aCAS,
+                                "ru.kfu.itis.issst.evex.Weapon")).size());
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void testGetDocumentCasForNonexistingDocument()
+            throws ResourceInitializationException, IOException, SAXException,
+            URISyntaxException, ParserConfigurationException {
+        CAS aCAS = CasCreationUtils.createCas(
+                XmiFileTreeCorpusDAO.getTypeSystem(corpusPathString), null,
+                null, null);
+        corpusDAO.getDocumentCas(new URI("49053.txt"), "1", aCAS);
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void testGetDocumentCasForWrongAnnotator()
+            throws ResourceInitializationException, IOException, SAXException,
+            URISyntaxException, ParserConfigurationException {
+        CAS aCAS = CasCreationUtils.createCas(
+                XmiFileTreeCorpusDAO.getTypeSystem(corpusPathString), null,
+                null, null);
+        corpusDAO.getDocumentCas(new URI("75788.txt"), "1", aCAS);
+    }
+
+}
