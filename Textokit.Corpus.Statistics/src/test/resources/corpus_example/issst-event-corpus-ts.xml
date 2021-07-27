@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>uima-ext-events</name>
+    <description/>
+    <version>0.2</version>
+    <vendor>CLLKazan</vendor>
+
+    <imports>
+        <import name="com.textocat.textokit.commons.Commons-TypeSystem"/>
+    </imports>
+
+    <types>
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Person</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Organization</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Artifact</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Weapon</name>
+            <description/>
+            <supertypeName>ru.kfu.itis.issst.evex.Artifact</supertypeName>
+        </typeDescription>
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Job</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Time</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+
+        <!--	EVENT	-->
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Event</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+
+            <features>
+        
