@@ -55,4 +55,72 @@
             <supertypeName>uima.tcas.Annotation</supertypeName>
 
             <features>
-        
+                <featureDescription>
+                    <name>negation</name>
+                    <description/>
+                    <rangeTypeName>uima.cas.String</rangeTypeName>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>tense</name>
+                    <description/>
+                    <rangeTypeName>uima.cas.String</rangeTypeName>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>generic</name>
+                    <description/>
+                    <rangeTypeName>uima.cas.String</rangeTypeName>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>notAsserted</name>
+                    <description>aka "Polarity"</description>
+
+                    <rangeTypeName>uima.cas.String</rangeTypeName>
+                </featureDescription>
+
+            </features>
+        </typeDescription>
+
+
+        <!--	EVENT SubTypes	-->
+
+
+        <!-- Die -->
+
+        <typeDescription>
+            <name>ru.kfu.itis.issst.evex.Die</name>
+            <description/>
+            <supertypeName>ru.kfu.itis.issst.evex.Event</supertypeName>
+            <features>
+                <featureDescription>
+                    <name>personArg</name>
+                    <description/>
+                    <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+                    <elementType>uima.tcas.Annotation</elementType>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>killerArg</name>
+                    <description/>
+                    <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+                    <elementType>ru.kfu.itis.issst.evex.Person</elementType>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>instrumentArg</name>
+                    <description/>
+                    <rangeTypeName>uima.tcas.Annotation</rangeTypeName>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>timeArg</name>
+                    <description/>
+                    <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+                    <elementType>ru.kfu.itis.issst.evex.Time</elementType>
+                </featureDescription>
+
+                <featureDescription>
+                    <name>placeArg</name>
+           
