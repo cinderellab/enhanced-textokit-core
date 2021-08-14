@@ -58,4 +58,7 @@
                         com.textocat.textokit.morph.opencorpora.resource.ClasspathMorphDictionaryResource
                     </resourceClassName>
                 </customResourceSpecifier>
-            </extern
+            </externalResource>
+        </externalResources>
+    </resourceManagerConfiguration>
+</analysisEngineDescription>
