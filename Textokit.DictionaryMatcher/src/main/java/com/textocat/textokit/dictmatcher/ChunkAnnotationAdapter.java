@@ -1,3 +1,4 @@
+
 /*
  *    Copyright 2015 Textocat
  *
@@ -14,20 +15,17 @@
  *    limitations under the License.
  */
 
-package com.textocat.textokit.chunk;
+package com.textocat.textokit.dictmatcher;
 
-import java.util.Set;
+import org.apache.uima.cas.TypeSystem;
+import org.apache.uima.cas.text.AnnotationFS;
 
 /**
- * @param <V> a type of metadata carried by chunks
- * @author Nikita Zhiltsov
+ * @param <V> a type of chunk value
+ * @author Rinat Gareev
  */
-public interface Chunker<V> {
-    /**
-     * return the chunks of the given tokenized(& normalized) string
-     *
-     * @param tokens an input sequence
-     * @return chunks matched in the given input
-     */
-    Set<Chunk<V>> chunks(Iterable<String> tokens);
+public interface ChunkAnnotationAdapter<V> {
+    void typeSystemInit(TypeSystem ts);
+
+    void makeAnnotation(AnnotationFS firstToken, AnnotationFS lastToken, V metadata);
 }

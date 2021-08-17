@@ -1,3 +1,4 @@
+
 /*
  *    Copyright 2015 Textocat
  *
@@ -16,18 +17,12 @@
 
 package com.textocat.textokit.chunk;
 
-import java.util.Set;
-
 /**
- * @param <V> a type of metadata carried by chunks
- * @author Nikita Zhiltsov
+ * @param <V> a metadata carried by dictionary entries
+ * @author Rinat Gareev
  */
-public interface Chunker<V> {
-    /**
-     * return the chunks of the given tokenized(& normalized) string
-     *
-     * @param tokens an input sequence
-     * @return chunks matched in the given input
-     */
-    Set<Chunk<V>> chunks(Iterable<String> tokens);
+public interface ChunkerBuilder<V> {
+    void addEntry(Iterable<String> tokens, V metadata);
+
+    Chunker<V> build();
 }
