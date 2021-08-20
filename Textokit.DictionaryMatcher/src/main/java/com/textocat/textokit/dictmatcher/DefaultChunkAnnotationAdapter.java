@@ -31,4 +31,40 @@ import org.apache.uima.resource.ResourceInitializationException;
 
 /**
  * The default implementation of {@link ChunkAnnotationAdapter} that completely ignores chunk metadata
- * and create annot
+ * and create annotation of a type given by the configuration.
+ *
+ * @author Rinat Gareev
+ */
+public class DefaultChunkAnnotationAdapter implements ChunkAnnotationAdapter<Object>, Initializable {
+
+    public static final String PARAM_RESULT_ANNOTATION_TYPE = "resultAnnotationType";
+
+    @ConfigurationParameter(name = PARAM_RESULT_ANNOTATION_TYPE)
+    private Class<? extends AnnotationFS> resultAnnoClass;
+    // derived
+    private Type resultAnnoType;
+    private Feature firstTokenFeature;
+
+    @Override
+    public void initialize(UimaContext ctx) throws ResourceInitializationException {
+        ConfigurationParameterInitializer.initialize(this, ctx);
+    }
+
+    @Override
+    public void typeSystemInit(TypeSystem ts) {
+        resultAnnoType = FSTypeUtils.getType(ts, resultAnnoClass.getName(), true);
+        // TODO describe this in the class javadoc
+        firstTokenFeature = FSTypeUtils.getFeature(resultAnnoType, "firstToken", false);
+    }
+
+    @Override
+    public void makeAnnotation(AnnotationFS firstToken, AnnotationFS lastToken, Object metadata) {
+        Preconditions.checkArgument(firstToken != null, "firstToken == null");
+        CAS cas = firstToken.getCAS();
+        AnnotationFS resAnno = cas.createAnnotation(resultAnnoType, firstToken.getBegin(), lastToken.getEnd());
+        if (firstTokenFeature != null) {
+            resAnno.setFeatureValue(firstTokenFeature, firstToken);
+        }
+        cas.addFsToIndexes(resAnno);
+    }
+}
