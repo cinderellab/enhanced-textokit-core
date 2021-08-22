@@ -71,4 +71,57 @@ public class DictionaryAnnotator<V> extends CasAnnotator_ImplBase {
             defaultValue = "com.textocat.textokit.dictmatcher.DefaultChunkAnnotationAdapter")
     private Class<? extends ChunkAnnotationAdapter> chunkAdapterClass;
     @ConfigurationParameter(name = PARAM_INPUT_TOKEN_TYPE, mandatory = false,
-            defaultValue = "com.textocat.textokit.morph.fs.Simp
+            defaultValue = "com.textocat.textokit.morph.fs.SimplyWord")
+    private Class<? extends AnnotationFS> inputTokenClass;
+    @ConfigurationParameter(name = PARAM_NORM_FORM_FEATURE_PATH, mandatory = false,
+            defaultValue = "lemma")
+    private String normFeaturePathStr;
+    @ConfigurationParameter(name = PARAM_NORM_FALLBACK_TO_COVERED_TEXT, mandatory = false,
+            defaultValue = "true")
+    private Boolean normFallbackToCoveredText;
+    @ConfigurationParameter(name = PARAM_BOUNDARY_ANNOTATION_TYPE, mandatory = false,
+            defaultValue = "com.textocat.textokit.segmentation.fstype.Sentence")
+    private Class<? extends AnnotationFS> boundaryAnnoClass;
+    // derived
+    private Type boundaryAnnoType;
+    private Type inputTokenType;
+    private ChunkAnnotationAdapter<V> chunkAnnotationAdapter;
+    // per-CAS state
+    private Function<AnnotationFS, String> normFunction;
+
+    @Override
+    public void initialize(UimaContext ctx) throws ResourceInitializationException {
+        super.initialize(ctx);
+        //noinspection unchecked
+        chunkAnnotationAdapter = InitializableFactory.create(ctx, chunkAdapterClass);
+    }
+
+    @Override
+    public void typeSystemInit(TypeSystem ts) throws AnalysisEngineProcessException {
+        super.typeSystemInit(ts);
+        boundaryAnnoType = FSTypeUtils.getType(ts, boundaryAnnoClass.getName(), true);
+        inputTokenType = FSTypeUtils.getType(ts, inputTokenClass.getName(), true);
+        chunkAnnotationAdapter.typeSystemInit(ts);
+    }
+
+    @Override
+    public void process(CAS cas) throws AnalysisEngineProcessException {
+        try {
+            normFunction = new NormFunction(FSUtils.stringFeaturePathFunc(cas, inputTokenType, normFeaturePathStr));
+        } catch (CASException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+        for (AnnotationFS span : CasUtil.select(cas, boundaryAnnoType)) {
+            processSpan(cas, span);
+        }
+    }
+
+    private void processSpan(CAS cas, AnnotationFS span) throws AnalysisEngineProcessException {
+        List<AnnotationFS> tokens = CasUtil.selectCovered(cas, inputTokenType, span);
+        if (tokens.isEmpty()) return;
+        if (!(tokens instanceof RandomAccess)) {
+            tokens = Lists.newArrayList(tokens);
+        }
+        List<String> tokenNorms = Lists.transform(tokens, normFunction);
+        Set<Chunk<V>> matches = dictMatcher.chunks(tokenNorms);
+       
