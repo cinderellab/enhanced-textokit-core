@@ -124,4 +124,34 @@ public class DictionaryAnnotator<V> extends CasAnnotator_ImplBase {
         }
         List<String> tokenNorms = Lists.transform(tokens, normFunction);
         Set<Chunk<V>> matches = dictMatcher.chunks(tokenNorms);
-       
+        if (matches == null) return;
+        for (Chunk<V> m : matches) {
+            AnnotationFS mFirstToken = tokens.get(m.start());
+            AnnotationFS mLastToken = tokens.get(m.end());
+            makeResultAnnotation(mFirstToken, mLastToken, m.metadata());
+        }
+    }
+
+    private void makeResultAnnotation(AnnotationFS firstToken, AnnotationFS lastToken, V chunkMetadata) {
+        chunkAnnotationAdapter.makeAnnotation(firstToken, lastToken, chunkMetadata);
+    }
+
+    private class NormFunction implements Function<AnnotationFS, String> {
+        private Function<FeatureStructure, String> normFeatureFunction;
+
+        public NormFunction(Function<FeatureStructure, String> normFeatureFunction) {
+            this.normFeatureFunction = normFeatureFunction;
+        }
+
+        @Override
+        public String apply(AnnotationFS anno) {
+            String res = normFeatureFunction.apply(anno);
+            if (res == null && normFallbackToCoveredText) {
+                // TODO refactor out lower-casing
+                res = anno.getCoveredText().toLowerCase();
+            }
+            return res;
+        }
+
+    }
+}
