@@ -113,4 +113,33 @@ public class DictionaryMatch extends Annotation {
   /** setter for tag - sets  
    * @generated
    * @param v value to set into the feature 
-   *
+   */
+  public void setTag(String v) {
+    if (DictionaryMatch_Type.featOkTst && ((DictionaryMatch_Type)jcasType).casFeat_tag == null)
+      jcasType.jcas.throwFeatMissing("tag", "com.textocat.textokit.dictmatcher.fs.DictionaryMatch");
+    jcasType.ll_cas.ll_setStringValue(addr, ((DictionaryMatch_Type)jcasType).casFeatCode_tag, v);}    
+   
+    
+  //*--------------*
+  //* Feature: dictionaryRecordId
+
+  /** getter for dictionaryRecordId - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getDictionaryRecordId() {
+    if (DictionaryMatch_Type.featOkTst && ((DictionaryMatch_Type)jcasType).casFeat_dictionaryRecordId == null)
+      jcasType.jcas.throwFeatMissing("dictionaryRecordId", "com.textocat.textokit.dictmatcher.fs.DictionaryMatch");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((DictionaryMatch_Type)jcasType).casFeatCode_dictionaryRecordId);}
+    
+  /** setter for dictionaryRecordId - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setDictionaryRecordId(String v) {
+    if (DictionaryMatch_Type.featOkTst && ((DictionaryMatch_Type)jcasType).casFeat_dictionaryRecordId == null)
+      jcasType.jcas.throwFeatMissing("dictionaryRecordId", "com.textocat.textokit.dictmatcher.fs.DictionaryMatch");
+    jcasType.ll_cas.ll_setStringValue(addr, ((DictionaryMatch_Type)jcasType).casFeatCode_dictionaryRecordId, v);}    
+  }
+
+    
