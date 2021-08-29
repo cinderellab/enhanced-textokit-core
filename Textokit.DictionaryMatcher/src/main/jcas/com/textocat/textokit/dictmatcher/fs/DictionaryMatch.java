@@ -40,4 +40,77 @@ public class DictionaryMatch extends Annotation {
    * @param addr low level Feature Structure reference
    * @param type the type of this Feature Structure 
    */
-  public Dic
+  public DictionaryMatch(int addr, TOP_Type type) {
+    super(addr, type);
+    readObject();
+  }
+  
+  /** @generated
+   * @param jcas JCas to which this Feature Structure belongs 
+   */
+  public DictionaryMatch(JCas jcas) {
+    super(jcas);
+    readObject();   
+  } 
+
+  /** @generated
+   * @param jcas JCas to which this Feature Structure belongs
+   * @param begin offset to the begin spot in the SofA
+   * @param end offset to the end spot in the SofA 
+  */  
+  public DictionaryMatch(JCas jcas, int begin, int end) {
+    super(jcas);
+    setBegin(begin);
+    setEnd(end);
+    readObject();
+  }   
+
+  /** 
+   * <!-- begin-user-doc -->
+   * Write your own initialization here
+   * <!-- end-user-doc -->
+   *
+   * @generated modifiable 
+   */
+  private void readObject() {/*default - does nothing empty block */}
+     
+ 
+    
+  //*--------------*
+  //* Feature: firstToken
+
+  /** getter for firstToken - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public Annotation getFirstToken() {
+    if (DictionaryMatch_Type.featOkTst && ((DictionaryMatch_Type)jcasType).casFeat_firstToken == null)
+      jcasType.jcas.throwFeatMissing("firstToken", "com.textocat.textokit.dictmatcher.fs.DictionaryMatch");
+    return (Annotation)(jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((DictionaryMatch_Type)jcasType).casFeatCode_firstToken)));}
+    
+  /** setter for firstToken - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setFirstToken(Annotation v) {
+    if (DictionaryMatch_Type.featOkTst && ((DictionaryMatch_Type)jcasType).casFeat_firstToken == null)
+      jcasType.jcas.throwFeatMissing("firstToken", "com.textocat.textokit.dictmatcher.fs.DictionaryMatch");
+    jcasType.ll_cas.ll_setRefValue(addr, ((DictionaryMatch_Type)jcasType).casFeatCode_firstToken, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: tag
+
+  /** getter for tag - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getTag() {
+    if (DictionaryMatch_Type.featOkTst && ((DictionaryMatch_Type)jcasType).casFeat_tag == null)
+      jcasType.jcas.throwFeatMissing("tag", "com.textocat.textokit.dictmatcher.fs.DictionaryMatch");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((DictionaryMatch_Type)jcasType).casFeatCode_tag);}
+    
+  /** setter for tag - sets  
+   * @generated
+   * @param v value to set into the feature 
+   *
