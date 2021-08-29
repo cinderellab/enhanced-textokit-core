@@ -56,4 +56,24 @@ public class TaggedChunkAnnotationAdapter implements ChunkAnnotationAdapter<Stri
     public void typeSystemInit(TypeSystem ts) {
         resultAnnotationType = FSTypeUtils.getType(ts, resultAnnotationClass.getName(), true);
         tagFeature = FSTypeUtils.getFeature(resultAnnotationType, tagFeatureName, true);
-        if (!ts.subsumes(ts.getType(CAS.TYPE_NAME_STRIN
+        if (!ts.subsumes(ts.getType(CAS.TYPE_NAME_STRING), tagFeature.getRange())) {
+            throw new IllegalStateException(String.format(
+                    "Feature %s can not hold dictionary tags as its range is %s",
+                    tagFeature, tagFeature.getRange()));
+        }
+        // TODO describe this in the class javadoc
+        firstTokenFeature = FSTypeUtils.getFeature(resultAnnotationType, "firstToken", false);
+    }
+
+    @Override
+    public void makeAnnotation(AnnotationFS firstToken, AnnotationFS lastToken, String tag) {
+        Preconditions.checkArgument(firstToken != null, "firstToken == null");
+        CAS cas = firstToken.getCAS();
+        AnnotationFS anno = cas.createAnnotation(resultAnnotationType, firstToken.getBegin(), lastToken.getEnd());
+        anno.setStringValue(tagFeature, tag);
+        if (firstTokenFeature != null) {
+            anno.setFeatureValue(firstTokenFeature, firstToken);
+        }
+        cas.addFsToIndexes(anno);
+    }
+}
