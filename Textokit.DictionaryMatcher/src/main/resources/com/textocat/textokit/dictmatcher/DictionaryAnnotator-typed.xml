@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
     <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
@@ -45,23 +46,32 @@
                 <mandatory>false</mandatory>
             </configurationParameter>
             <configurationParameter>
-                <name>resultAnnotationType</name>
+                <name>targetNamespace</name>
+                <description/>
                 <type>String</type>
                 <multiValued>false</multiValued>
                 <mandatory>false</mandatory>
             </configurationParameter>
             <configurationParameter>
-                <name>tagFeature</name>
+                <name>tags</name>
+                <description/>
                 <type>String</type>
-                <multiValued>false</multiValued>
-                <mandatory>false</mandatory>
+                <multiValued>true</multiValued>
+                <mandatory>true</mandatory>
+            </configurationParameter>
+            <configurationParameter>
+                <name>annotationTypes</name>
+                <description/>
+                <type>String</type>
+                <multiValued>true</multiValued>
+                <mandatory>true</mandatory>
             </configurationParameter>
         </configurationParameters>
         <configurationParameterSettings>
             <nameValuePair>
                 <name>chunkAdapterClass</name>
                 <value>
-                    <string>com.textocat.textokit.dictmatcher.TaggedChunkAnnotationAdapter</string>
+                    <string>com.textocat.textokit.dictmatcher.TypedChunkAnnotationAdapter</string>
                 </value>
             </nameValuePair>
             <nameValuePair>
@@ -86,18 +96,6 @@
                 <name>boundaryAnnoType</name>
                 <value>
                     <string>com.textocat.textokit.segmentation.fstype.Sentence</string>
-                </value>
-            </nameValuePair>
-            <nameValuePair>
-                <name>resultAnnotationType</name>
-                <value>
-                    <string>com.textocat.textokit.dictmatcher.fs.DictionaryMatch</string>
-                </value>
-            </nameValuePair>
-            <nameValuePair>
-                <name>tagFeature</name>
-                <value>
-                    <string>tag</string>
                 </value>
             </nameValuePair>
         </configurationParameterSettings>
