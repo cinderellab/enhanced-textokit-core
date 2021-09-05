@@ -25,4 +25,9 @@
                 <featureDescription>
                     <name>dictionaryRecordId</name>
                     <rangeTypeName>uima.cas.String</rangeTypeName>
-                </featureDe
+                </featureDescription>
+            </features>
+        </typeDescription>
+    </types>
+
+</typeSystemDescription>
