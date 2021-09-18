@@ -61,4 +61,7 @@ public class MensaChunkerBuilder<V> implements ChunkerBuilder<V> {
         log.info("Building AhoCorasickMachine...");
         machine.buildGotoFunction(dictEntries);
         machine.buildFailureFunction();
-        log.info("AhoCorasickMachine
+        log.info("AhoCorasickMachine has been built.");
+        return new MensaChunker<>(machine);
+    }
+}
