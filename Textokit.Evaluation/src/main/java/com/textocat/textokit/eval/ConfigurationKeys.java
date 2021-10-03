@@ -29,4 +29,15 @@ public class ConfigurationKeys {
     public static final String KEY_TYPE_SYSTEM_DESC_NAMES = TYPE_SYSTEM_DESC + ".names";
     public static final String DOCUMENT_META = "document.meta";
     public static final String KEY_DOCUMENT_META_TYPE = DOCUMENT_META + ".annotationType";
-    public static final String KEY_DOCUMENT_META_URI_FEATURE = DOCUMEN
+    public static final String KEY_DOCUMENT_META_URI_FEATURE = DOCUMENT_META + ".uriFeatureName";
+    public static final String PREFIX_LISTENER_ID = "listener.";
+    public static final String PREFIX_LISTENER_PROPERTY = "listenerProperty.";
+    public static final String KEY_MATCHING_CONFIGURATION_TARGET_TYPE = "check.targetTypes";
+    public static final String PREFIX_MATCHING_CONFIGURATION = "check.";
+
+    // public static final String
+
+    private ConfigurationKeys() {
+    }
+
+}
