@@ -49,4 +49,64 @@ public class TypeSystemInitializer implements FactoryBean<TypeSystem> {
     @Value("${typeSystem.description.paths}")
     private String typeSystemDescPathsString;
     @Value("${typeSystem.description.names}")
-    private 
+    private String typeSystemDescNamesString;
+
+    // derived
+    private String[] typeSystemDescPaths;
+    private String[] typeSystemDescNames;
+
+    private TypeSystem ts;
+
+    @SuppressWarnings("unused")
+    @PostConstruct
+    private void init() {
+        if (!isBlank(typeSystemDescPathsString)) {
+            typeSystemDescPaths = StringUtils.split(typeSystemDescPathsString, ";,");
+        }
+        if (!isBlank(typeSystemDescNamesString)) {
+            typeSystemDescNames = StringUtils.split(typeSystemDescNamesString, ";,");
+        }
+    }
+
+    private TypeSystem createTypeSystem() throws IOException, UIMAException {
+        TypeSystemDescription tsDesc = null;
+        if (typeSystemDescPaths != null && typeSystemDescPaths.length > 0) {
+            tsDesc = createTypeSystemDescriptionFromPath(typeSystemDescPaths);
+        }
+        if (typeSystemDescNames != null && typeSystemDescNames.length > 0) {
+            TypeSystemDescription tsDescFromNames = createTypeSystemDescription(
+                    typeSystemDescNames);
+            if (tsDesc != null) {
+                tsDesc = mergeTypeSystems(asList(tsDesc, tsDescFromNames));
+            } else {
+                tsDesc = tsDescFromNames;
+            }
+        }
+        if (tsDesc == null) {
+            log.info("TypeSystemDescription will be created using the UIMAFit discovery");
+            tsDesc = TypeSystemDescriptionFactory.createTypeSystemDescription();
+        }
+        CAS dumbCas = CasCreationUtils.createCas(tsDesc, null, null);
+        TypeSystem typeSystem = dumbCas.getTypeSystem();
+        // printAllTypes();
+        return typeSystem;
+    }
+
+    @Override
+    public TypeSystem getObject() throws Exception {
+        if (ts == null) {
+            ts = createTypeSystem();
+        }
+        return ts;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return TypeSystem.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+}
