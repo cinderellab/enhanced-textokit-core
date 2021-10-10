@@ -70,4 +70,10 @@ public class TypeBasedExtractor implements AnnotationExtractor {
      * {@inheritDoc}
      */
     @Override
-    public FSIterator<Annota
+    public FSIterator<AnnotationFS> extract(CAS cas) {
+        // TODO optimization point - get common ancestor type if any
+        FSIterator<AnnotationFS> allAnnoIter = cas.getAnnotationIndex().iterator();
+        return cas.createFilteredIterator(allAnnoIter, annoMatchConstraint);
+    }
+
+}
