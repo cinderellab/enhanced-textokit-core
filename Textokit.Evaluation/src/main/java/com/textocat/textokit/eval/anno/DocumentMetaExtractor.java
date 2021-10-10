@@ -51,4 +51,17 @@ public class DocumentMetaExtractor {
         }
         docUriFeature = docMetaType.getFeatureByBaseName(docUriFeatureName);
         if (docUriFeature == null) {
-            throw new Il
+            throw new IllegalStateException(String.format("No feature %s in type %s",
+                    docUriFeatureName, docMetaType));
+        }
+    }
+
+    public String getDocumentUri(CAS cas) {
+        String uri = AnnotationUtils.getStringValue(cas, docMetaType, docUriFeature);
+        if (uri == null) {
+            throw new IllegalStateException("CAS doesn't have annotation of type " + docMetaType);
+        }
+        return uri;
+    }
+
+}
