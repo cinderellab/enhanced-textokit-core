@@ -99,4 +99,82 @@ public class FSCasDirectory implements CasDirectory, BeanNameAware {
                     docUriStr));
         }
         if (!xmiFile.isFile()) {
-            throw new IllegalStateException("Not
+            throw new IllegalStateException("Not a file: " + xmiFile);
+        }
+        return deserialize(xmiFile);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator<CAS> iterator() {
+        Iterator<File> xmiFileIter = getXmiFiles().iterator();
+        return Iterators.transform(xmiFileIter, deserializeFunc());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int size() {
+        return getXmiFiles().size();
+    }
+
+    /**
+     * Subclasses may override this to perform alignment, filtering,
+     * transformation and etc. operations on deserialized CAS.
+     *
+     * @param cas
+     */
+    protected void postProcessCAS(CAS cas) {
+        // default impl do nothing
+    }
+
+    /**
+     * Subclasses may override this to provide additional filtering logic.
+     *
+     * @return file filter for source files in the base dir
+     */
+    protected IOFileFilter getSourceFileFilter() {
+        return suffixFileFilter(".xmi");
+    }
+
+    private Collection<File> xmiFiles;
+
+    private Collection<File> getXmiFiles() {
+        if (xmiFiles == null) {
+            IOFileFilter sourceFileFilter = getSourceFileFilter();
+            xmiFiles = FileUtils.listFiles(dir, sourceFileFilter, trueFileFilter());
+        }
+        return xmiFiles;
+    }
+
+    private Map<String, File> uriToXmiFileMap;
+
+    private Map<String, File> getUriToXmiFileMap()
+            throws ResourceInitializationException, IOException, SAXException {
+        if (uriToXmiFileMap == null) {
+            log.info("Scanning {} XMIs for document URIs...", dir);
+            uriToXmiFileMap = Maps.newHashMap();
+            CAS wrkCas = createCas();
+            for (final File xmiFile : getXmiFiles()) {
+                deserialize(xmiFile, wrkCas);
+                String docURI = docMetaExtractor.getDocumentUri(wrkCas);
+                final File prevFile;
+                if ((prevFile = uriToXmiFileMap.put(docURI, xmiFile)) != null) {
+                    throw new IllegalStateException(
+                            String.format(
+                                    "There are at least 2 files which metadata has the same URI '%s':\n%s\n%s",
+                                    docURI, prevFile, xmiFile));
+                }
+                wrkCas.reset();
+            }
+            log.info("Scanning {} XMIs for document URIs is finished", dir);
+        }
+        return uriToXmiFileMap;
+    }
+
+    private Function<File, CAS> deserializeFunc() {
+        return new Function<File, CAS>() {
+    
