@@ -177,4 +177,39 @@ public class FSCasDirectory implements CasDirectory, BeanNameAware {
 
     private Function<File, CAS> deserializeFunc() {
         return new Function<File, CAS>() {
-    
+            @Override
+            public CAS apply(File input) {
+                try {
+                    return deserialize(input);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
+
+    private CAS deserialize(File xmiFile) throws UIMAException, SAXException, IOException {
+        CAS cas = createCas();
+        deserialize(xmiFile, cas);
+        postProcessCAS(cas);
+        return cas;
+    }
+
+    private void deserialize(File xmiFile, CAS cas) throws IOException, SAXException {
+        InputStream is = openStream(xmiFile);
+        try {
+            XmiCasDeserializer.deserialize(is, cas);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    private CAS createCas() throws ResourceInitializationException {
+        return CasCreationUtils.createCas(ts, null, null, null);
+    }
+
+    private InputStream openStream(File file) throws IOException {
+        FileInputStream fis = new FileInputStream(file);
+        return new BufferedInputStream(fis);
+    }
+}
