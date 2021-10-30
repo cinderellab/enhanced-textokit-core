@@ -1,3 +1,4 @@
+
 /*
  *    Copyright 2015 Textocat
  *
@@ -22,10 +23,23 @@ import org.apache.uima.cas.text.AnnotationFS;
 /**
  * @author Rinat Gareev
  */
-public interface AnnotationPrinter {
+public class CoveredTextAnnotationPrinter implements AnnotationPrinter {
 
-    void init(TypeSystem ts);
+    private static final CoveredTextAnnotationPrinter INSTANCE = new CoveredTextAnnotationPrinter();
 
-    String getString(AnnotationFS anno);
+    public static CoveredTextAnnotationPrinter getInstance() {
+        return INSTANCE;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getString(AnnotationFS anno) {
+        return anno == null ? null : anno.getCoveredText();
+    }
+
+    @Override
+    public void init(TypeSystem ts) {
+    }
 }
