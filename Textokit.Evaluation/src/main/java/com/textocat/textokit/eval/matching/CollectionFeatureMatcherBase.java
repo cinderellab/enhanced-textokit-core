@@ -77,4 +77,8 @@ abstract class CollectionFeatureMatcherBase<FST extends FeatureStructure, E> ext
     @Override
     public void print(StringBuilder out, FST value) {
         Collection<E> col = getCollection(value);
-       
+        out.append(feature.getShortName());
+        out.append("=");
+        collectionMatcherDelegate.print(out, col);
+    }
+}
