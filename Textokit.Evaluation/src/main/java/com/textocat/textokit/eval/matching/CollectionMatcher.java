@@ -73,3 +73,26 @@ class CollectionMatcher<V, C extends Collection<V>> implements Matcher<C> {
         if (col == null) {
             out.append((Object) null);
         } else {
+            out.append("{");
+            Iterator<V> iter = col.iterator();
+            if (iter.hasNext()) {
+                elemMatcher.print(out, iter.next());
+            }
+            while (iter.hasNext()) {
+                out.append(",");
+                elemMatcher.print(out, iter.next());
+            }
+            out.append("}");
+        }
+    }
+
+    private int search(V refElem, List<V> candidatesList) {
+        for (int i = 0; i < candidatesList.size(); i++) {
+            V cand = candidatesList.get(i);
+            if (elemMatcher.match(refElem, cand)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}
