@@ -57,4 +57,77 @@ public class CompositeMatcher<FST extends FeatureStructure> extends MatcherBase<
 	/* 'equals' implementation has to deal with cyclic graph of matchers.
      * It is not necessary. See also equality checking in tests
 	 */
-    // public boolean equals(Obj
+    // public boolean equals(Object obj) {
+
+    @Override
+    protected String toString(IdentityHashMap<Matcher<?>, Integer> idMap) {
+        if (matchers == null)
+            return "null-list";
+        else {
+            idMap.put(this, getNextId(idMap));
+            StringBuilder sb = new StringBuilder("[");
+            Iterator<Matcher<FST>> tmIter = matchers.iterator();
+            while (tmIter.hasNext()) {
+                Matcher<FST> m = tmIter.next();
+                sb.append(getToString(idMap, m));
+                if (tmIter.hasNext())
+                    sb.append(", ");
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+    }
+
+    @Override
+    public void print(StringBuilder out, FST value) {
+        boolean printExtBrackets = out.length() > 0;
+        if (printExtBrackets)
+            out.append("[");
+        Iterator<Matcher<FST>> iter = matchers.iterator();
+        if (iter.hasNext()) {
+            iter.next().print(out, value);
+        }
+        while (iter.hasNext()) {
+            out.append("|");
+            iter.next().print(out, value);
+        }
+        if (printExtBrackets)
+            out.append("]");
+    }
+
+    @Override
+    protected Collection<Matcher<?>> getSubMatchers() {
+        List<Matcher<?>> result = Lists.newLinkedList();
+        result.addAll(matchers);
+        return result;
+    }
+
+    public static <FST extends FeatureStructure> Builder<FST> builderForFS(Type targetType) {
+        return new Builder<FST>(targetType);
+    }
+
+    public static AnnotationMatcherBuilder builderForAnnotation(Type targetType) {
+        return new AnnotationMatcherBuilder(targetType);
+    }
+
+    public static class Builder<FST extends FeatureStructure> {
+        protected Type targetType;
+        protected CompositeMatcher<FST> instance = new CompositeMatcher<FST>();
+
+        protected Builder(Type targetType) {
+            this.targetType = targetType;
+            instance.matchers = Lists.newLinkedList();
+        }
+
+        public Builder<FST> addTypeChecker() {
+            instance.matchers.add(new FSTypeMatcher<FST>(true));
+            return this;
+        }
+
+        public Builder<FST> addPrimitiveFeatureMatcher(String featName) {
+            Feature feature = getFeature(targetType, featName, true);
+            instance.matchers.add(new PrimitiveFeatureMatcher<FST>(feature));
+            return this;
+        }
+
+        public <FVT extends FeatureStru
