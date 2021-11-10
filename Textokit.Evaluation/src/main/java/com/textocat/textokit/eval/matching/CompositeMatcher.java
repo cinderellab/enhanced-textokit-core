@@ -179,4 +179,27 @@ public class CompositeMatcher<FST extends FeatureStructure> extends MatcherBase<
             return this;
         }
 
-        public Type getTarget
+        public Type getTargetType() {
+            return targetType;
+        }
+
+        public CompositeMatcher<FST> build() {
+            // TODO LOW PRIORITY: invoke 'build' on sub-builders avoiding inf recursion
+            instance.matchers = ImmutableList.copyOf(instance.matchers);
+            return instance;
+        }
+    }
+
+    public static class AnnotationMatcherBuilder extends Builder<AnnotationFS> {
+
+        protected AnnotationMatcherBuilder(Type targetType) {
+            super(targetType);
+        }
+
+        public Builder<AnnotationFS> addBoundaryMatcher() {
+            instance.matchers.add(BoundaryMatcher.INSTANCE);
+            return this;
+        }
+
+    }
+}
