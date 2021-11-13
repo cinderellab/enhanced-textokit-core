@@ -60,4 +60,58 @@ public class MatchingConfigurationInitializer {
     public MatchingConfigurationInitializer(TypeSystem ts, PropertyResolver propertyResolver) {
         this.ts = ts;
         this.propertyResolver = propertyResolver;
-        this.uimaAnnotationType = FSTypeUtils.getType(ts, "uima.tcas.Annotation", 
+        this.uimaAnnotationType = FSTypeUtils.getType(ts, "uima.tcas.Annotation", true);
+    }
+
+    public TypeBasedMatcherDispatcher<AnnotationFS> create() {
+        String targetTypeNamesStr = propertyResolver
+                .getProperty(ConfigurationKeys.KEY_MATCHING_CONFIGURATION_TARGET_TYPE);
+        if (targetTypeNamesStr == null) {
+            throw new IllegalStateException(String.format(
+                    "Can't create matcher because there is no property under key %s",
+                    ConfigurationKeys.KEY_MATCHING_CONFIGURATION_TARGET_TYPE));
+        }
+        TypeBasedMatcherDispatcher.Builder<AnnotationFS> builder =
+                TypeBasedMatcherDispatcher.builder(ts);
+        List<String> targetTypeNames = Arrays.asList(StringUtils.split(
+                targetTypeNamesStr, ",;"));
+        for (String ttn : targetTypeNames) {
+            Type targetType = FSTypeUtils.getType(ts, ttn, true);
+            CompositeMatcher<AnnotationFS> m = createTargetMatcher(targetType);
+            builder.addSubmatcher(targetType, m);
+        }
+        return builder.build();
+    }
+
+    public CompositeMatcher<AnnotationFS> createTargetMatcher(Type targetType) {
+        String matcherId = targetType.getShortName();
+        CompositeMatcher.AnnotationMatcherBuilder builder = (CompositeMatcher.AnnotationMatcherBuilder) getBuilder(
+                matcherId,
+                targetType);
+        return builder.build();
+    }
+
+    private <FST extends FeatureStructure> void parseMatchersDescription(
+            CompositeMatcher.Builder<FST> builder, List<String> descStrings) {
+        for (String matcherStr : descStrings) {
+            if (!parseSingleMatcherDescription(builder, matcherStr)) {
+                throw new IllegalStateException(String.format(
+                        "Can't parse matcher description: '%s'", matcherStr));
+            }
+        }
+    }
+
+    private <FST extends FeatureStructure> boolean parseSingleMatcherDescription(
+            CompositeMatcher.Builder<FST> builder, String matcherStr) {
+        for (MatcherDescriptionParser curParser : matcherDescParsers) {
+            java.util.regex.Matcher regexMatcher = curParser.descRegex.matcher(matcherStr);
+            if (regexMatcher.matches()) {
+                curParser.onParse(regexMatcher, builder);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private CompositeMatcher.Builder<?> getBuilder(String matcherId, Type matcherTargetType) {
+        CompositeMatcher.Builder<?>
