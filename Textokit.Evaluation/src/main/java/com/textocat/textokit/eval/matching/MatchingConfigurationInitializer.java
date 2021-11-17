@@ -114,4 +114,59 @@ public class MatchingConfigurationInitializer {
     }
 
     private CompositeMatcher.Builder<?> getBuilder(String matcherId, Type matcherTargetType) {
-        CompositeMatcher.Builder<?>
+        CompositeMatcher.Builder<?> result = id2Builder.get(matcherId);
+        if (result != null) {
+            return result;
+        }
+        // get description string
+        String matcherDescKey = ConfigurationKeys.PREFIX_MATCHING_CONFIGURATION + matcherId;
+        String matchersDesc = propertyResolver.getProperty(matcherDescKey);
+        if (matchersDesc == null) {
+            throw new IllegalStateException("Can't find matcher descriptions under key "
+                    + matcherDescKey);
+        }
+        // create instance
+        result = createBuilder(matcherTargetType);
+        id2Builder.put(matcherId, result);
+        // parse description string
+        String[] matcherStrings = split(matchersDesc, MATCHER_DELIMITER_CHARS);
+        parseMatchersDescription(result, Arrays.asList(matcherStrings));
+        return result;
+    }
+
+    private CompositeMatcher.Builder<?> parseSubMatcher(List<String> desc, Type targetType) {
+        String matcherIdReference = getPrefixed("ref:", desc);
+        if (matcherIdReference != null) {
+            if (desc.size() > 1) {
+                throw new IllegalArgumentException(String.format(
+                        "Illegal combination of submatchers: %s", desc));
+            }
+            return getBuilder(matcherIdReference, targetType);
+        }
+        CompositeMatcher.Builder<?> subMatcherBuilder = createBuilder(targetType);
+        parseMatchersDescription(subMatcherBuilder, desc);
+        return subMatcherBuilder;
+    }
+
+    private abstract class MatcherDescriptionParser {
+        private Pattern descRegex;
+
+        protected MatcherDescriptionParser(String descPatternStr) {
+            this.descRegex = Pattern.compile(descPatternStr);
+        }
+
+        protected abstract <FST extends FeatureStructure> void onParse(
+                java.util.regex.Matcher regexMatcher,
+                CompositeMatcher.Builder<FST> builder);
+    }
+
+    private final List<MatcherDescriptionParser> matcherDescParsers;
+
+    {
+        List<MatcherDescriptionParser> matcherDescParsers = Lists.newLinkedList();
+        // checkBoundaries
+        matcherDescParsers.add(new MatcherDescriptionParser("checkBoundaries") {
+            @Override
+            protected <FST extends FeatureStructure> void onParse(Matcher regexMatcher,
+                                                                  CompositeMatcher.Builder<FST> builder) {
+                if (!(builder insta
