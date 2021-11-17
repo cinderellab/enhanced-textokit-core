@@ -169,4 +169,47 @@ public class MatchingConfigurationInitializer {
             @Override
             protected <FST extends FeatureStructure> void onParse(Matcher regexMatcher,
                                                                   CompositeMatcher.Builder<FST> builder) {
-                if (!(builder insta
+                if (!(builder instanceof CompositeMatcher.AnnotationMatcherBuilder)) {
+                    throw new IllegalStateException(
+                            "Can't add checkBoundaries matcher for non-annotation FS type");
+                }
+                ((CompositeMatcher.AnnotationMatcherBuilder) builder).addBoundaryMatcher();
+            }
+        });
+        // checkType
+        matcherDescParsers.add(new MatcherDescriptionParser("checkType") {
+            @Override
+            protected <FST extends FeatureStructure> void onParse(Matcher regexMatcher,
+                                                                  CompositeMatcher.Builder<FST> builder) {
+                builder.addTypeChecker();
+            }
+        });
+        // attribute matcher
+        matcherDescParsers.add(new MatcherDescriptionParser("feature.(\\p{Alnum}+)=\\{([^}]*)\\}") {
+
+            @Override
+            protected <FST extends FeatureStructure> void onParse(Matcher regexMatcher,
+                                                                  CompositeMatcher.Builder<FST> builder) {
+                String featName = regexMatcher.group(1);
+                String subMatchersDesc = regexMatcher.group(2);
+                List<String> subMatcherStrings = newArrayList(
+                        split(subMatchersDesc, SUBMATCHER_DELIMITER_CHARS));
+
+                Feature feature = getFeature(builder.getTargetType(), featName, true);
+                Type featRange = feature.getRange();
+                if (featRange.isPrimitive()) {
+                    if (subMatcherStrings.equals(Arrays.asList("primitive"))) {
+                        // handle primitive-ranged feature
+                        builder.addPrimitiveFeatureMatcher(featName);
+                        return;
+                    }
+                    throw new IllegalStateException(String.format(
+                            "Illegal matcher description for primitive feature %s:\n%s",
+                            feature, subMatcherStrings));
+                }
+                if (MatchingUtils.isCollectionType(featRange)) {
+                    // handle array-or-collection-ranged feature
+                    Boolean ignoreOrder = null;
+                    if (subMatcherStrings.contains("unordered")) {
+                        ignoreOrder = true;
+                        subMatcherSt
