@@ -212,4 +212,56 @@ public class MatchingConfigurationInitializer {
                     Boolean ignoreOrder = null;
                     if (subMatcherStrings.contains("unordered")) {
                         ignoreOrder = true;
-                        subMatcherSt
+                        subMatcherStrings.remove("unordered");
+                    }
+                    if (subMatcherStrings.contains("ordered")) {
+                        ignoreOrder = false;
+                        subMatcherStrings.remove("ordered");
+                    }
+                    Type componentType = MatchingUtils.getComponentType(featRange);
+                    if (componentType.isPrimitive()) {
+                        subMatcherStrings.remove("primitive");
+                        if (!subMatcherStrings.isEmpty()) {
+                            throw new IllegalStateException(
+                                    String.format(
+                                            "Illegal matcher description for primitive collection feature %s:\n%s",
+                                            feature, subMatcherStrings));
+                        }
+                        builder.addPrimitiveCollectionFeatureMatcher(featName, ignoreOrder);
+                    } else {
+                        CompositeMatcher.Builder<?> elemMatcherBuilder = parseSubMatcher(
+                                subMatcherStrings, componentType);
+                        builder.addFSCollectionFeatureMatcher(featName, elemMatcherBuilder,
+                                ignoreOrder);
+                    }
+                } else {
+                    // handle non-primitive-ranged feature
+                    CompositeMatcher.Builder<?> valueMatcherBuilder = parseSubMatcher(
+                            subMatcherStrings, featRange);
+                    builder.addFSFeatureMatcher(featName, valueMatcherBuilder);
+                }
+            }
+        });
+        this.matcherDescParsers = ImmutableList.copyOf(matcherDescParsers);
+    }
+
+    /**
+     * @param prefix
+     * @param src    source collection
+     * @return first string from src collection with specified prefix omitted
+     */
+    private static String getPrefixed(String prefix, Collection<String> src) {
+        for (String str : src) {
+            if (str.startsWith(prefix)) {
+                return str.substring(prefix.length());
+            }
+        }
+        return null;
+    }
+
+    private CompositeMatcher.Builder<?> createBuilder(Type type) {
+        CompositeMatcher.Builder<?> result;
+        if (ts.subsumes(uimaAnnotationType, type)) {
+            result = CompositeMatcher.builderForAnnotation(type);
+        } else {
+            result = CompositeMatcher.builderForF
