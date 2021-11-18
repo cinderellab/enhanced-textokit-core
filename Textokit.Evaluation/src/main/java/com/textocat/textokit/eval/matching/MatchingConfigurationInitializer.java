@@ -264,4 +264,8 @@ public class MatchingConfigurationInitializer {
         if (ts.subsumes(uimaAnnotationType, type)) {
             result = CompositeMatcher.builderForAnnotation(type);
         } else {
-            result = CompositeMatcher.builderForF
+            result = CompositeMatcher.builderForFS(type);
+        }
+        return result;
+    }
+}
