@@ -82,4 +82,45 @@ public class TypeBasedMatcherDispatcher<FST extends FeatureStructure> extends Ma
 
     private Matcher<FST> getSubmatcher(FST ref) {
         Type refType = ref.getType();
-        
+        Matcher<FST> submatcher = type2matcher.get(refType);
+        while (submatcher == null) {
+            refType = ts.getParent(refType);
+            if (refType == null) {
+                break;
+            }
+            submatcher = type2matcher.get(refType);
+        }
+        if (submatcher == null) {
+            throw new IllegalStateException(String.format(
+                    "There is no submatcher for type %s", refType));
+        }
+        return submatcher;
+    }
+
+    @Override
+    protected String toString(IdentityHashMap<Matcher<?>, Integer> idMap) {
+        if (type2matcher == null) {
+            return "EmptyTypeBasedMatcherDispatcher";
+        } else {
+            idMap.put(this, getNextId(idMap));
+            StringBuilder sb = new StringBuilder("[");
+            Iterator<Type> typesIter = type2matcher.keySet().iterator();
+            while (typesIter.hasNext()) {
+                Type t = typesIter.next();
+                sb.append(t).append(" => ");
+                sb.append(getToString(idMap, type2matcher.get(t)));
+                if (typesIter.hasNext())
+                    sb.append(" || ");
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+    }
+
+    @Override
+    protected Collection<Matcher<?>> getSubMatchers() {
+        Collection<Matcher<?>> result = new LinkedList<Matcher<?>>();
+        result.addAll(type2matcher.values());
+        return result;
+    }
+}
