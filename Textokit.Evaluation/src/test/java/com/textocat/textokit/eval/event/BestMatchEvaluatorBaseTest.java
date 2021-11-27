@@ -53,4 +53,65 @@ public class BestMatchEvaluatorBaseTest extends AbstractJUnit4SpringContextTests
                                                            AnnotationFS sysAnno) {
                     RecognitionMeasures result = new RecognitionMeasures();
                     int overlapBegin = Math.max(goldAnno.getBegin(), sysAnno.getBegin());
-                    int overlapEnd = Math.min(goldAnno.getEnd(), sysAnno.getEn
+                    int overlapEnd = Math.min(goldAnno.getEnd(), sysAnno.getEnd());
+                    if (overlapBegin >= overlapEnd) {
+                        // annotations do not overlap
+                        result.incrementMissing(1);
+                        result.incrementSpurious(1);
+                    } else {
+                        result.incrementMatching(overlapEnd - overlapBegin);
+                        // calc missing
+                        if (goldAnno.getBegin() < overlapBegin) {
+                            result.incrementMissing(overlapBegin - goldAnno.getBegin());
+                        }
+                        if (goldAnno.getEnd() > overlapEnd) {
+                            result.incrementMissing(goldAnno.getEnd() - overlapEnd);
+                        }
+                        // calc spurious
+                        if (sysAnno.getBegin() < overlapBegin) {
+                            result.incrementSpurious(overlapBegin - sysAnno.getBegin());
+                        }
+                        if (sysAnno.getEnd() > overlapEnd) {
+                            result.incrementSpurious(sysAnno.getEnd() - overlapEnd);
+                        }
+                    }
+                    return result;
+                }
+            };
+        }
+
+        @Bean
+        public TypeSystemInitializer typeSystemInitializer() {
+            return new TypeSystemInitializer();
+        }
+
+        @Bean
+        public static PropertySourcesPlaceholderConfigurer pspc() {
+            return new PropertySourcesPlaceholderConfigurer();
+        }
+    }
+
+    @Autowired
+    private TypeSystem ts;
+    @Autowired
+    private BestMatchEvaluatorBase evaluator;
+
+    @Test
+    @DirtiesContext
+    public void test1() throws UIMAException {
+        Type t1 = ts.getType("test.TestFirst");
+        CAS cas = CasCreationUtils.createCas(ts, null, null, null);
+        cas.setDocumentText(TXT);
+        AnnotationFS s1 = cas.createAnnotation(t1, 0, 10);
+        AnnotationFS g1 = cas.createAnnotation(t1, 0, 9);
+        evaluator.onDocumentChange("1");
+        evaluator.onPartialMatch(g1, s1);
+        evaluator.onDocumentChange(null);
+        RecognitionMeasures m = evaluator.getMeasures();
+        assertEquals(1, m.getMatchedScore(), 0.001f);
+        assertEquals(1f / 9, m.getSpuriousScore(), 0.001f);
+        assertEquals(0f, m.getMissedScore(), 0.001f);
+    }
+
+    @Test
+    @Dirti
