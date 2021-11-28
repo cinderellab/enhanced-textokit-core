@@ -114,4 +114,56 @@ public class BestMatchEvaluatorBaseTest extends AbstractJUnit4SpringContextTests
     }
 
     @Test
-    @Dirti
+    @DirtiesContext
+    public void test2() throws UIMAException {
+        Type t1 = ts.getType("test.TestFirst");
+        CAS cas = CasCreationUtils.createCas(ts, null, null, null);
+        cas.setDocumentText(TXT);
+        AnnotationFS g1 = cas.createAnnotation(t1, 0, 9);
+        AnnotationFS s1 = cas.createAnnotation(t1, 2, 3);
+        AnnotationFS s2 = cas.createAnnotation(t1, 0, 18);
+        AnnotationFS s3 = cas.createAnnotation(t1, 6, 12);
+        evaluator.onDocumentChange("1");
+        evaluator.onPartialMatch(g1, s1);
+        evaluator.onPartialMatch(g1, s2);
+        evaluator.onPartialMatch(g1, s3);
+        evaluator.onMissing(g1);
+        evaluator.onDocumentChange(null);
+        RecognitionMeasures m = evaluator.getMeasures();
+        assertEquals(1, m.getMatchedScore(), 0.001f);
+        assertEquals(3, m.getSpuriousScore(), 0.001f);
+        assertEquals(0, m.getMissedScore(), 0.001f);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test3() throws UIMAException {
+        // the same as test2 but with exactMatch invoked
+        Type t1 = ts.getType("test.TestFirst");
+        CAS cas = CasCreationUtils.createCas(ts, null, null, null);
+        cas.setDocumentText(TXT);
+        AnnotationFS g1 = cas.createAnnotation(t1, 0, 9);
+        AnnotationFS s1 = cas.createAnnotation(t1, 0, 9);
+        AnnotationFS s2 = cas.createAnnotation(t1, 0, 18);
+        AnnotationFS s3 = cas.createAnnotation(t1, 6, 12);
+        evaluator.onDocumentChange("1");
+        evaluator.onExactMatch(g1, s1);
+        evaluator.onPartialMatch(g1, s2);
+        evaluator.onPartialMatch(g1, s3);
+        evaluator.onDocumentChange(null);
+        RecognitionMeasures m = evaluator.getMeasures();
+        assertEquals(1f, m.getMatchedScore(), 0.001f);
+        assertEquals(2f, m.getSpuriousScore(), 0.001f);
+        assertEquals(0f, m.getMissedScore(), 0.001f);
+    }
+
+    private static final String TXT;
+
+    static {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            sb.append("FOOBAR ");
+        }
+        TXT = sb.toString();
+    }
+}
