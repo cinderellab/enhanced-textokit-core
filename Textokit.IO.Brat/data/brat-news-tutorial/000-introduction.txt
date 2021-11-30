@@ -1,0 +1,6 @@
+Welcome to the Brat Rapid Annotation Tool (brat) tutorial!
+
+brat is a web-based tool for structured text annotation and visualization. The easiest way to explain what this means is by example: see the following sentence illustrating various types of annotation. Take a moment to study this example, moving your mouse cursor over some of the annotations. Hold the cursor still over an annotation for more detail.
+
+
+1 ) Citibank was involved in moving about $100 million for Raul Salinas de Gortari,
