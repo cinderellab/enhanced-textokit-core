@@ -11,4 +11,9 @@ Try logging in and out now, and make sure you are logged in before proceeding wi
 
 Troubleshooting
 
-Some documents in this tutorial have a "troubleshooting" section like this at the bottom. These sections provide help for resolving possible issues following the instructions in the document. Feel free to skip over these sections unless you are having troub
+Some documents in this tutorial have a "troubleshooting" section like this at the bottom. These sections provide help for resolving possible issues following the instructions in the document. Feel free to skip over these sections unless you are having trouble with some of the instructions.
+
+* If the login fails to take effect, you may be blocking cookies. brat uses a cookie to detect if users are logged in, and you should allow this cookie to be set to use brat for annotation.
+
+* If you are administering the brat installation and don't know where to set usernames and passwords: edit the file config.py in the brat installation root using a text editor.
+
