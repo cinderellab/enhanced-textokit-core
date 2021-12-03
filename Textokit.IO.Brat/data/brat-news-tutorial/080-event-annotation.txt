@@ -1,0 +1,3 @@
+Event annotation
+
+For capturing associations of arbitrary numbers of annotations, brat implements a number of fe
