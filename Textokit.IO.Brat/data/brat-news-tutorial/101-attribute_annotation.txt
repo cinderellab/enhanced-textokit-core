@@ -12,4 +12,14 @@ Some examples are shown in the following. Take a moment to study these by hoveri
 4 ) CNN reports that YouTube has merged with Google.
 
 
-As you may have noted earlier, there are separate controls under the annot
+As you may have noted earlier, there are separate controls under the annotation type selector for attributes. Try using these now to make the attribute settings for the following annotations match those above.
+
+
+1 ) Somebody twitted that YouTube may merge with Google.
+
+3 ) A merger between YouTube and Google.
+
+4 ) CNN reports that YouTube has merged with Google.
+
+
+Attributes can be set when creating a new annotation in exactly the same way that they can be set when editing an existing one.
