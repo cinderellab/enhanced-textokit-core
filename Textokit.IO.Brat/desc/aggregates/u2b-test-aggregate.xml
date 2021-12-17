@@ -36,4 +36,65 @@
                 <type>String</type>
                 <multiValued>true</multiValued>
                 <overrides>
-                	<paramet
+                	<parameter>U2B/RelationsToBrat</parameter>
+                </overrides>
+            </configurationParameter>
+            <configurationParameter>
+                <name>EventsToBrat</name>
+                <description/>
+                <type>String</type>
+                <multiValued>true</multiValued>
+                <overrides>
+                	<parameter>U2B/EventsToBrat</parameter>
+                </overrides>
+            </configurationParameter>
+            <configurationParameter>
+            	<name>BratNoteMappers</name>
+            	<type>String</type>
+            	<multiValued>true</multiValued>
+            	<overrides>
+            		<parameter>U2B/BratNoteMappers</parameter>
+            	</overrides>
+            </configurationParameter>
+		</configurationParameters>
+		<configurationParameterSettings>
+			<nameValuePair>
+				<name>BratOutputDir</name>
+				<value>
+					<string>target/test-uima2brat-output</string>
+				</value>
+			</nameValuePair>
+			<nameValuePair>
+				<name>EntitiesToBrat</name>
+				<value>
+					<array>
+						<string>issst.test.HL_Company=>Company</string>
+			            <string>issst.test.HL_Position=>Position</string>
+			            <string>issst.test.HL_Person=>Person</string>
+			            <string>issst.test.HL_City=>City</string>
+			            <string>issst.test.TE</string>
+					</array>
+				</value>
+			</nameValuePair>
+			<nameValuePair>
+				<name>RelationsToBrat</name>
+				<value>
+					<array>
+						<string>issst.test.BirthPlace=>BirthPlace: person, city</string>
+					</array>
+				</value>
+			</nameValuePair>
+			<nameValuePair>
+				<name>EventsToBrat</name>
+				<value>
+					<array>
+						<string>issst.test.HL_Acquisition=>Acquisition: slotFirst as HL_Company, slotSecond as HL_Company</string>
+			            <string>issst.test.HL_Resignation=>Resignation: person as HL_Person, company as HL_Company, position as HL_Position, approvedBy as HL_Person</string>
+			            <string>issst.test.HL_CompanyAnnouncement=>CompanyAnnouncement: company</string>
+			            <string>issst.test.HL_PositionChange=>PositionChange: person as HL_Person, newPosition as HL_Position, oldPosition as HL_Position, newCompany as HL_Company, oldCompany as HL_Company</string>
+			            <string>issst.test.HL_PersonAnnouncement: person</string>
+					</array>
+				</value>
+			</nameValuePair>
+			<nameValuePair>
+				<name>BratNot
