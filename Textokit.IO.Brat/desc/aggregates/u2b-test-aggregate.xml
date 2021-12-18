@@ -97,4 +97,24 @@
 				</value>
 			</nameValuePair>
 			<nameValuePair>
-				<name>BratNot
+				<name>BratNoteMappers</name>
+				<value>
+					<array>
+						<string>issst.test.HL_City : com.textocat.textokit.io.brat.test.CityNoteMapper</string>
+					</array>
+				</value>
+			</nameValuePair>
+		</configurationParameterSettings>
+		<flowConstraints>
+			<fixedFlow>
+				<node>U2B</node>
+			</fixedFlow>
+		</flowConstraints>
+		<operationalProperties>
+			<modifiesCas>true</modifiesCas>
+			<multipleDeploymentAllowed>false</multipleDeploymentAllowed>
+			<outputsNewCASes>false</outputsNewCASes>
+		</operationalProperties>
+	</analysisEngineMetaData>
+	<resourceManagerConfiguration />
+</analysisEngineDescription>
