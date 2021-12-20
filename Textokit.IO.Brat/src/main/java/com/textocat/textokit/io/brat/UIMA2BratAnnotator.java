@@ -1,4 +1,3 @@
-
 /*
  *    Copyright 2015 Textocat
  *
@@ -17,24 +16,14 @@
 
 package com.textocat.textokit.io.brat;
 
-import org.apache.uima.cas.TypeSystem;
-import org.nlplab.brat.configuration.BratTypesConfiguration;
-
-/**
- * @author Rinat Gareev
- */
-public abstract class BratUimaMappingFactoryBase implements BratUimaMappingFactory {
-
-    protected TypeSystem ts;
-    protected BratTypesConfiguration bratTypesCfg;
-
-    @Override
-    public void setTypeSystem(TypeSystem ts) {
-        this.ts = ts;
-    }
-
-    @Override
-    public void setBratTypes(BratTypesConfiguration btConf) {
-        this.bratTypesCfg = btConf;
-    }
-}
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.*;
+import com.textocat.textokit.commons.DocumentMetadata;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.uima.UimaContext;
+import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.*;
+import org.apache.uima.cas.t
