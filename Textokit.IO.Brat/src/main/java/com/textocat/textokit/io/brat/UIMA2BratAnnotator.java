@@ -140,4 +140,63 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
             eventsToBrat = ImmutableList.of();
         } else {
             eventsToBrat = Lists.newLinkedList();
-            for (String valStr : 
+            for (String valStr : eventsToBratRaw) {
+                eventsToBrat.add(StructureDefinitionValue.fromString(valStr));
+            }
+            eventsToBrat = ImmutableList.copyOf(eventsToBrat);
+        }
+        if (noteMappersDefinitionsRaw == null) {
+            noteMappersDefinitions = ImmutableList.of();
+        } else {
+            noteMappersDefinitions = Lists.newLinkedList();
+            for (String defStr : noteMappersDefinitionsRaw) {
+                noteMappersDefinitions.add(NoteMapperDefinitionValue.fromString(defStr));
+            }
+            noteMappersDefinitions = ImmutableList.copyOf(noteMappersDefinitions);
+        }
+        //
+        //noinspection unchecked
+        outPathFunc = InitializableFactory.create(ctx, outPathFuncClass);
+    }
+
+    @Override
+    public void typeSystemInit(TypeSystem ts)
+            throws AnalysisEngineProcessException {
+        super.typeSystemInit(ts);
+        this.ts = ts;
+        //
+        getLogger().info("Reading UIMA types to convert to brat annotations ... ");
+        createBratTypesConfiguration();
+        Writer acWriter = null;
+        try {
+            if (!bratDirectory.isDirectory())
+                bratDirectory.mkdirs();
+            File annotationConfFile = new File(bratDirectory, ANNOTATION_CONF_FILE);
+            acWriter = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(annotationConfFile), ANNOTATION_CONF_ENCODING));
+            bratTypesConfig.writeTo(acWriter);
+        } catch (IOException e) {
+            throw new AnalysisEngineProcessException(e);
+        } finally {
+            IOUtils.closeQuietly(acWriter);
+        }
+    }
+
+    @Override
+    public void process(CAS cas) throws AnalysisEngineProcessException {
+        // extract target file name
+        currentDocName = extractDocName(cas);
+        // prepare paths
+        BratDocument bratDoc = new BratDocument(bratDirectory, currentDocName);
+        // write doc text
+        String txt = cas.getDocumentText();
+        try {
+            FileUtils.write(bratDoc.getTxtFile(), txt, TXT_FILES_ENCODING);
+        } catch (IOException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+
+        // populate Brat annotation container
+        bac = new BratAnnotationContainer(bratTypesConfig);
+        context = new ToBratMappingContext();
+        // 
