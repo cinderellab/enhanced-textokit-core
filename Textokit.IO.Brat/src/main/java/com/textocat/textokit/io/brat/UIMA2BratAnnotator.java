@@ -82,4 +82,62 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
     private String[] entitiesToBratRaw;
     private List<EntityDefinitionValue> entitiesToBrat;
     @ConfigurationParameter(name = RELATIONS_TO_BRAT, mandatory = false)
-    private String[] relationsTo
+    private String[] relationsToBratRaw;
+    private List<StructureDefinitionValue> relationsToBrat;
+    @ConfigurationParameter(name = EVENTS_TO_BRAT, mandatory = false)
+    private String[] eventsToBratRaw;
+    private List<StructureDefinitionValue> eventsToBrat;
+    @ConfigurationParameter(name = BRAT_NOTE_MAPPERS, mandatory = false)
+    private String[] noteMappersDefinitionsRaw;
+    private List<NoteMapperDefinitionValue> noteMappersDefinitions;
+    @ConfigurationParameter(name = PARAM_OUTPUT_PATH_FUNCTION, mandatory = false,
+            defaultValue = "com.textocat.textokit.consumer.DefaultSourceURI2OutputFilePathFunction")
+    private Class<? extends Function> outPathFuncClass;
+
+    // derived configuration fields
+    private BratTypesConfiguration bratTypesConfig;
+    private UimaBratMapping mapping;
+    private Function<DocumentMetadata, Path> outPathFunc;
+
+    // state fields
+    private TypeSystem ts;
+
+    // per-CAS state fields
+    private String currentDocName;
+    private BratAnnotationContainer bac;
+    private ToBratMappingContext context;
+
+    @Override
+    public void initialize(UimaContext ctx)
+            throws ResourceInitializationException {
+        super.initialize(ctx);
+
+        getLogger().info("Annotator is initializing ...");
+        if (entitiesToBratRaw == null) {
+            entitiesToBrat = ImmutableList.of();
+        } else {
+            entitiesToBrat = Lists.newLinkedList();
+            for (String valStr : entitiesToBratRaw) {
+                entitiesToBrat.add(EntityDefinitionValue.fromString(valStr));
+            }
+            entitiesToBrat = ImmutableList.copyOf(entitiesToBrat);
+        }
+        if (relationsToBratRaw == null) {
+            relationsToBrat = ImmutableList.of();
+        } else {
+            relationsToBrat = Lists.newLinkedList();
+            for (String valStr : relationsToBratRaw) {
+                StructureDefinitionValue val = StructureDefinitionValue.fromString(valStr);
+                if (val.roleDefinitions.size() != 2) {
+                    throw new IllegalArgumentException(String.format(
+                            "Illegal relation definition: %s", valStr));
+                }
+                relationsToBrat.add(val);
+            }
+            relationsToBrat = ImmutableList.copyOf(relationsToBrat);
+        }
+        if (eventsToBratRaw == null) {
+            eventsToBrat = ImmutableList.of();
+        } else {
+            eventsToBrat = Lists.newLinkedList();
+            for (String valStr : 
