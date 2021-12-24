@@ -199,4 +199,64 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
         // populate Brat annotation container
         bac = new BratAnnotationContainer(bratTypesConfig);
         context = new ToBratMappingContext();
-        // 
+        // start with entities
+        for (Type uType : mapping.getEntityUimaTypes()) {
+            UimaBratEntityMapping entMapping = mapping.getEntityMapping(uType);
+            for (AnnotationFS uEntity : cas.getAnnotationIndex(uType)) {
+                mapEntity(entMapping, uEntity);
+            }
+        }
+        // then relations
+        for (Type uType : mapping.getRelationUimaTypes()) {
+            UimaBratRelationMapping relMapping = mapping.getRelationMapping(uType);
+            for (AnnotationFS uRelation : cas.getAnnotationIndex(uType)) {
+                mapRelation(relMapping, uRelation);
+            }
+        }
+        // then events
+        for (Type uType : mapping.getEventUimaTypes()) {
+            UimaBratEventMapping evMapping = mapping.getEventMapping(uType);
+            for (AnnotationFS uEvent : cas.getAnnotationIndex(uType)) {
+                mapEvent(evMapping, uEvent);
+            }
+        }
+        // write .ann file
+        Writer annWriter = null;
+        try {
+            annWriter = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(bratDoc.getAnnFile()), ANN_FILES_ENCODING));
+            bac.writeTo(annWriter);
+        } catch (IOException e) {
+            throw new AnalysisEngineProcessException(e);
+        } finally {
+            IOUtils.closeQuietly(annWriter);
+        }
+        // clear per-CAS state
+        currentDocName = null;
+        bac = null;
+        context = null;
+    }
+
+    private void mapEntity(UimaBratEntityMapping entMapping, AnnotationFS uEntity) {
+        if (context.isMapped(uEntity)) {
+            return;
+        }
+        BratEntityType bType = entMapping.bratType;
+        // create brat annotation instance
+        BratEntity bEntity = new BratEntity(bType,
+                uEntity.getBegin(), uEntity.getEnd(), uEntity.getCoveredText());
+        // add to container - it assigns ID
+        bEntity = bac.register(bEntity);
+        // map to note
+        mapNotes(entMapping, bEntity, uEntity);
+        // memorize
+        context.mapped(uEntity, bEntity);
+    }
+
+    private void mapRelation(UimaBratRelationMapping relMapping, AnnotationFS uRelation) {
+        if (context.isMapped(uRelation)) {
+            return;
+        }
+        BratRelationType bType = relMapping.bratType;
+        Map<String, BratEntity> argMap = makeArgMap(
+                uRelation,
