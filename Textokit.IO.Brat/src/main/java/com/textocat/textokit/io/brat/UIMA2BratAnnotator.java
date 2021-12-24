@@ -259,4 +259,62 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
         }
         BratRelationType bType = relMapping.bratType;
         Map<String, BratEntity> argMap = makeArgMap(
-                uRelation,
+                uRelation, bType, relMapping.roleFeatures);
+        if (argMap == null) {
+            return;
+        }
+        // create
+        BratRelation bRelation = new BratRelation(bType, argMap);
+        // assign id
+        bRelation = bac.register(bRelation);
+        // map to note
+        mapNotes(relMapping, bRelation, uRelation);
+        // memorize
+        context.mapped(uRelation, bRelation);
+    }
+
+    private void mapEvent(UimaBratEventMapping evMapping, AnnotationFS uEvent) {
+        if (context.isMapped(uEvent)) {
+            return;
+        }
+        BratEventType bType = evMapping.bratType;
+        // use UIMA event annotation boundaries as Brat event trigger boundaries
+        BratEventTrigger trigger = new BratEventTrigger(bType,
+                uEvent.getBegin(), uEvent.getEnd(), uEvent.getCoveredText());
+        // assign id to trigger
+        trigger = bac.register(trigger);
+        // fill slots
+        Multimap<String, BratAnnotation<?>> roleAnnotations = makeRoleMap(
+                uEvent, bType, evMapping.roleFeatures);
+        // create
+        BratEvent bEvent = new BratEvent(bType, trigger, roleAnnotations);
+        // assign id
+        bEvent = bac.register(bEvent);
+        // map to note
+        mapNotes(evMapping, bEvent, uEvent);
+        // memorize
+        context.mapped(uEvent, bEvent);
+    }
+
+    // fill relation roles
+    private Map<String, BratEntity> makeArgMap(AnnotationFS uAnno,
+                                               BratRelationType bratType, Map<String, Feature> argFeatMap) {
+        Map<String, BratEntity> argAnnotations = Maps.newHashMapWithExpectedSize(2);
+        for (String argName : argFeatMap.keySet()) {
+            Feature argFeat = argFeatMap.get(argName);
+            FeatureStructure argFS = uAnno.getFeatureValue(argFeat);
+            if (argFS == null) {
+                getLogger().warn(String.format(
+                        "Can't map %s to Brat relation. Its feature '%s' is not set.",
+                        toPrettyString(uAnno), argFeat));
+                return null;
+            }
+            BratEntity argValue = context.demandEntity(argFS);
+            argAnnotations.put(argName, argValue);
+        }
+        return argAnnotations;
+    }
+
+    // fill event roles
+    private Multimap<String, BratAnnotation<?>> makeRoleMap(AnnotationFS uAnno,
+                                                  
