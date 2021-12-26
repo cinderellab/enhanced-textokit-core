@@ -317,4 +317,60 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
 
     // fill event roles
     private Multimap<String, BratAnnotation<?>> makeRoleMap(AnnotationFS uAnno,
-                                                  
+                                                            BratEventType bratType, Map<String, Feature> roleFeatMap) {
+        Multimap<String, BratAnnotation<?>> roleAnnotations = LinkedHashMultimap.create();
+        for (String roleName : roleFeatMap.keySet()) {
+            EventRole roleDesc = bratType.getRole(roleName);
+            // check role range types
+            boolean entityInRange = isEveryInstanceOf(roleDesc.getRangeTypes(),
+                    BratEntityType.class);
+            if (!entityInRange && !isEveryInstanceOf(roleDesc.getRangeTypes(), BratEventType.class)) {
+                throw new UnsupportedOperationException(String.format(
+                        "Mixed entity/event types in role range is not supported: %s", roleDesc));
+            }
+            //
+            Feature roleFeat = roleFeatMap.get(roleName);
+            FeatureStructure _roleFS = uAnno.getFeatureValue(roleFeat);
+            if (_roleFS == null) {
+                continue;
+            }
+            List<FeatureStructure> roleFSList;
+            if (PUtils.hasCollectionRange(roleFeat)) {
+                roleFSList = PUtils.toList(roleFeat, _roleFS);
+            } else {
+                roleFSList = ImmutableList.of(_roleFS);
+            }
+            //
+            for (FeatureStructure roleFS : roleFSList) {
+                BratAnnotation<?> rv;
+                if (entityInRange) {
+                    rv = context.demandEntity(roleFS);
+                } else { // role value should be event
+                    rv = context.getEvent(roleFS, false);
+                    if (rv == null) {
+                        // means that a sub-event has not been mapped yet
+                        // TODO implement nested event mapping
+                        throw new UnsupportedOperationException(
+                                "Nested event mapping is not supported yet");
+                    }
+                }
+                roleAnnotations.put(roleName, rv);
+            }
+        }
+        return roleAnnotations;
+    }
+
+    private static boolean isEveryInstanceOf(Iterable<?> srcCol, Class<?> testClass) {
+        for (Object e : srcCol) {
+            if (!testClass.isInstance(e)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+     * PRECONDITIONS: bAnno must have ID
+     */
+    private <BT extends BratType> void mapNotes(UimaBratTypeMappingBase<BT> mapping,
+        
