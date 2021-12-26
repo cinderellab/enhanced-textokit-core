@@ -373,4 +373,63 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
      * PRECONDITIONS: bAnno must have ID
      */
     private <BT extends BratType> void mapNotes(UimaBratTypeMappingBase<BT> mapping,
-        
+                                                BratAnnotation<BT> bAnno, AnnotationFS uAnno) {
+        assert bAnno.getId() != null;
+        BratNoteMapper noteMapper = mapping.noteMapper;
+        if (noteMapper != null) {
+            String noteContent = noteMapper.makeNote(uAnno);
+            if (noteContent != null) {
+                BratNoteAnnotation noteAnno = new BratNoteAnnotation(
+                        bratTypesConfig.getUiNoteType(), bAnno, noteContent);
+                noteAnno = bac.register(noteAnno);
+            }
+        }
+    }
+
+    private String toPrettyString(AnnotationFS anno) {
+        return String.format("<%s, offset %s in %s>", anno.getCoveredText(), anno.getBegin(),
+                currentDocName);
+    }
+
+    private String toPrettyString(FeatureStructure fs) {
+        if (fs instanceof AnnotationFS) {
+            return toPrettyString((AnnotationFS) fs);
+        }
+        return String.valueOf(fs);
+    }
+
+    private String extractDocName(CAS cas) {
+        JCas jcas = null;
+        try {
+            jcas = cas.getJCas();
+        } catch (CASException e) {
+            throw new IllegalStateException(e);
+        }
+        DocumentMetadata metaAnno = JCasUtil.selectSingle(jcas, DocumentMetadata.class);
+        Path outPath = outPathFunc.apply(metaAnno);
+        String docName = flattenToSingleFilename(outPath);
+        if (StringUtils.isBlank(docName)) {
+            throw new IllegalStateException(String.format(
+                    "Extracted empty doc name from meta: %s", metaAnno));
+        }
+        return docName;
+    }
+
+    private static final Joiner PATH_ELEM_JOINER = Joiner.on('-');
+
+    private static String flattenToSingleFilename(Path p) {
+        return PATH_ELEM_JOINER.join(p);
+    }
+
+    private void createBratTypesConfiguration() throws AnalysisEngineProcessException {
+        // type configuration builder
+        final BratTypesConfiguration.Builder tcBuilder = BratTypesConfiguration.builder();
+        /*
+         * define mapping initializer that will incrementally build
+		 * required Brat type system as side effect
+		 */
+        UimaBratMappingInitializer initializer = new UimaBratMappingInitializer(ts,
+                entitiesToBrat, relationsToBrat, eventsToBrat, noteMappersDefinitions) {
+
+            @Override
+            protected BratEntityType getEntityType(String typeName) 
