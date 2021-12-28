@@ -489,4 +489,14 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
             }
             if (!targetClass.isInstance(result)) {
                 throw new IllegalStateException(String.format(
-   
+                        "Unexpected mapped instance type for %s:\n required: %s\n actual:%s",
+                        toPrettyString(fs), targetClass.getName(), result.getClass().getName()));
+            }
+            return (B) result;
+        }
+
+        private void mapped(AnnotationFS uAnno, BratAnnotation<?> bAnno) {
+            mappedAnnos.put(uAnno, bAnno);
+        }
+    }
+}
