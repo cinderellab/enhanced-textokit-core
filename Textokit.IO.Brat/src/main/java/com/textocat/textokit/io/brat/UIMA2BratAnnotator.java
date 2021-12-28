@@ -432,4 +432,61 @@ public class UIMA2BratAnnotator extends CasAnnotator_ImplBase {
                 entitiesToBrat, relationsToBrat, eventsToBrat, noteMappersDefinitions) {
 
             @Override
-            protected BratEntityType getEntityType(String typeName) 
+            protected BratEntityType getEntityType(String typeName) {
+                return tcBuilder.addEntityType(typeName);
+            }
+
+            @Override
+            protected BratRelationType getRelationType(String typeName,
+                                                       Map<String, String> argTypeNames) {
+                return tcBuilder.addRelationType(typeName, argTypeNames);
+            }
+
+            @Override
+            protected BratEventType getEventType(String typeName,
+                                                 Map<String, String> roleTypeNames, Set<String> multiValuedRoles) {
+                Map<String, Cardinality> roleCardinalities = Maps.newHashMap();
+                for (String roleName : roleTypeNames.keySet()) {
+                    Cardinality card = multiValuedRoles.contains(roleName)
+                            ? Cardinality.ARRAY
+                            : Cardinality.OPTIONAL;
+                    roleCardinalities.put(roleName, card);
+                }
+                return tcBuilder.addEventType(typeName,
+                        Multimaps.forMap(roleTypeNames), roleCardinalities);
+            }
+        };
+        mapping = initializer.create();
+        bratTypesConfig = tcBuilder.build();
+    }
+
+    private class ToBratMappingContext {
+        private Map<AnnotationFS, BratAnnotation<?>> mappedAnnos = Maps.newHashMap();
+
+        private boolean isMapped(AnnotationFS anno) {
+            return mappedAnnos.containsKey(anno);
+        }
+
+        private BratEntity demandEntity(FeatureStructure fs) {
+            return getMapped(fs, BratEntity.class, true);
+        }
+
+        private BratEvent getEvent(FeatureStructure fs, boolean require) {
+            return getMapped(fs, BratEvent.class, require);
+        }
+
+        @SuppressWarnings("unchecked")
+        private <B extends BratAnnotation<?>> B getMapped(
+                FeatureStructure fs, Class<B> targetClass, boolean require) {
+            BratAnnotation<?> result = mappedAnnos.get(fs);
+            if (result == null) {
+                if (require) {
+                    throw new IllegalStateException(String.format(
+                            "Can't find mapped instance for %s in %s",
+                            toPrettyString(fs), currentDocName));
+                }
+                return null;
+            }
+            if (!targetClass.isInstance(result)) {
+                throw new IllegalStateException(String.format(
+   
