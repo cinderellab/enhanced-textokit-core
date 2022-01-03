@@ -53,4 +53,21 @@ public class BratAttributeType extends BratType {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BratA
+        BratAttributeType that = (BratAttributeType) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(values, that.values);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, values);
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+                .add("name", name)
+                .add("values", values)
+                .toString();
+    }
+}
