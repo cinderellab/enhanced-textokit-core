@@ -12,4 +12,23 @@
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
- *    limi
+ *    limitations under the License.
+ */
+
+package org.nlplab.brat.configuration;
+
+/**
+ * @author Rinat Gareev
+ */
+public abstract class BratType {
+
+    protected final String name;
+
+    protected BratType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
