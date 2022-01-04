@@ -58,4 +58,38 @@ public class BratEventType extends BratType implements HasRoles {
 
     public EventRole getRole(String roleName) {
         EventRole eventRole = roles.get(roleName);
-        if (eventRo
+        if (eventRole == null) {
+            throw new IllegalArgumentException(String.format(
+                    "No role '%s' in %s", roleName, this));
+        }
+        return eventRole;
+    }
+
+    public Map<String, EventRole> getRoles() {
+        return roles;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof BratEventType)) {
+            return false;
+        }
+        BratEventType that = (BratEventType) obj;
+        return new EqualsBuilder().append(name, that.name)
+                .append(roles, that.roles).isEquals();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("name", name).append("roles", roles).toString();
+    }
+}
