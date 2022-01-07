@@ -57,4 +57,15 @@ public class B2UTest {
 
         CollectionReaderDescription colReaderDesc = CollectionReaderFactory.createReaderDescription(
                 BratCollectionReader.class, tsd,
-                BratCollecti
+                BratCollectionReader.PARAM_BRAT_COLLECTION_DIR, "data/brat-news-tutorial",
+                BratCollectionReader.PARAM_MAPPING_FACTORY_CLASS,
+                AutoBratUimaMappingFactory.class.getName(),
+                AutoBratUimaMappingFactory.PARAM_NAMESPACES_TO_SCAN, "ace");
+
+        // configure AE
+        AnalysisEngineDescription aeDesc = XmiFileWriter.createDescription(
+                new File("target/brat-news-tutorial.xmi"));
+
+        SimplePipeline.runPipeline(colReaderDesc, aeDesc);
+    }
+}
