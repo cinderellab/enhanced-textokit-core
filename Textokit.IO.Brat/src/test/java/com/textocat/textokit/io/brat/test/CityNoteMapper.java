@@ -43,3 +43,27 @@ public class CityNoteMapper implements BratNoteMapper {
         annotationTypeExist(CITY_TYPE_NAME, cityType);
         longFeat = featureExist(cityType, "longitude");
         latFeat = featureExist(cityType, "latitude");
+    }
+
+    @Override
+    public String makeNote(AnnotationFS uAnno) {
+        int latitude = uAnno.getIntValue(latFeat);
+        int longitude = uAnno.getIntValue(longFeat);
+        if (latitude == 0 || longitude == 0) {
+            return null;
+        }
+        return String.format("%s:%s", latitude, longitude);
+    }
+
+    @Override
+    public void parseNote(AnnotationFS uAnno, String noteContent) {
+        if (noteContent == null) {
+            return;
+        }
+        String[] coords = noteContent.split(":");
+        int latitude = Integer.valueOf(coords[0]);
+        int longitude = Integer.valueOf(coords[1]);
+        uAnno.setIntValue(latFeat, latitude);
+        uAnno.setIntValue(longFeat, longitude);
+    }
+}
