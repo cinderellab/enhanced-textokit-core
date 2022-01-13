@@ -41,4 +41,23 @@ public class BratTypesConfigurationTest {
         assertEquals("Start-org", startOrgType.getName());
         assertEquals(2, startOrgType.getRoles().size());
         assertEquals(Cardinality.NON_EMPTY_ARRAY,
-                startOrgType.getRol
+                startOrgType.getRole("Agent-Arg").getCardinality());
+        assertEquals(3, startOrgType.getRole("Agent-Arg").getRangeTypes().size());
+        assertEquals(Cardinality.ONE, startOrgType.getRole("Org-Arg").getCardinality());
+        assertEquals(1, startOrgType.getRole("Org-Arg").getRangeTypes().size());
+        assertEquals(orgType, startOrgType.getRole("Org-Arg").getRangeTypes().iterator().next());
+        // check empty event parsing
+        BratEventType shType = btConf.getType("Something-Happened", BratEventType.class);
+        assertEquals("Something-Happened", shType.getName());
+        assertEquals(0, shType.getRoles().size());
+        //
+        assertEquals(Sets.newHashSet(
+                        new BratAttributeType("Individual"),
+                        new BratAttributeType("Mention", "Name", "Nominal", "Other"),
+                        new BratAttributeType("Negation"),
+                        new BratAttributeType("Confidence", "High", "Neutral", "Low")
+                ),
+                Sets.newHashSet(btConf.getAttributes()));
+    }
+
+}
