@@ -15,4 +15,43 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <executi
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-tokenizer-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-morph-dictionary-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-postagger-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimafit-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
+</project>
