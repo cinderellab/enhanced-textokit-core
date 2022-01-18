@@ -120,4 +120,23 @@ public class NormalizedTextWriter extends JCasAnnotator_ImplBase {
         }
     }
 
-    private String normalizeSpaceBetween(FS
+    private String normalizeSpaceBetween(FSIterator<TokenBase> tbIter, final Token x, final Token y) {
+        // X must be before Y
+        Preconditions.checkArgument(x == null || y == null || x.getCAS().getAnnotationIndex().compare(x, y) < 0);
+        if (x == null) {
+            tbIter.moveToFirst();
+        } else {
+            tbIter.moveTo(x);
+        }
+        while (// if Y is null then iterate till the end
+                (y == null && tbIter.isValid())
+                        // else - iterate till the Y
+                        || (y != null && !tbIter.get().equals(y))) {
+            if (tbIter.get() instanceof BREAK) {
+                return "\n";
+            }
+            tbIter.moveToNext();
+        }
+        return " ";
+    }
+}
