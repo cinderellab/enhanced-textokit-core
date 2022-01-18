@@ -61,4 +61,63 @@ public class NormalizedTextWriter extends JCasAnnotator_ImplBase {
                 PARAM_OUTPUT_DIR, outputDir);
     }
 
-    public static final String PARA
+    public static final String PARAM_OUTPUT_DIR = "outputDir";
+    public static final String OUTPUT_FILENAME_SUFFIX = "-normalized";
+    public static final String OUTPUT_FILENAME_EXTENSION = ".txt";
+
+    @ConfigurationParameter(name = PARAM_OUTPUT_DIR)
+    private File outputDir;
+
+    @Override
+    public void initialize(UimaContext ctx) throws ResourceInitializationException {
+        super.initialize(ctx);
+        try {
+            FileUtils.forceMkdir(outputDir);
+        } catch (IOException e) {
+            throw new ResourceInitializationException(e);
+        }
+    }
+
+    @Override
+    public void process(JCas cas) throws AnalysisEngineProcessException {
+        // initialize
+        String docFilename;
+        try {
+            docFilename = DocumentUtils.getDocumentFilename(cas.getCas());
+        } catch (URISyntaxException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+        if (docFilename == null) {
+            throw new IllegalStateException("Can't extract a document filename from CAS");
+        }
+        String outFilename = FilenameUtils.getBaseName(docFilename)
+                + OUTPUT_FILENAME_SUFFIX + OUTPUT_FILENAME_EXTENSION;
+        File outFile = new File(outputDir, outFilename);
+        Map<Token, Word> token2WordIndex = MorphCasUtils.getToken2WordIndex(cas);
+        @SuppressWarnings("unchecked")
+        FSIterator<TokenBase> tbIter = (FSIterator) cas.getAnnotationIndex(TokenBase.typeIndexID).iterator();
+        try (PrintWriter out = IoUtils.openPrintWriter(outFile)) {
+            Token lastProcessedTok = null;
+            for (Token curTok : JCasUtil.select(cas, Token.class)) {
+                // normalize space between
+                out.print(normalizeSpaceBetween(tbIter, lastProcessedTok, curTok));
+                // normalize current token
+                String curTokNorm;
+                Word w = token2WordIndex.get(curTok);
+                if (w != null) {
+                    curTokNorm = MorphCasUtils.getFirstLemma(w);
+                } else {
+                    curTokNorm = curTok.getCoveredText();
+                }
+                out.print(curTokNorm);
+                //
+                lastProcessedTok = curTok;
+            }
+            // handle a possible line ending after the last token
+            out.print(normalizeSpaceBetween(tbIter, lastProcessedTok, null));
+        } catch (IOException e) {
+            throw new AnalysisEngineProcessException(e);
+        }
+    }
+
+    private String normalizeSpaceBetween(FS
