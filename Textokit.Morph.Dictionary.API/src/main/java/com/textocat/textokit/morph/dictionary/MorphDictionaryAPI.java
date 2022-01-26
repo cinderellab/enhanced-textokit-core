@@ -65,3 +65,20 @@ public interface MorphDictionaryAPI {
     public ExternalResourceDescription getGramModelDescription();
 
     /**
+     * Provides direct access to {@link MorphDictionary} instance.
+     *
+     * @return tuple (cacheKey, dictionary instance). The purpose of cache keys:
+     * if all cache keys produces by this API are collected by JVM
+     * Garbage Collector, the cached {@link MorphDictionary} instance
+     * will also be collected.
+     * @throws Exception
+     */
+    public CachedResourceTuple<MorphDictionary> getCachedInstance() throws Exception;
+
+    /**
+     * Provides direct access to {@link GramModel} instance.
+     *
+     * @throws Exception
+     */
+    public GramModel getGramModel() throws Exception;
+}
