@@ -46,4 +46,25 @@ public interface GramModel {
      * (including grandchildren and so on). If grammeme with given
      * string id does not exist then result is null.
      */
-    BitS
+    BitSet getGrammemWithChildrenBits(String gramId, boolean includeTarget);
+
+    /**
+     * @return grammems whose parent id is null.
+     */
+    Set<String> getTopGrammems();
+
+    /**
+     * @param grammems grammem bits
+     * @return list of string ids ordered by grammeme numerical id (ascending)
+     */
+    List<String> toGramSet(BitSet grammems);
+
+    BitSet getPosBits();
+
+    /**
+     * @return PoS-label from the given gram bits if there are any; otherwise -
+     * null.
+     * @throws IllegalArgumentException if there are > 1 PoS-bits set in the given bitset.
+     */
+    String getPos(BitSet gramBits);
+}
