@@ -64,3 +64,44 @@ public class MorphDictionaryUtils {
 
     public static Set<Lemma> getLinkedLemmas(Wordform wf, Predicate<LemmaLinkType> linkTypeFilter, MorphDictionary dict) {
         Set<Lemma> resultSet = Sets.newHashSet();
+        Set<Integer> ignoreSet = Sets.newHashSet();
+        // call recursive function
+        Lemma wfLemma = dict.getLemma(wf.getLemmaId());
+        resultSet.add(wfLemma);
+        addLinkedLemmas(wfLemma, linkTypeFilter, resultSet, ignoreSet, dict);
+        return resultSet;
+    }
+
+    private static void addLinkedLemmas(Lemma target, Predicate<LemmaLinkType> linkFilter,
+                                        Set<Lemma> resultSet, Set<Integer> ignoreSet, MorphDictionary dict) {
+        ignoreSet.add(target.getId());
+        //
+        Set<Lemma> linkedLemmas = Sets.newHashSet();
+        linkedLemmas.addAll(getLemmasById(dict.getLemmaInlinks(target.getId()), linkFilter, dict));
+        linkedLemmas.addAll(getLemmasById(dict.getLemmaOutlinks(target.getId()), linkFilter, dict));
+        resultSet.addAll(linkedLemmas);
+        // recursive calls
+        for (Lemma ll : linkedLemmas) {
+            if (!ignoreSet.contains(ll.getId())) {
+                addLinkedLemmas(ll, linkFilter, resultSet, ignoreSet, dict);
+            }
+        }
+    }
+
+    private static Set<Lemma> getLemmasById(Map<Integer, LemmaLinkType> linkMap,
+                                            Predicate<LemmaLinkType> linkTypeFilter,
+                                            MorphDictionary dict) {
+        Set<Lemma> res = Sets.newHashSet();
+        for (Map.Entry<Integer, LemmaLinkType> lme : linkMap.entrySet()) {
+            if (linkTypeFilter.apply(lme.getValue())) {
+                Lemma l = dict.getLemma(lme.getKey());
+                res.add(l);
+            }
+        }
+        return res;
+    }
+
+    private MorphDictionaryUtils() {
+    }
+
+}
