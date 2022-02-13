@@ -150,4 +150,11 @@ public class SintagrusUtils {
             if (src.containsAll(what)) {
                 target.addAll(replacement);
                 src.removeAll(what);
-          
+            }
+        }
+    }
+
+    private SintagrusUtils() {
+    }
+
+}
