@@ -74,4 +74,80 @@ public class SintagrusUtils {
         b.add(replace("PART", PRCL));
         // P
         b.add(replace("P", PRCL));
-        // interject
+        // interjection
+        b.add(replace("INTJ", INTJ));
+        // NID
+        b.add(replace("NID"));
+        // TODO pronouns
+        // -ANIMACY
+        b.add(replace("ОД", anim));
+        b.add(replace("НЕОД", inan));
+        // TODO handle ANIMACY in ADJF & PRTF
+        // -GENDER-
+        b.add(replace("МУЖ", masc));
+        b.add(replace("ЖЕН", femn));
+        b.add(replace("СРЕД", neut));
+        // -NUMBER-
+        b.add(replace("ЕД", sing));
+        b.add(replace("МН", plur));
+        // -CASE-
+        b.add(replace("ИМ", nomn));
+        b.add(replace("РОД", gent));
+        b.add(replace("ПАРТ", gen2));
+        b.add(replace("ДАТ", datv));
+        b.add(replace("ВИН", accs));
+        b.add(replace("ТВОР", ablt));
+        b.add(replace("ПР", loct));
+        b.add(replace("МЕСТН", loc2));
+        b.add(replace("ЗВ", voct));
+        // -comparatives-
+        b.add(replace("ПРЕВ", Supr));
+        // -MOod-
+        b.add(replace("ИЗЪЯВ", indc));
+        b.add(replace("ПОВ", impr));
+        // -aspect-
+        b.add(replace("НЕСОВ", impf));
+        b.add(replace("СОВ", perf));
+        // -tense-
+        // XXX b.add(replace("непрош"))
+        b.add(replace("ПРОШ", past));
+        b.add(replace("НАСТ", pres));
+        // -person-
+        b.add(replace("1-Л", per1));
+        b.add(replace("2-Л", per2));
+        b.add(replace("3-Л", per3));
+        // -voice-
+        b.add(replace("страд", pssv));
+        // aux
+        submappers = b.build();
+    }
+
+    private static Submapper replace(String what, String... replacement) {
+        return new ReplaceSubmapper(ImmutableSet.of(what),
+                ImmutableSet.copyOf(replacement));
+    }
+
+    private static Submapper replace(String[] what, String... replacement) {
+        return new ReplaceSubmapper(ImmutableSet.copyOf(what),
+                ImmutableSet.copyOf(replacement));
+    }
+
+    private static interface Submapper {
+        void apply(Set<String> src, Set<String> target);
+    }
+
+    private static class ReplaceSubmapper implements Submapper {
+        private final Set<String> what;
+        private final Set<String> replacement;
+
+        private ReplaceSubmapper(Set<String> what, Set<String> replacement) {
+            this.what = what;
+            this.replacement = replacement;
+        }
+
+        @Override
+        public void apply(Set<String> src, Set<String> target) {
+            if (src.containsAll(what)) {
+                target.addAll(replacement);
+                src.removeAll(what);
+          
