@@ -61,3 +61,52 @@ public class MorphologyDictionaryLookup {
         MorphDictionary dict = DictionaryDeserializer.from(serializedDictFile);
         for (File srcFile : srcFiles) {
             // read input
+            List<String> srcLines = FileUtils.readLines(srcFile, "utf-8");
+            // prepare output
+            File outFile = getOutFile(srcFile);
+            out = IoUtils.openPrintWriter(outFile);
+
+            try {
+                for (String s : srcLines) {
+                    s = s.trim();
+                    if (s.isEmpty()) {
+                        continue;
+                    }
+                    s = WordUtils.normalizeToDictionaryForm(s);
+                    List<Wordform> sEntries = dict.getEntries(s);
+                    if (sEntries == null || sEntries.isEmpty()) {
+                        writeEntry(s, "?UNKNOWN?");
+                        continue;
+                    }
+                    for (Wordform se : sEntries) {
+                        BitSet gramBits = getAllGramBits(se, dict);
+                        List<String> grams = dict.getGramModel().toGramSet(gramBits);
+                        writeEntry(s, grams);
+                    }
+                }
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+        }
+    }
+
+    private void writeEntry(String src, String gram) {
+        writeEntry(src, ImmutableList.of(gram));
+    }
+
+    private void writeEntry(String src, Iterable<String> grams) {
+        out.println(String.format("%s\t%s",
+                src, gramJoiner.join(grams)));
+    }
+
+    private static final Joiner gramJoiner = Joiner.on(',');
+
+    private File getOutFile(File srcFile) {
+        File dir = srcFile.getParentFile();
+        if (dir == null) {
+            dir = new File(".");
+        }
+        String baseName = FilenameUtils.getBaseName(srcFile.getName());
+        return new File(dir, baseName + ".out");
+    }
+}
