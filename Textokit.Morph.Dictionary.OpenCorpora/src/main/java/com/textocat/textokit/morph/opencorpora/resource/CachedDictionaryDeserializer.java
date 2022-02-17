@@ -62,4 +62,32 @@ public class CachedDictionaryDeserializer {
         CacheResourceKey cacheKey = null;
         MorphDictionary dictionary = null;
         synchronized (instanceCache) {
-            
+            for (Map.Entry<CacheResourceKey, MorphDictionary> cEntry : instanceCache.entrySet()) {
+                if (Objects.equal(url, cEntry.getKey().getUrl())) {
+                    cacheKey = cEntry.getKey();
+                    dictionary = cEntry.getValue();
+                    IOUtils.closeQuietly(in);
+                    log.info("Reusing MorphDictionary instance deserialized from {}", url);
+                    break;
+                }
+            }
+            if (dictionary == null) {
+                cacheKey = new CacheResourceKey(url);
+                dictionary = DictionaryDeserializer.from(in, String.valueOf(url));
+                log.info("A wordform predictor has not been set in deserialized MorphDictionary");
+                instanceCache.put(cacheKey, dictionary);
+            }
+        }
+        // sanity check
+        if (cacheKey == null || dictionary == null) {
+            throw new IllegalStateException();
+        }
+        return new GetDictionaryResult(cacheKey, dictionary);
+    }
+
+    public GetDictionaryResult getDictionary(File file) throws Exception {
+        URL url = file.toURI().toURL();
+        InputStream fileIS = FileUtils.openInputStream(file);
+        return getDictionary(url, fileIS);
+    }
+}
