@@ -1,3 +1,4 @@
+
 /*
  *    Copyright 2015 Textocat
  *
@@ -18,18 +19,26 @@ package com.textocat.textokit.morph.opencorpora.resource;
 
 import com.textocat.textokit.morph.dictionary.resource.GramModel;
 import com.textocat.textokit.morph.dictionary.resource.GramModelHolder;
+import com.textocat.textokit.morph.dictionary.resource.MorphDictionary;
+import com.textocat.textokit.morph.dictionary.resource.MorphDictionaryHolder;
 import com.textocat.textokit.morph.opencorpora.OpencorporaMorphDictionaryAPI;
 import com.textocat.textokit.resource.ClasspathResourceBase;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.ResourceSpecifier;
 
+import java.io.InputStream;
 import java.util.Map;
 
 /**
  * @author Rinat Gareev
  */
-public class ClasspathGramModelResource extends ClasspathResourceBase implements GramModelHolder {
-    private GramModel gm;
+public class ClasspathMorphDictionaryResource extends ClasspathResourceBase
+        implements MorphDictionaryHolder, GramModelHolder {
+
+    // state fields
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private CacheResourceKey cacheKey;
+    private MorphDictionary dict;
 
     @Override
     protected String locateDefaultResourceClassPath() {
@@ -37,19 +46,30 @@ public class ClasspathGramModelResource extends ClasspathResourceBase implements
     }
 
     @Override
-    public boolean initialize(ResourceSpecifier aSpecifier, Map<String, Object> aAdditionalParams) throws ResourceInitializationException {
+    public boolean initialize(ResourceSpecifier aSpecifier, Map<String, Object> aAdditionalParams)
+            throws ResourceInitializationException {
         if (!super.initialize(aSpecifier, aAdditionalParams))
             return false;
         try {
-            gm = GramModelDeserializer.from(resource.getInputStream(), resource.getURL().toString());
+            try (InputStream resourceIS = resource.getInputStream()) {
+                CachedDictionaryDeserializer.GetDictionaryResult getDictResult =
+                        CachedDictionaryDeserializer.getInstance().getDictionary(resource.getURL(), resourceIS);
+                this.cacheKey = getDictResult.cacheKey;
+                this.dict = getDictResult.dictionary;
+            }
         } catch (Exception e) {
             throw new ResourceInitializationException(e);
         }
-        return false;
+        return true;
+    }
+
+    @Override
+    public MorphDictionary getDictionary() {
+        return dict;
     }
 
     @Override
     public GramModel getGramModel() {
-        return gm;
+        return dict.getGramModel();
     }
 }
