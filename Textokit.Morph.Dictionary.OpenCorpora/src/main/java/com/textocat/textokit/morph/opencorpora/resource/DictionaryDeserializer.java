@@ -57,4 +57,9 @@ public class DictionaryDeserializer {
         }
         log.info("Deserialization of MorphDictionary finished in {} ms",
                 currentTimeMillis() - timeBefore);
-        return 
+        return dict;
+    }
+
+    private DictionaryDeserializer() {
+    }
+}
