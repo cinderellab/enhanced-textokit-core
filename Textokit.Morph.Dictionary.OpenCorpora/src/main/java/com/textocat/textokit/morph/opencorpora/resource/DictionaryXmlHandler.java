@@ -66,4 +66,78 @@ class DictionaryXmlHandler extends DefaultHandler {
     private static final String ELEM_LEMMA_NORM = "l";
     private static final String ATTR_TEXT = "t";
     private static final String ELEM_WF_GRAMMEM = "g";
-    
+    private static final String ELEM_LEMMA_GRAMMEM = ELEM_WF_GRAMMEM;
+    private static final String ATTR_WF_GRAMMEME_ID = "v";
+    private static final String ELEM_WORDFORM = "f";
+    private static final String ELEM_LINK_TYPES = "link_types";
+    private static final String ELEM_LINK_TYPE = "type";
+    private static final String ATTR_LINK_TYPE_ID = "id";
+    private static final String ELEM_LINKS = "links";
+    private static final String ELEM_LINK = "link";
+    @SuppressWarnings("unused")
+    private static final String ATTR_LINK_ID = "id";
+    private static final String ATTR_LINK_FROM = "from";
+    private static final String ATTR_LINK_TO = "to";
+    private static final String ATTR_LINK_TYPE = "type";
+
+    private abstract class ElementHandler {
+        protected final String qName;
+        private ElementHandler parentHandler;
+
+        protected ElementHandler(String qName) {
+            if (qName == null)
+                throw new NullPointerException(qName);
+            this.qName = qName;
+        }
+
+        protected final <EH> EH getParent(Class<EH> parentClass) {
+            return parentClass.cast(parentHandler);
+        }
+
+        protected final void setParent(ElementHandler parent) {
+            this.parentHandler = parent;
+        }
+
+        protected abstract void startElement(Attributes attrs);
+
+        protected abstract void endElement();
+
+        protected abstract void characters(String str);
+
+        /**
+         * @param elem
+         * @return return handler for child element elem
+         */
+        protected abstract ElementHandler getHandler(String elem);
+    }
+
+    private abstract class ElementHandlerBase extends ElementHandler {
+
+        private Map<String, ElementHandler> children = ImmutableMap.of();
+
+        protected ElementHandlerBase(String qName) {
+            super(qName);
+        }
+
+        @Override
+        protected final void startElement(Attributes attrs) {
+            children = declareChildren();
+            if (children != null) {
+                for (ElementHandler child : children.values()) {
+                    child.setParent(this);
+                }
+            }
+            startSelf(attrs);
+        }
+
+        @Override
+        protected final void endElement() {
+            endSelf();
+            // clear children
+            this.children = null;
+        }
+
+        @Override
+        protected void characters(String str) {
+            if (!str.trim().isEmpty()) {
+             
