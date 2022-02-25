@@ -140,4 +140,95 @@ class DictionaryXmlHandler extends DefaultHandler {
         @Override
         protected void characters(String str) {
             if (!str.trim().isEmpty()) {
-             
+                throw new UnsupportedOperationException(String.format(
+                        "Unexpected characters within %s:\n%s",
+                        this.qName, str));
+            }
+        }
+
+        @Override
+        protected final ElementHandler getHandler(String elem) {
+            return children == null ? null : children.get(elem);
+        }
+
+        protected abstract void startSelf(Attributes attrs);
+
+        protected abstract void endSelf();
+
+        protected abstract Map<String, ElementHandler> declareChildren();
+    }
+
+    private class RootHandler extends ElementHandler {
+        private ElementHandlerBase topHandler;
+
+        RootHandler(ElementHandlerBase topHandler) {
+            super("%ROOT%");
+            this.topHandler = topHandler;
+        }
+
+        @Override
+        protected void startElement(Attributes attrs) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        protected void endElement() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        protected void characters(String str) {
+            if (!str.trim().isEmpty()) {
+                throw new IllegalStateException();
+            }
+        }
+
+        @Override
+        protected ElementHandler getHandler(String elem) {
+            if (Objects.equal(elem, topHandler.qName)) {
+                return topHandler;
+            }
+            return null;
+        }
+    }
+
+    private abstract class NoOpHandler extends ElementHandlerBase {
+        NoOpHandler(String qName) {
+            super(qName);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+        }
+
+        @Override
+        protected void endSelf() {
+        }
+    }
+
+    private class IgnoreHandler extends ElementHandler {
+        protected IgnoreHandler(String qName) {
+            super(qName);
+        }
+
+        @Override
+        protected void startElement(Attributes attrs) {
+            // ignore
+        }
+
+        @Override
+        protected void endElement() {
+            // ignore
+        }
+
+        @Override
+        protected void characters(String str) {
+            // ignore
+        }
+
+        @Override
+        protected ElementHandler getHandler(String elem) {
+            // ignore all children
+            IgnoreHandler result = new IgnoreHandler(elem);
+            result.setParent(this);
+   
