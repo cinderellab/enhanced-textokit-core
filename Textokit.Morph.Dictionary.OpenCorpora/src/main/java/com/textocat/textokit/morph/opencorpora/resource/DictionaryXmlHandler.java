@@ -231,4 +231,92 @@ class DictionaryXmlHandler extends DefaultHandler {
             // ignore all children
             IgnoreHandler result = new IgnoreHandler(elem);
             result.setParent(this);
-   
+            return result;
+        }
+    }
+
+    private class ReadContentHandler extends NoOpHandler {
+        private String content;
+
+        ReadContentHandler(String qName) {
+            super(qName);
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return null;
+        }
+
+        @Override
+        protected void characters(String str) {
+            this.content = str.trim();
+        }
+
+        String getContent() {
+            return content;
+        }
+    }
+
+    private class DictionaryElemHandler extends ElementHandlerBase {
+        DictionaryElemHandler() {
+            super(ELEM_DICTIONARY);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            String version = requiredAttr(attrs, ATTR_DICTIONARY_VERSION);
+            String revision = requiredAttr(attrs, ATTR_DICTIONARY_REVISION);
+            dict.setVersion(version);
+            dict.setRevision(revision);
+        }
+
+        @Override
+        protected void endSelf() {
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(
+                    new GrammemsHandler(),
+                    new IgnoreHandler(ELEM_RESTRICTIONS),
+                    new LemmataHandler(),
+                    new LinkTypesHandler(),
+                    new LinksHandler()));
+        }
+    }
+
+    private class GrammemsHandler extends NoOpHandler {
+        private ImmutableGramModel.Builder gmBuilder;
+
+        GrammemsHandler() {
+            super(ELEM_GRAMMEMS);
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new GrammemHandler()));
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            gmBuilder = ImmutableGramModel.builder();
+        }
+
+        @Override
+        protected void endSelf() {
+            for (GramModelPostProcessor gmPP : gramModelProcessors) {
+                gmPP.postprocess(gmBuilder);
+            }
+            GramModel gm = gmBuilder.build();
+            dict.setGramModel(gm);
+            super.endSelf();
+        }
+    }
+
+    private class LemmataHandler extends NoOpHandler {
+        LemmataHandler() {
+            super(ELEM_LEMMATA);
+        }
+
+        @Override
+        protected Map<String, ElementHandler> 
