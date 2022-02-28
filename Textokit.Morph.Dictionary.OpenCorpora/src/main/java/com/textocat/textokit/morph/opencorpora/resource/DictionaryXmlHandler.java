@@ -397,4 +397,81 @@ class DictionaryXmlHandler extends DefaultHandler {
         private Multimap<String, Wordform> wordforms;
 
         LemmaHandler() {
-            supe
+            super(ELEM_LEMMA);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            builder = Lemma.builder(dict.getGramModel(), requiredInt(attrs, ATTR_LEMMA_ID));
+            wordforms = LinkedHashMultimap.create();
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new LemmaNormHandler(), new WordformHandler()));
+        }
+
+        @Override
+        protected void endSelf() {
+            if (postProcessLemma(builder, wordforms)) {
+                Lemma lemma = builder.build();
+                dict.addLemma(lemma);
+                for (String wfStr : wordforms.keySet()) {
+                    for (Wordform wf : wordforms.get(wfStr)) {
+                        dict.addWordform(wfStr, wf);
+                    }
+                }
+                acceptedLemmaCounter++;
+            } else {
+                rejectedLemmaCounter++;
+            }
+            builder = null;
+            wordforms = null;
+            lemmasParsed++;
+            if (lemmasParsed % 10000 == 0) {
+                log.info("Lemmas have been parsed: {}", lemmasParsed);
+            }
+        }
+
+        void addWordform(String text, Wordform wf) {
+            if (!wordforms.put(text, wf)) {
+                log.warn("Duplicate pair <{}, {}> at line {}", new Object[]{
+                        text, wf, docLocator.getLineNumber()
+                });
+            }
+        }
+    }
+
+    private class LemmaNormHandler extends ElementHandlerBase {
+        LemmaNormHandler() {
+            super(ELEM_LEMMA_NORM);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            String t = requiredAttr(attrs, ATTR_TEXT);
+            getParent(LemmaHandler.class).builder.setString(t);
+        }
+
+        @Override
+        protected void endSelf() {
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new LemmaGrammemHandler()));
+        }
+    }
+
+    private class WordformHandler extends ElementHandlerBase {
+        private Wordform.Builder builder;
+        private String text;
+
+        WordformHandler() {
+            super(ELEM_WORDFORM);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            int lemmaId = getParent(LemmaHandler.class).builder.getLemmaId();
+            builder = Wordform.bui
