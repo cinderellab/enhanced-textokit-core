@@ -319,4 +319,82 @@ class DictionaryXmlHandler extends DefaultHandler {
         }
 
         @Override
-        protected Map<String, ElementHandler> 
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new LemmaHandler()));
+        }
+    }
+
+    private class LinkTypesHandler extends NoOpHandler {
+        LinkTypesHandler() {
+            super(ELEM_LINK_TYPES);
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new LinkTypeHandler()));
+        }
+    }
+
+    private class LinksHandler extends NoOpHandler {
+        LinksHandler() {
+            super(ELEM_LINKS);
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new LinkHandler()));
+        }
+    }
+
+    private class GrammemHandler extends ElementHandlerBase {
+        // state fields
+        private String parentId;
+
+        GrammemHandler() {
+            super(ELEM_GRAMMEM);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            parentId = requiredAttr(attrs, ATTR_GRAMMEM_PARENT);
+        }
+
+        @Override
+        protected void endSelf() {
+            String id = nameHandler.getContent();
+            if (id == null) {
+                throw new IllegalStateException("Empty grammeme name");
+            }
+            if (parentId.isEmpty()) {
+                parentId = null;
+            }
+            String alias = aliasHandler.getContent();
+            String description = descHandler.getContent();
+            Grammeme gram = new Grammeme(id, parentId, alias, description);
+            getParent(GrammemsHandler.class).gmBuilder.addGrammeme(gram);
+            id = null;
+            parentId = null;
+            // child handlers are cleared by super class
+        }
+
+        private ReadContentHandler nameHandler;
+        private ReadContentHandler aliasHandler;
+        private ReadContentHandler descHandler;
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            nameHandler = new ReadContentHandler(ELEM_GRAMMEM_NAME);
+            aliasHandler = new ReadContentHandler(ELEM_GRAMMEM_ALIAS);
+            descHandler = new ReadContentHandler(ELEM_GRAMMEM_DESCRIPTION);
+            return toMap(newHashSet(nameHandler, aliasHandler, descHandler));
+        }
+
+    }
+
+    private class LemmaHandler extends ElementHandlerBase {
+        private Lemma.Builder builder;
+        // wf string => set of wf objects
+        private Multimap<String, Wordform> wordforms;
+
+        LemmaHandler() {
+            supe
