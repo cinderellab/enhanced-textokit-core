@@ -474,4 +474,92 @@ class DictionaryXmlHandler extends DefaultHandler {
         @Override
         protected void startSelf(Attributes attrs) {
             int lemmaId = getParent(LemmaHandler.class).builder.getLemmaId();
-            builder = Wordform.bui
+            builder = Wordform.builder(dict.getGramModel(), lemmaId);
+            text = requiredAttr(attrs, ATTR_TEXT);
+        }
+
+        @Override
+        protected void endSelf() {
+            getParent(LemmaHandler.class).addWordform(text, builder.build());
+            builder = null;
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return toMap(newHashSet(new WordformGrammemHandler()));
+        }
+    }
+
+    private abstract class GrammemRefHandler extends ElementHandlerBase {
+        protected String gramId;
+
+        GrammemRefHandler(String qName) {
+            super(qName);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            gramId = requiredAttr(attrs, ATTR_WF_GRAMMEME_ID);
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return null;
+        }
+    }
+
+    private class LemmaGrammemHandler extends GrammemRefHandler {
+        LemmaGrammemHandler() {
+            super(ELEM_LEMMA_GRAMMEM);
+        }
+
+        @Override
+        protected void endSelf() {
+            getParent(LemmaNormHandler.class).getParent(LemmaHandler.class).builder
+                    .addGrammeme(gramId);
+            gramId = null;
+        }
+    }
+
+    private class WordformGrammemHandler extends GrammemRefHandler {
+        WordformGrammemHandler() {
+            super(ELEM_WF_GRAMMEM);
+        }
+
+        @Override
+        protected void endSelf() {
+            getParent(WordformHandler.class).builder.addGrammeme(gramId);
+            gramId = null;
+        }
+    }
+
+    private class LinkTypeHandler extends ElementHandlerBase {
+        private String name;
+        private Short id;
+
+        LinkTypeHandler() {
+            super(ELEM_LINK_TYPE);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            id = requiredShort(attrs, ATTR_LINK_TYPE_ID);
+        }
+
+        @Override
+        protected void endSelf() {
+            if (name == null) {
+                throw new IllegalStateException("Link type element is empty");
+            }
+            LemmaLinkType lemmaLinkType = new LemmaLinkType(id, name);
+            dict.addLemmaLinkType(lemmaLinkType);
+            id = null;
+            name = null;
+        }
+
+        @Override
+        protected void characters(String str) {
+            str = str.trim();
+            if (str.isEmpty()) {
+                throw new IllegalStateException("Empty lemma link name");
+     
