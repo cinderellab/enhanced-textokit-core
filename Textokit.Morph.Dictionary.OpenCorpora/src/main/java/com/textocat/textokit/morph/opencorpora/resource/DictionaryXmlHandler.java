@@ -562,4 +562,87 @@ class DictionaryXmlHandler extends DefaultHandler {
             str = str.trim();
             if (str.isEmpty()) {
                 throw new IllegalStateException("Empty lemma link name");
-     
+            }
+            name = str;
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return null;
+        }
+    }
+
+    private class LinkHandler extends ElementHandlerBase {
+        LinkHandler() {
+            super(ELEM_LINK);
+        }
+
+        @Override
+        protected void startSelf(Attributes attrs) {
+            int fromId = requiredInt(attrs, ATTR_LINK_FROM);
+            int toId = requiredInt(attrs, ATTR_LINK_TO);
+            short linkTypeId = requiredShort(attrs, ATTR_LINK_TYPE);
+            dict.addLemmaLink(fromId, toId, linkTypeId);
+        }
+
+        @Override
+        protected void endSelf() {
+        }
+
+        @Override
+        protected Map<String, ElementHandler> declareChildren() {
+            return null;
+        }
+    }
+
+    // config fields
+    private List<LemmaPostProcessor> lemmaPostProcessors = Lists.newLinkedList();
+    private List<GramModelPostProcessor> gramModelProcessors = Lists.newLinkedList();
+    // state fields
+    private MorphDictionaryImpl dict;
+    private Deque<String> elemStack = Lists.newLinkedList();
+    private Deque<ElementHandler> handlerStack = Lists.newLinkedList();
+    private int lemmasParsed = 0;
+    private int acceptedLemmaCounter;
+    private int rejectedLemmaCounter;
+    private ElementHandler rootHandler;
+    private Locator docLocator;
+
+    DictionaryXmlHandler(MorphDictionaryImpl dict) {
+        this.dict = dict;
+    }
+
+    /**
+     * NOTE! Order of LemmaPostProcessor instances may be crucial!
+     *
+     * @param lemmaPP instance to add
+     */
+    public void addLemmaPostProcessor(LemmaPostProcessor lemmaPP) {
+        lemmaPostProcessors.add(lemmaPP);
+    }
+
+    public void addGramModelPostProcessor(GramModelPostProcessor gmPP) {
+        gramModelProcessors.add(gmPP);
+    }
+
+    @Override
+    public void setDocumentLocator(Locator locator) {
+        super.setDocumentLocator(locator);
+        this.docLocator = locator;
+    }
+
+    @Override
+    public void startDocument() throws SAXException {
+        handlerStack.clear();
+        elemStack.clear();
+        lemmasParsed = 0;
+        acceptedLemmaCounter = 0;
+        rejectedLemmaCounter = 0;
+        finished = false;
+
+        rootHandler = new RootHandler(new DictionaryElemHandler());
+        handlerStack.addFirst(rootHandler);
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
