@@ -723,4 +723,68 @@ class DictionaryXmlHandler extends DefaultHandler {
 
     public MorphDictionaryImpl getDictionary() {
         if (!finished) {
-            throw new Illeg
+            throw new IllegalStateException("Parsing is not finished");
+        }
+        return dict;
+    }
+
+    /**
+     * Invoke lemma post-processors
+     *
+     * @param lemma
+     * @param wfMap mutable map of wordform_string => set_of_wordform_objects
+     * @return true if given lemma must be accepted, false - otherwise.
+     */
+    private boolean postProcessLemma(Lemma.Builder lemmaBuilder, Multimap<String, Wordform> wfMap) {
+        for (LemmaPostProcessor filter : lemmaPostProcessors) {
+            if (!filter.process(dict, lemmaBuilder, wfMap)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @SuppressWarnings("unused")
+    private boolean insideElem(String elem) {
+        return elemStack.contains(elem);
+    }
+
+    private static String requiredAttr(Attributes attrs, String qName) {
+        String result = attrs.getValue(qName);
+        if (result == null) {
+            throw new IllegalStateException("attribute " + qName
+                    + " is required");
+        }
+        return result.trim();
+    }
+
+    private static short requiredShort(Attributes attrs, String qName) {
+        String resultStr = requiredAttr(attrs, qName);
+        try {
+            return Short.valueOf(resultStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException(String.format(
+                    "Attribute %s value is not number: %s", qName, resultStr),
+                    e);
+        }
+    }
+
+    private static int requiredInt(Attributes attrs, String qName) {
+        String resultStr = requiredAttr(attrs, qName);
+        try {
+            return Integer.valueOf(resultStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException(String.format(
+                    "Attribute %s value is not number: %s", qName, resultStr),
+                    e);
+        }
+    }
+
+    private static Map<String, ElementHandler> toMap(Set<? extends ElementHandler> set) {
+        Map<String, ElementHandler> result = newHashMapWithExpectedSize(set.size());
+        for (ElementHandler handler : set) {
+            result.put(handler.qName, handler);
+        }
+        return result;
+    }
+}
