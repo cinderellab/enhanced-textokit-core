@@ -646,3 +646,81 @@ class DictionaryXmlHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName,
+                             Attributes attributes) throws SAXException {
+        String elem = localName;
+        if (elem.isEmpty()) {
+            elem = qName;
+        }
+        elemStack.addFirst(elem);
+
+        ElementHandler contextHandler = handlerStack.getFirst();
+        ElementHandler elemHandler = contextHandler.getHandler(elem);
+        if (elemHandler == null) {
+            throw new IllegalStateException(String.format(
+                    "Context handler %s have not returned handler for elem %s",
+                    contextHandler, elemStack));
+        }
+        handlerStack.addFirst(elemHandler);
+        elemHandler.startElement(attributes);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName)
+            throws SAXException {
+        String elem = localName;
+        if (elem.isEmpty()) {
+            elem = qName;
+        }
+        // check doc structure sanity
+        if (!elemStack.getFirst().equals(elem)) {
+            throw new IllegalStateException(String.format(
+                    "Elem ending expected: %s, but was: %s",
+                    elemStack.getFirst(), elem));
+        }
+
+        ElementHandler elemHandler = handlerStack.removeFirst();
+        if (sb != null) {
+            String txt = sb.toString();
+            // !
+            txt.trim();
+            elemHandler.characters(txt);
+            sb = null;
+        }
+        elemHandler.endElement();
+
+        elemStack.removeFirst();
+    }
+
+    private StringBuilder sb;
+
+    @Override
+    public void characters(char[] ch, int start, int length)
+            throws SAXException {
+        if (sb == null) {
+            sb = new StringBuilder();
+        }
+        sb.append(ch, start, length);
+    }
+
+    private boolean finished;
+
+    @Override
+    public void endDocument() throws SAXException {
+        log.info("The dictionary xml parsing is finished. Firing 'dictionaryParsed' event...");
+        for (LemmaPostProcessor lpp : lemmaPostProcessors) {
+            lpp.dictionaryParsed(dict);
+        }
+        // sanity check
+        if (!elemStack.isEmpty()) {
+            throw new IllegalStateException(
+                    "Elem stack is not empty at the end: " + elemStack);
+        }
+        log.info("Lemmas accepted: {}\nLemmas rejected: {}",
+                acceptedLemmaCounter, rejectedLemmaCounter);
+        dict.complete();
+        finished = true;
+    }
+
+    public MorphDictionaryImpl getDictionary() {
+        if (!finished) {
+            throw new Illeg
