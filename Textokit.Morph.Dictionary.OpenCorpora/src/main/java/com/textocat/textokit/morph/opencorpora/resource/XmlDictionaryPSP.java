@@ -71,4 +71,24 @@ public class XmlDictionaryPSP {
                 8192 * 8);
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().putValue(Attributes.Name.MANIFEST_VERSION.toString(), "1.0");
-        ma
+        manifest.getMainAttributes().putValue(OpencorporaMorphDictionaryAPI.ME_OPENCORPORA_DICTIONARY_VERSION, dict.getVersion());
+        manifest.getMainAttributes().putValue(OpencorporaMorphDictionaryAPI.ME_OPENCORPORA_DICTIONARY_REVISION, dict.getRevision());
+        manifest.getMainAttributes().putValue(OpencorporaMorphDictionaryAPI.ME_OPENCORPORA_DICTIONARY_VARIANT, cfg.variant);
+        String dictEntryName = String.format(OpencorporaMorphDictionaryAPI.FILENAME_PATTERN_OPENCORPORA_SERIALIZED_DICT,
+                dict.getVersion(), dict.getRevision(), cfg.variant);
+        JarOutputStream jarOut = new JarOutputStream(fout, manifest);
+        jarOut.putNextEntry(new ZipEntry(dictEntryName));
+        ObjectOutputStream serOut = new ObjectOutputStream(jarOut);
+        try {
+            serOut.writeObject(dict.getGramModel());
+            serOut.writeObject(dict);
+        } finally {
+            serOut.flush();
+            jarOut.closeEntry();
+            serOut.close();
+        }
+        System.out.println(String.format(
+                "Serialization finished in %s ms.\nOutput size: %s bytes",
+                currentTimeMillis() - timeBefore, cfg.outputJarFile.length()));
+    }
+}
