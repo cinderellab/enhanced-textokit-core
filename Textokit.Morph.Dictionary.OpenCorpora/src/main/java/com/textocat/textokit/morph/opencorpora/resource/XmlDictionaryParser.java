@@ -99,4 +99,7 @@ public class XmlDictionaryParser {
     }
 
     public static void parse(MorphDictionaryImpl dict, InputStream in, DictionaryExtension ext)
-        
+            throws IOException, SAXException {
+        new XmlDictionaryParser(dict, ext, in).run();
+    }
+}
