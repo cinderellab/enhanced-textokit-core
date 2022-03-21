@@ -59,4 +59,18 @@ public class XmlDictionaryParserLauncher {
             IOUtils.closeQuietly(fis);
         }
 
-        log.info("Preparing to seri
+        log.info("Preparing to serialization...");
+        long timeBefore = currentTimeMillis();
+        OutputStream fout = new BufferedOutputStream(FileUtils.openOutputStream(cfg.outputFile),
+                8192 * 8);
+        ObjectOutputStream out = new ObjectOutputStream(fout);
+        try {
+            out.writeObject(dict.getGramModel());
+            out.writeObject(dict);
+        } finally {
+            out.close();
+        }
+        log.info("Serialization finished in {} ms.\nOutput size: {} bytes",
+                currentTimeMillis() - timeBefore, cfg.outputFile.length());
+    }
+}
