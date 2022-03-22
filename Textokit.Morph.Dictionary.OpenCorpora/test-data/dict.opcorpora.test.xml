@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<dictionary version="0.92" revision="390682">
+<grammemes>
+    <grammeme parent=""><name>POST</name><alias>ЧР</alias><description>часть речи</description></grammeme>
+    <grammeme parent="POST"><name>NOUN</name><alias>СУЩ</alias><description>имя существительное</description></grammeme>
+    <grammeme parent="POST"><name>ADJF</name><alias>ПРИЛ</alias><description>имя прилагательное (полное)</description></grammeme>
+    <grammeme parent="POST"><name>ADJS</name><alias>КР_ПРИЛ</alias><description>имя прилагательное (краткое)</description></grammeme>
+    <grammeme parent="POST"><name>COMP</name><alias>КОМП</alia

@@ -46,4 +46,18 @@ public class YoLemmaPostProcessor extends LexemePostProcessorBase {
         Multimap<String, Wordform> additionalWfs = LinkedHashMultimap.create();
         for (String wfStr : wfMap.keySet()) {
             // alternative wordform string
-            String altStr = StringUtils.replaceChars(wfStr, YO_CHARS, YO_REPLACEMENT
+            String altStr = StringUtils.replaceChars(wfStr, YO_CHARS, YO_REPLACEMENTS);
+            if (Objects.equal(wfStr, altStr)) {
+                continue;
+            } // else wfStr contains 'yo'
+            if (wfMap.containsKey(altStr)) {
+                // the wordform multimap already contains string without 'yo'
+                continue;
+            }
+            additionalWfs.putAll(altStr, wfMap.get(wfStr));
+        }
+        wfMap.putAll(additionalWfs);
+        return true;
+    }
+
+}
