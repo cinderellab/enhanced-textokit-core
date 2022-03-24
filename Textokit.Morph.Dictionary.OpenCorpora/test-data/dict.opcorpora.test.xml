@@ -26,4 +26,25 @@
     <grammeme parent="GNdr"><name>masc</name><alias>мр</alias><description>мужской род</description></grammeme>
     <grammeme parent="GNdr"><name>femn</name><alias>жр</alias><description>женский род</description></grammeme>
     <grammeme parent="GNdr"><name>neut</name><alias>ср</alias><description>средний род</description></grammeme>
-    <grammeme parent=""><name>Ms-f</name>
+    <grammeme parent=""><name>Ms-f</name><alias>ор</alias><description>общий род</description></grammeme>
+    <grammeme parent=""><name>NMbr</name><alias>Число</alias><description>число</description></grammeme>
+    <grammeme parent="NMbr"><name>sing</name><alias>ед</alias><description>единственное число</description></grammeme>
+    <grammeme parent="NMbr"><name>plur</name><alias>мн</alias><description>множественное число</description></grammeme>
+    <grammeme parent=""><name>Sgtm</name><alias>sg</alias><description>singularia tantum</description></grammeme>
+    <grammeme parent=""><name>Pltm</name><alias>pl</alias><description>pluralia tantum</description></grammeme>
+    <grammeme parent=""><name>Fixd</name><alias>0</alias><description>неизменяемое</description></grammeme>
+    <grammeme parent=""><name>CAse</name><alias>Падеж</alias><description>категория падежа</description></grammeme>
+    <grammeme parent="CAse"><name>nomn</name><alias>им</alias><description>именительный падеж</description></grammeme>
+    <grammeme parent="CAse"><name>gent</name><alias>рд</alias><description>родительный падеж</description></grammeme>
+    <grammeme parent="CAse"><name>datv</name><alias>дт</alias><description>дательный падеж</description></grammeme>
+    <grammeme parent="CAse"><name>accs</name><alias>вн</alias><description>винительный падеж</description></grammeme>
+    <grammeme parent="CAse"><name>ablt</name><alias>тв</alias><description>творительный падеж</description></grammeme>
+    <grammeme parent="CAse"><name>loct</name><alias>пр</alias><description>предложный падеж</description></grammeme>
+    <grammeme parent="nomn"><name>voct</name><alias>зв</alias><description>звательный падеж</description></grammeme>
+    <grammeme parent="gent"><name>gen1</name><alias>рд1</alias><description>первый родительный падеж</description></grammeme>
+    <grammeme parent="gent"><name>gen2</name><alias>рд2</alias><description>второй родительный (частичный) падеж</description></grammeme>
+    <grammeme parent="accs"><name>acc2</name><alias>вн2</alias><description>второй винительный падеж</description></grammeme>
+    <grammeme parent="loct"><name>loc1</name><alias>пр1</alias><description>первый предложный падеж</description></grammeme>
+    <grammeme parent="loct"><name>loc2</name><alias>пр2</alias><description>второй предложный (местный) падеж</description></grammeme>
+    <grammeme parent=""><name>Abbr</name><alias>аббр</alias><description>аббревиатура</description></grammeme>
+    <grammeme par
