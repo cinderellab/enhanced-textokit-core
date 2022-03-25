@@ -47,4 +47,25 @@
     <grammeme parent="loct"><name>loc1</name><alias>пр1</alias><description>первый предложный падеж</description></grammeme>
     <grammeme parent="loct"><name>loc2</name><alias>пр2</alias><description>второй предложный (местный) падеж</description></grammeme>
     <grammeme parent=""><name>Abbr</name><alias>аббр</alias><description>аббревиатура</description></grammeme>
-    <grammeme par
+    <grammeme parent=""><name>Name</name><alias>имя</alias><description>имя</description></grammeme>
+    <grammeme parent=""><name>Surn</name><alias>фам</alias><description>фамилия</description></grammeme>
+    <grammeme parent=""><name>Patr</name><alias>отч</alias><description>отчество</description></grammeme>
+    <grammeme parent=""><name>Geox</name><alias>гео</alias><description>топоним</description></grammeme>
+    <grammeme parent=""><name>Orgn</name><alias>орг</alias><description>организация</description></grammeme>
+    <grammeme parent=""><name>Trad</name><alias>tm</alias><description>торговая марка</description></grammeme>
+    <grammeme parent=""><name>Subx</name><alias>субст?</alias><description>возможна субстантивация</description></grammeme>
+    <grammeme parent=""><name>Supr</name><alias>превосх</alias><description>превосходная степень</description></grammeme>
+    <grammeme parent=""><name>Qual</name><alias>кач</alias><description>качественное</description></grammeme>
+    <grammeme parent=""><name>Apro</name><alias>мест-п</alias><description>местоименное</description></grammeme>
+    <grammeme parent=""><name>Anum</name><alias>числ-п</alias><description>порядковое</description></grammeme>
+    <grammeme parent=""><name>Poss</name><alias>притяж</alias><description>притяжательное</description></grammeme>
+    <grammeme parent=""><name>V-ey</name><alias>*ею</alias><description>форма на -ею</description></grammeme>
+    <grammeme parent=""><name>V-oy</name><alias>*ою</alias><description>форма на -ою</description></grammeme>
+    <grammeme parent=""><name>Cmp2</name><alias>сравн2</alias><description>сравнительная степень на по-</description></grammeme>
+    <grammeme parent=""><name>V-ej</name><alias>*ей</alias><description>форма компаратива на -ей</description></grammeme>
+    <grammeme parent=""><name>ASpc</name><alias>Вид</alias><description>категория вида</description></grammeme>
+    <grammeme parent="ASpc"><name>perf</name><alias>сов</alias><description>совершенный вид</description></grammeme>
+    <grammeme parent="ASpc"><name>impf</name><alias>несов</alias><description>несовершенный вид</description></grammeme>
+    <grammeme parent=""><name>TRns</name><alias>Перех</alias><description>категория переходности</description></grammeme>
+    <grammeme parent="TRns"><name>tran</name><alias>перех</alias><description>переходный</description></grammeme>
+    <grammeme parent="TRns"><name>intr</name><alias>неперех</alias><descr
