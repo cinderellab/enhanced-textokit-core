@@ -110,4 +110,13 @@
     <grammeme parent=""><name>V-sh</name><alias>*ши</alias><description>деепричастие на -ши</description></grammeme>
     <grammeme parent=""><name>Af-p</name><alias>*предл</alias><description>форма после предлога</description></grammeme>
     <grammeme parent=""><name>Inmx</name><alias>не/одуш?</alias><description>может использоваться как одуш. / неодуш. </description></grammeme>
-    <grammeme parent=""><n
+    <grammeme parent=""><name>Vpre</name><alias>в_предл</alias><description>Вариант предлога ( со, подо, ...)</description></grammeme>
+    <grammeme parent=""><name>Anph</name><alias>Анаф</alias><description>Анафорическое (местоимение)</description></grammeme>
+</grammemes>
+<lemmata>
+    <lemma id="51" rev="51"><l t="а"><g v="CONJ"/></l><f t="а"></f></lemma>
+    <lemma id="52" rev="52"><l t="а"><g v="INTJ"/></l><f t="а"></f></lemma>
+    <lemma id="53" rev="53"><l t="а"><g v="PRCL"/></l><f t="а"></f></lemma>
+    <lemma id="39835" rev="39835"><l t="вворотил"><g v="VERB"/><g v="perf"/><g v="tran"/></l><f t="вворотил"><g v="masc"/><g v="sing"/><g v="past"/><g v="indc"/></f><f t="вворотила"><g v="femn"/><g v="sing"/><g v="past"/><g v="indc"/></f><f t="вворотило"><g v="neut"/><g v="sing"/><g v="past"/><g v="indc"/></f><f t="вворотили"><g v="plur"/><g v="past"/><g v="indc"/></f><f t="вворочу"><g v="sing"/><g v="1per"/><g v="futr"/><g v="indc"/></f><f t="вворотим"><g v="plur"/><g v="1per"/><g v="futr"/><g v="indc"/></f><f t="вворотишь"><g v="sing"/><g v="2per"/><g v="futr"/><g v="indc"/></f><f t="вворотите"><g v="plur"/><g v="2per"/><g v="futr"/><g v="indc"/></f><f t="вворотит"><g v="sing"/><g v="3per"/><g v="futr"/><g v="indc"/></f><f t="вворотят"><g v="plur"/><g v="3per"/><g v="futr"/><g v="indc"/></f><f t="вворотим"><g v="sing"/><g v="impr"/><g v="incl"/></f><f t="вворотимте"><g v="plur"/><g v="impr"/><g v="incl"/></f><f t="ввороти"><g v="sing"/><g v="impr"/><g v="excl"/></f><f t="вворотите"><g v="plur"/><g v="impr"/><g v="excl"/></f></lemma>
+    <lemma id="47914" rev="47914"><l t="внятно"><g v="ADVB"/></l><f t="внятно"></f></lemma>
+    <lemma id="48473" rev="48473"><l t="водохранилищный"><g v="ADJF"/></l><f t="водохранилищный"><g v="masc"/><g v="sing"/><g v="nomn"/></f><f t="водохранилищного"><g v="masc"/><g v="sing"/><g v="gent"/></f><f t="водохранилищному"><g v="masc"/><g v="sing"/><g v="datv"/></f><f t="водохранилищного"><g v="anim"/><g v="masc"/><g v="sing"/><g v="accs"/></f><f t="водохранилищный"><g v="inan"/><g v="masc"/><g v="sing"/><g v="accs"/></f><f t="водохранилищным"><g v="masc"/><g v="sing"/><g v="ablt"/></f><f t="водохранилищном"><g v="masc"/><g v="sing"/><g v="loct"/></f><f t="водохранилищная"><g v="femn"/><g v="sing"/><g v="nomn"/></f><f t="водохранилищной"><g v="femn"/><g v="sing"/><g v="gent"/></f><f t="водохранилищной"><g v="femn"/><g v="sin
