@@ -46,4 +46,18 @@ public class VPRecognizerAPI {
     }
 
     /**
-     * @return import instance. This is preferred way to inclu
+     * @return import instance. This is preferred way to include the AE into
+     * pipeline, especially when a pipeline descriptor is expected to be
+     * serialized into XML.
+     * @see PipelineDescriptorUtils#createAggregateDescription(java.util.List,
+     * java.util.List)
+     */
+    public static Import getAEImport() {
+        Import result = new Import_impl();
+        result.setName(AE_VP_RECOGNIZER);
+        return result;
+    }
+
+    private VPRecognizerAPI() {
+    }
+}
