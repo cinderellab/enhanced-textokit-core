@@ -47,4 +47,32 @@ public class VerbPhrase extends Phrase {
   /** @generated
    * @param jcas JCas to which this Feature Structure belongs 
    */
-  public VerbPhrase(JCas j
+  public VerbPhrase(JCas jcas) {
+    super(jcas);
+    readObject();   
+  } 
+
+  /** @generated
+   * @param jcas JCas to which this Feature Structure belongs
+   * @param begin offset to the begin spot in the SofA
+   * @param end offset to the end spot in the SofA 
+  */  
+  public VerbPhrase(JCas jcas, int begin, int end) {
+    super(jcas);
+    setBegin(begin);
+    setEnd(end);
+    readObject();
+  }   
+
+  /** 
+   * <!-- begin-user-doc -->
+   * Write your own initialization here
+   * <!-- end-user-doc -->
+   *
+   * @generated modifiable 
+   */
+  private void readObject() {/*default - does nothing empty block */}
+     
+}
+
+    
