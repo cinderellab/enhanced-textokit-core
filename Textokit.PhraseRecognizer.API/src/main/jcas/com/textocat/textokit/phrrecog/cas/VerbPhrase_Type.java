@@ -52,3 +52,11 @@ public class VerbPhrase_Type extends Phrase_Type {
 	 */
   public VerbPhrase_Type(JCas jcas, Type casType) {
     super(jcas, casType);
+    casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl)this.casType, getFSGenerator());
+
+  }
+}
+
+
+
+    
