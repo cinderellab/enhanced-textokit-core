@@ -46,4 +46,16 @@
                     <rangeTypeName>com.textocat.textokit.morph.fs.Wordform</rangeTypeName>
                 </featureDescription>
                 <featureDescription>
-              
+                    <name>particle</name>
+                    <description/>
+                    <rangeTypeName>com.textocat.textokit.morph.fs.Wordform</rangeTypeName>
+                </featureDescription>
+            </features>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.phrrecog.cas.VerbPhrase</name>
+            <description>Represents Verb Phrase</description>
+            <supertypeName>com.textocat.textokit.phrrecog.cas.Phrase</supertypeName>
+        </typeDescription>
+    </types>
+</typeSystemDescription>

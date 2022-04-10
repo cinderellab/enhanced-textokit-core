@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+	<frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+	<primitive>false</primitive>
+
+	<delegateAnalysisEngineSpecifiers>
+		<delegateAnalysisEngine key="tokenizer">
+			<import name="com.textocat.textokit.tokenizer.tokenizer-ae" />
+		</delegateAnalysisEngine>
+		<delegateAnalysisEngine key="sentenceSplitter">
+			<import name="com.textocat.textokit.segmentation.sentence-splitter-ae" />
+		</delegateAnalysisEngine>
+		<delegateAnalysisEngine key="morphTagger">
+			<import name="com.textocat.textokit.morph.opencorpora.MorphologyAnnotator" />
+		</delegateAnalysisEngine>
+		<delegateAnalysisEngine key="numProcessor">
+			<import name="com.textocat.textokit.morph.NumProcessor" />
+		</delegateAnalysisEngine>
+		<delegateAnalysisEngine key="npRecognizer">
+			<import name="com.textocat.textokit.phrrecog.NPRecognizer" />
+		</delegateAnalysisEngine>
+	</delegateAnalysisEngineSpecifiers>
+
+	<analysisEngineMetaData>
+		<name>NP-recognizer-aggregate</name>
+
+		<flowConstraints>
+			<fixedFlow>
+				<node>tokenizer</node>
+				<node>sentenceSplitter</node>
+				<node>morphTagger</node>
+				<node>numProcessor</node>
+				<node>npRecognizer</node>
+			</fixedFlow>
+		</flowConstraints>
+	</analysisEngineMetaData>
+
+	<resourceManagerConfiguration>
+		<externalResources>
+			<externalResource>
+				<name>morphDictionary</name>
+				<description />
+				<fileResourceSpecifier>
+					<fileUrl>dict.opcorpora.ser</fileUrl>
+				</fileResourceSpecifier>
+				<implementationName>com.textocat.textokit.morph.opencorpora.resource.SerializedDictionaryResource</implementationName>
+			</externalRes
