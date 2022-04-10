@@ -16,8 +16,8 @@
 		<delegateAnalysisEngine key="numProcessor">
 			<import name="com.textocat.textokit.morph.NumProcessor" />
 		</delegateAnalysisEngine>
-		<delegateAnalysisEngine key="npRecognizer">
-			<import name="com.textocat.textokit.phrrecog.NPRecognizer" />
+		<delegateAnalysisEngine key="vpRecognizer">
+			<import name="com.textocat.textokit.phrrecog.VPRecognizer" />
 		</delegateAnalysisEngine>
 	</delegateAnalysisEngineSpecifiers>
 
@@ -30,7 +30,7 @@
 				<node>sentenceSplitter</node>
 				<node>morphTagger</node>
 				<node>numProcessor</node>
-				<node>npRecognizer</node>
+				<node>vpRecognizer</node>
 			</fixedFlow>
 		</flowConstraints>
 	</analysisEngineMetaData>
