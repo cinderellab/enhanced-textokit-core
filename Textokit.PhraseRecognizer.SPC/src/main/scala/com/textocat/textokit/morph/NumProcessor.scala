@@ -63,3 +63,8 @@ class NumProcessor extends JCasAnnotator_ImplBase {
     wfArr.set(0, numrWf)
     wfArr.set(1, adjWf)
     word.setWordforms(wfArr)
+
+    word.addToIndexes()
+  }
+
+}
