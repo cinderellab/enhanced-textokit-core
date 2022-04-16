@@ -55,4 +55,34 @@ class AnnotationSpan[A >: Null <: AnnotationFS](annoList: List[A]) {
   }
 
   class AnnotationPosition(anno: AnnotationFS) extends Position {
-    require(anno.getBeg
+    require(anno.getBegin() >= baseOffset, "illegal begin of annotation")
+
+    override val line: Int = 1
+    // NOTE! Column numbers start at 1
+    override val column: Int = anno.getBegin() - baseOffset + 1
+
+    override lazy val lineContents: String = inputContentString
+  }
+
+  class EndOfSequencePosition extends Position {
+    override val line: Int = 1
+    // NOTE! Column numbers start at 1
+    override val column: Int = endOffset
+
+    override lazy val lineContents: String = inputContentString
+  }
+
+  private lazy val inputContentString = {
+    val sb = new StringBuilder()
+    appendAnnotationContent(sb, 0, annoList)
+    sb.toString()
+  }
+
+  private def appendAnnotationContent(sb: StringBuilder, lastAnnoEnd: Int, list: List[A]): Unit =
+    if (!list.isEmpty) {
+      val anno = list.head
+      lastAnnoEnd.until(anno.getBegin()).foreach(sb.append(' '))
+      sb.append(anno.getCoveredText())
+      appendAnnotationContent(sb, anno.getEnd(), list.tail)
+    }
+}
