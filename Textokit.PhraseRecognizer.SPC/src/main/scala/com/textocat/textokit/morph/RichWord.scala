@@ -66,4 +66,19 @@ class RichWordFactory(gramModel: GramModel) {
 
   implicit def word2RichWord(w: Word): RichWord = {
     val wf = MorphCasUtils.requireOnlyWordform(w)
-    val wfbs = MorphDictionaryUtils.toGramBits(gramModel, FSUtils.
+    val wfbs = MorphDictionaryUtils.toGramBits(gramModel, FSUtils.toList(wf.getGrammems))
+    val partOfSpeech = {
+      val grs = wfbs.clone().asInstanceOf[ju.BitSet]
+      grs.and(partOfSpeechMask)
+      if (grs.isEmpty) NoPartOfSpeech
+      else gramModel.toGramSet(grs).mkString("&")
+    }
+    val gramCats = (for ((cat, catMask) <- gramCatMasks) yield {
+      val grs = wfbs.clone().asInstanceOf[ju.BitSet]
+      grs.and(catMask)
+      if (grs.isEmpty) None
+      else Some(cat -> gramModel.toGramSet(grs).head)
+    }).flatten.toMap
+    RichWord(wf, w.getCoveredText, Option(wf.getLemma), partOfSpeech, gramCats)
+  }
+}
