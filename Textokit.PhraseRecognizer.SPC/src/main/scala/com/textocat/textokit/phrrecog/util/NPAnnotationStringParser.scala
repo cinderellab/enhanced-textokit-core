@@ -86,4 +86,17 @@ class NPAnnotationStringParser(protected val jCas: JCas, protected val tokens: A
     val phrase = new NounPhrase(jCas)
     if (prepWfOpt.isDefined) phrase.setPreposition(prepWfOpt.get)
     if (particleWfOpt.isDefined) phrase.setParticle(particleWfOpt.get)
-    phr
+    phrase.setHead(headWf)
+    phrase.setDependentWords(depWordformsFsArray)
+    phrase.setDependentPhrases(depPhrasesFsArray)
+    val (begin, end) = phrrecog.getOffsets(phrase)
+    phrase.setBegin(begin)
+    phrase.setEnd(end)
+    phrase
+  }
+}
+
+object NPAnnotationStringParser {
+  val PrefixPreposition = "prep"
+  val PrefixParticle = "prcl"
+}
