@@ -75,4 +75,6 @@ public class GrammemeExtractor implements FeatureExtractor1 {
         for (int i = wfBits.nextSetBit(0); i >= 0; i = wfBits.nextSetBit(i + 1)) {
             result.add(new Feature(featureName, gramModel.getGrammem(i).getId()));
         }
-        return resul
+        return result;
+    }
+}
