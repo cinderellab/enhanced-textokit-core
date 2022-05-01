@@ -68,4 +68,12 @@ public class AgreementPredicates {
             .agree(sing)
             .agree(plur);
 
-    private static final
+    private static final Builder genderAgrBuilder = new Builder()
+            .agree(masc).agree(masc, GNdr)
+            .agree(femn).agree(femn, GNdr)
+            .agree(neut).agree(neut, GNdr)
+            .agree(GNdr);
+
+    private AgreementPredicates() {
+    }
+}
