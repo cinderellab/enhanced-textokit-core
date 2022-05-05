@@ -50,4 +50,71 @@ public class GramModelBasedTagMapper implements TagMapper, Initializable {
      * @throws ResourceInitializationException
      */
     public static void declareResourceDependencies(ResourceSpecifier clientResourceDesc)
-            thro
+            throws ResourceInitializationException {
+        ExternalResourceFactory.createDependency(clientResourceDesc,
+                GramModelBasedTagMapper.RESOURCE_GRAM_MODEL,
+                GramModelHolder.class);
+    }
+
+	/*
+    ExternalResourceFactory.bindResource(clientResourceDesc,
+			GramModelBasedTagMapper.RESOURCE_GRAM_MODEL, gramModelDesc);
+			*/
+
+    public static final String RESOURCE_GRAM_MODEL = "gramModel";
+    // config fields
+    @ExternalResource(key = RESOURCE_GRAM_MODEL, mandatory = true)
+    private GramModelHolder gramModelHolder;
+    // derived
+    private GramModel gramModel;
+
+    // for UIMA
+    public GramModelBasedTagMapper() {
+    }
+
+    // for stand-alone usage
+    public GramModelBasedTagMapper(GramModel gramModel) {
+        this.gramModel = gramModel;
+    }
+
+    @Override
+    public void initialize(UimaContext ctx) throws ResourceInitializationException {
+        ExternalResourceInitializer.initialize(this, ctx);
+        gramModel = gramModelHolder.getGramModel();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> parseTag(String tag, String token) {
+        return parseTag(tag);
+    }
+
+    public static Set<String> parseTag(String tag) {
+        if (StringUtils.isEmpty(tag) || tag.equalsIgnoreCase("null")) {
+            return Sets.newLinkedHashSet();
+        }
+        return Sets.newLinkedHashSet(targetGramSplitter.split(tag));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toTag(Set<String> grams) {
+        BitSet wfBits = toGramBits(gramModel, grams);
+        return toTag(wfBits);
+    }
+
+    public String toTag(BitSet wfBits) {
+        if (wfBits.isEmpty()) {
+            return null;
+        }
+        return targetGramJoiner.join(gramModel.toGramSet(wfBits));
+    }
+
+    public static final String targetGramDelim = "&";
+    public static final Joiner targetGramJoiner = Joiner.on(targetGramDelim);
+    public static final Splitter targetGramSplitter = Splitter.on(targetGramDelim);
+}
