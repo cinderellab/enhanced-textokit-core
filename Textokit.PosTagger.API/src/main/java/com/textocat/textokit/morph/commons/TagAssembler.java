@@ -16,25 +16,14 @@
 
 package com.textocat.textokit.morph.commons;
 
-import com.textocat.textokit.postagger.MorphCasUtils;
+import com.textocat.textokit.commons.cas.FSUtils;
+import com.textocat.textokit.morph.dictionary.resource.GramModelHolder;
+import com.textocat.textokit.morph.fs.Word;
+import com.textocat.textokit.morph.fs.Wordform;
+import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
-import org.apache.uima.jcas.JCas;
-import org.apache.uima.resource.ResourceInitializationException;
-
-/**
- * @author Rinat Gareev
- */
-public class SimplyWordAnnotator extends JCasAnnotator_ImplBase {
-
-    public static AnalysisEngineDescription createDescription() throws ResourceInitializationException {
-        return AnalysisEngineFactory.createEngineDescription(SimplyWordAnnotator.class);
-    }
-
-    @Override
-    public void process(JCas jCas) throws AnalysisEngineProcessException {
-        MorphCasUtils.makeSimplyWords(jCas);
-    }
-}
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.factory.initializable.InitializableFactory;
+import org
