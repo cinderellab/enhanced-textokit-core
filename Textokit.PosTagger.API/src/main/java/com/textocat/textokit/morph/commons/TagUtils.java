@@ -49,3 +49,51 @@ public class TagUtils {
     public static Function<BitSet, Boolean> getClosedClassIndicator(GramModel gm) {
         // initialize mask
         final BitSet closedClassTagsMask = new BitSet();
+        for (String cpGram : closedPosSet) {
+            closedClassTagsMask.set(gm.getGrammemNumId(cpGram));
+        }
+        //
+        return new Function<BitSet, Boolean>() {
+            @Override
+            public Boolean apply(BitSet _wfBits) {
+                BitSet wfBits = (BitSet) _wfBits.clone();
+                wfBits.and(closedClassTagsMask);
+                return !wfBits.isEmpty();
+            }
+
+        };
+    }
+
+    // FIXME refactor hard-coded dependency on a tag mapper implementation
+    public static boolean isClosedClassTag(String tag) {
+        return closedClassPunctuationTags.contains(tag)
+                || !Sets.intersection(
+                GramModelBasedTagMapper.parseTag(tag), closedPosSet)
+                .isEmpty();
+    }
+
+    public static String postProcessExternalTag(String tag) {
+        return !"null".equals(String.valueOf(tag)) ? tag : null;
+    }
+
+    public static final Set<String> closedClassPunctuationTags = ImmutableSet
+            .copyOf(punctuationTagMap.values());
+
+    public static final Function<Word, String> tagFunction() {
+        return tagFunction;
+    }
+
+    private static final Function<Word, String> tagFunction = new Function<Word, String>() {
+        @Override
+        public String apply(Word word) {
+            if (word == null) {
+                return null;
+            }
+            Wordform wf = MorphCasUtils.requireOnlyWordform(word);
+            return wf.getPos();
+        }
+    };
+
+    private TagUtils() {
+    }
+}
