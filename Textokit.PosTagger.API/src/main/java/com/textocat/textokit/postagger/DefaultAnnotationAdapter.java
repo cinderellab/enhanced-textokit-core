@@ -44,4 +44,72 @@ public class DefaultAnnotationAdapter extends AnnotationAdapterBase {
 
     @Override
     public void apply(JCas jcas, Annotation token, Collection<Wordform> dictWfs) {
-        Word w
+        Word word = new Word(jcas);
+        word.setBegin(token.getBegin());
+        word.setEnd(token.getEnd());
+        // TODO check token type
+        word.setToken((Token) token);
+        List<com.textocat.textokit.morph.fs.Wordform> casWfList = Lists.newLinkedList();
+        for (Wordform wf : dictWfs) {
+            com.textocat.textokit.morph.fs.Wordform casWf = new com.textocat.textokit.morph.fs.Wordform(jcas);
+
+            BitSet grammems = wf.getGrammems();
+            Lemma lemma = dict.getLemma(wf.getLemmaId());
+            // set lemma id
+            casWf.setLemmaId(lemma.getId());
+            // set lemma norm
+            casWf.setLemma(lemma.getString());
+            // set pos
+            casWf.setPos(dict.getGramModel().getPos(lemma.getGrammems()));
+            // set grammems
+            grammems.or(lemma.getGrammems());
+            List<String> gramSet = dict.getGramModel().toGramSet(grammems);
+            casWf.setGrammems(FSUtils.toStringArray(jcas, gramSet));
+
+            // set hosting word
+            casWf.setWord(word);
+
+            casWfList.add(casWf);
+        }
+        // set wordforms
+        word.setWordforms(FSUtils.toFSArray(jcas, casWfList));
+
+        word.addToIndexes();
+    }
+
+    @Override
+    public void apply(JCas jcas, Annotation token,
+                      Integer lexemeId, final String _lemma, BitSet posBits) {
+        Word word = new Word(jcas);
+        word.setBegin(token.getBegin());
+        word.setEnd(token.getEnd());
+        // TODO check token type
+        word.setToken((Token) token);
+
+        com.textocat.textokit.morph.fs.Wordform casWf = new com.textocat.textokit.morph.fs.Wordform(jcas);
+        String lemma = null;
+        if (lexemeId != null) {
+            Lemma lex = dict.getLemma(lexemeId);
+            lemma = lex.getString();
+            casWf.setLemmaId(lexemeId);
+        } else if (_lemma != null) {
+            lemma = _lemma;
+        }
+        if (lemma != null) {
+            casWf.setLemma(lemma);
+        }
+        // TODO set 'pos' feature
+        // casWf.setPos(...);
+
+        List<String> gramSet = dict.getGramModel().toGramSet(posBits);
+        casWf.setGrammems(FSUtils.toStringArray(jcas, gramSet));
+
+        // set hosting word
+        casWf.setWord(word);
+
+        // set wordforms
+        word.setWordforms(FSUtils.toFSArray(jcas, ImmutableList.of(casWf)));
+
+        word.addToIndexes();
+    }
+}
