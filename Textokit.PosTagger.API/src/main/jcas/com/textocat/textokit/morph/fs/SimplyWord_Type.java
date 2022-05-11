@@ -38,4 +38,70 @@ public class SimplyWord_Type extends Annotation_Type {
    */
   @Override
   protected FSGenerator getFSGenerator() {return fsGenerator;}
+  /** @generated */
+  private final FSGenerator fsGenerator = 
+    new FSGenerator() {
+      public FeatureStructure createFS(int addr, CASImpl cas) {
+  			 if (SimplyWord_Type.this.useExistingInstance) {
+  			   // Return eq fs instance if already created
+  		     FeatureStructure fs = SimplyWord_Type.this.jcas.getJfsFromCaddr(addr);
+  		     if (null == fs) {
+  		       fs = new SimplyWord(addr, SimplyWord_Type.this);
+  			   SimplyWord_Type.this.jcas.putJfsFromCaddr(addr, fs);
+  			   return fs;
+  		     }
+  		     return fs;
+        } else return new SimplyWord(addr, SimplyWord_Type.this);
+  	  }
+    };
+  /** @generated */
+  @SuppressWarnings ("hiding")
+  public final static int typeIndexID = SimplyWord.typeIndexID;
+  /** @generated 
+     @modifiable */
+  @SuppressWarnings ("hiding")
+  public final static boolean featOkTst = JCasRegistry.getFeatOkTst("com.textocat.textokit.morph.fs.SimplyWord");
+ 
+  /** @generated */
+  final Feature casFeat_posTag;
+  /** @generated */
+  final int     casFeatCode_posTag;
   /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public String getPosTag(int addr) {
+        if (featOkTst && casFeat_posTag == null)
+      jcas.throwFeatMissing("posTag", "com.textocat.textokit.morph.fs.SimplyWord");
+    return ll_cas.ll_getStringValue(addr, casFeatCode_posTag);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setPosTag(int addr, String v) {
+        if (featOkTst && casFeat_posTag == null)
+      jcas.throwFeatMissing("posTag", "com.textocat.textokit.morph.fs.SimplyWord");
+    ll_cas.ll_setStringValue(addr, casFeatCode_posTag, v);}
+    
+  
+ 
+  /** @generated */
+  final Feature casFeat_grammems;
+  /** @generated */
+  final int     casFeatCode_grammems;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getGrammems(int addr) {
+        if (featOkTst && casFeat_grammems == null)
+      jcas.throwFeatMissing("grammems", "com.textocat.textokit.morph.fs.SimplyWord");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_grammems);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setGrammems(int addr, int v) {
+       
