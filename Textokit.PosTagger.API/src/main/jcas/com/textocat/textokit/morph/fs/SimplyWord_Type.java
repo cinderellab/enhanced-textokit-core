@@ -104,4 +104,66 @@ public class SimplyWord_Type extends Annotation_Type {
    * @param v value to set 
    */    
   public void setGrammems(int addr, int v) {
-       
+        if (featOkTst && casFeat_grammems == null)
+      jcas.throwFeatMissing("grammems", "com.textocat.textokit.morph.fs.SimplyWord");
+    ll_cas.ll_setRefValue(addr, casFeatCode_grammems, v);}
+    
+   /** @generated
+   * @param addr low level Feature Structure reference
+   * @param i index of item in the array
+   * @return value at index i in the array 
+   */
+  public String getGrammems(int addr, int i) {
+        if (featOkTst && casFeat_grammems == null)
+      jcas.throwFeatMissing("grammems", "com.textocat.textokit.morph.fs.SimplyWord");
+    if (lowLevelTypeChecks)
+      return ll_cas.ll_getStringArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_grammems), i, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_grammems), i);
+	return ll_cas.ll_getStringArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_grammems), i);
+  }
+   
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param i index of item in the array
+   * @param v value to set
+   */ 
+  public void setGrammems(int addr, int i, String v) {
+        if (featOkTst && casFeat_grammems == null)
+      jcas.throwFeatMissing("grammems", "com.textocat.textokit.morph.fs.SimplyWord");
+    if (lowLevelTypeChecks)
+      ll_cas.ll_setStringArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_grammems), i, v, true);
+    jcas.checkArrayBounds(ll_cas.ll_getRefValue(addr, casFeatCode_grammems), i);
+    ll_cas.ll_setStringArrayValue(ll_cas.ll_getRefValue(addr, casFeatCode_grammems), i, v);
+  }
+ 
+ 
+  /** @generated */
+  final Feature casFeat_lemma;
+  /** @generated */
+  final int     casFeatCode_lemma;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public String getLemma(int addr) {
+        if (featOkTst && casFeat_lemma == null)
+      jcas.throwFeatMissing("lemma", "com.textocat.textokit.morph.fs.SimplyWord");
+    return ll_cas.ll_getStringValue(addr, casFeatCode_lemma);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setLemma(int addr, String v) {
+        if (featOkTst && casFeat_lemma == null)
+      jcas.throwFeatMissing("lemma", "com.textocat.textokit.morph.fs.SimplyWord");
+    ll_cas.ll_setStringValue(addr, casFeatCode_lemma, v);}
+    
+  
+ 
+  /** @generated */
+  final Feature casFeat_lemmaId;
+  /** @generated */
+  final int     casFeatCode_lemmaId;
+  /** @generated
+   * @param addr low 
