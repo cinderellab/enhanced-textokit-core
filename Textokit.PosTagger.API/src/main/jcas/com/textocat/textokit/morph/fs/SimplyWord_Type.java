@@ -166,4 +166,68 @@ public class SimplyWord_Type extends Annotation_Type {
   /** @generated */
   final int     casFeatCode_lemmaId;
   /** @generated
-   * @param addr low 
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getLemmaId(int addr) {
+        if (featOkTst && casFeat_lemmaId == null)
+      jcas.throwFeatMissing("lemmaId", "com.textocat.textokit.morph.fs.SimplyWord");
+    return ll_cas.ll_getIntValue(addr, casFeatCode_lemmaId);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setLemmaId(int addr, int v) {
+        if (featOkTst && casFeat_lemmaId == null)
+      jcas.throwFeatMissing("lemmaId", "com.textocat.textokit.morph.fs.SimplyWord");
+    ll_cas.ll_setIntValue(addr, casFeatCode_lemmaId, v);}
+    
+  
+ 
+  /** @generated */
+  final Feature casFeat_token;
+  /** @generated */
+  final int     casFeatCode_token;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getToken(int addr) {
+        if (featOkTst && casFeat_token == null)
+      jcas.throwFeatMissing("token", "com.textocat.textokit.morph.fs.SimplyWord");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_token);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setToken(int addr, int v) {
+        if (featOkTst && casFeat_token == null)
+      jcas.throwFeatMissing("token", "com.textocat.textokit.morph.fs.SimplyWord");
+    ll_cas.ll_setRefValue(addr, casFeatCode_token, v);}
+    
+  
+
+
+
+  /** initialize variables to correspond with Cas Type and Features
+	 * @generated
+	 * @param jcas JCas
+	 * @param casType Type 
+	 */
+  public SimplyWord_Type(JCas jcas, Type casType) {
+    super(jcas, casType);
+    casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl)this.casType, getFSGenerator());
+
+ 
+    casFeat_posTag = jcas.getRequiredFeatureDE(casType, "posTag", "uima.cas.String", featOkTst);
+    casFeatCode_posTag  = (null == casFeat_posTag) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_posTag).getCode();
+
+ 
+    casFeat_grammems = jcas.getRequiredFeatureDE(casType, "grammems", "uima.cas.StringArray", featOkTst);
+    casFeatCode_grammems  = (null == casFeat_grammems) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_grammems).getCode();
+
+ 
+    casFeat_lemma = jcas.getRequiredFeatureDE(casType, "lemma", "uima.cas.String", featOkTst);
+    casFeatCode_lemma  = (null == casFeat_lemma) ? JCa
