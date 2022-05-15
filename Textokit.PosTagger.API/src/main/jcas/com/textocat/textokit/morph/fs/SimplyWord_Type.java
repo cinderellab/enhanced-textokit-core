@@ -230,4 +230,19 @@ public class SimplyWord_Type extends Annotation_Type {
 
  
     casFeat_lemma = jcas.getRequiredFeatureDE(casType, "lemma", "uima.cas.String", featOkTst);
-    casFeatCode_lemma  = (null == casFeat_lemma) ? JCa
+    casFeatCode_lemma  = (null == casFeat_lemma) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_lemma).getCode();
+
+ 
+    casFeat_lemmaId = jcas.getRequiredFeatureDE(casType, "lemmaId", "uima.cas.Integer", featOkTst);
+    casFeatCode_lemmaId  = (null == casFeat_lemmaId) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_lemmaId).getCode();
+
+ 
+    casFeat_token = jcas.getRequiredFeatureDE(casType, "token", "com.textocat.textokit.tokenizer.fstype.Token", featOkTst);
+    casFeatCode_token  = (null == casFeat_token) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_token).getCode();
+
+  }
+}
+
+
+
+    
