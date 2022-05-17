@@ -16,4 +16,8 @@
         <capabilities/>
         <operationalProperties>
             <modifiesCas>true</modifiesCas>
-            <
+            <multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+            <outputsNewCASes>false</outputsNewCASes>
+        </operationalProperties>
+    </analysisEngineMetaData>
+</analysisEngineDescription>
