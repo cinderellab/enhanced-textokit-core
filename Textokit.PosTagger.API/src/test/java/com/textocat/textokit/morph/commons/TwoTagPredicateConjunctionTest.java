@@ -63,4 +63,46 @@ public class TwoTagPredicateConjunctionTest {
         when(predMock2.apply(bs1, bs2)).thenReturn(true);
         // use
         TwoTagPredicateConjunction conj = TwoTagPredicateConjunction.and(predMock1, predMock2);
-        Assert.a
+        Assert.assertEquals(true, conj.apply(bs1, bs2));
+        // verify that second predicate is also checked
+        verify(predMock2).apply(bs1, bs2);
+    }
+
+    @Test
+    public void test1False() {
+        // stub
+        TwoTagPredicate predMock1 = mock(TwoTagPredicate.class);
+        when(predMock1.apply(bs1, bs2)).thenReturn(false);
+        // use
+        TwoTagPredicateConjunction conj = TwoTagPredicateConjunction.and(predMock1);
+        Assert.assertEquals(false, conj.apply(bs1, bs2));
+    }
+
+    @Test
+    public void test2False() {
+        // stub
+        TwoTagPredicate predMock1 = mock(TwoTagPredicate.class);
+        when(predMock1.apply(bs1, bs2)).thenReturn(false);
+        TwoTagPredicate predMock2 = mock(TwoTagPredicate.class);
+        // short-circuit
+        when(predMock2.apply(any(BitSet.class), any(BitSet.class))).thenThrow(
+                new IllegalStateException());
+        // use
+        TwoTagPredicateConjunction conj = TwoTagPredicateConjunction.and(predMock1, predMock2);
+        Assert.assertEquals(false, conj.apply(bs1, bs2));
+    }
+
+    @Test
+    public void testTrueFalse() {
+        // stub
+        TwoTagPredicate predMock1 = mock(TwoTagPredicate.class);
+        when(predMock1.apply(bs1, bs2)).thenReturn(true);
+        TwoTagPredicate predMock2 = mock(TwoTagPredicate.class);
+        when(predMock2.apply(bs1, bs2)).thenReturn(false);
+        // use
+        TwoTagPredicateConjunction conj = TwoTagPredicateConjunction.and(predMock1, predMock2);
+        Assert.assertEquals(false, conj.apply(bs1, bs2));
+        // verify
+        verify(predMock2).apply(bs1, bs2);
+    }
+}
