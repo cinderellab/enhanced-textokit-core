@@ -79,4 +79,18 @@ public class DictionaryComplianceCheckerBootstrap {
                     XmiCollectionReader.PARAM_INPUTDIR, corpusDir.getPath());
         }
         //
-        Analys
+        AnalysisEngineDescription dcCheckerDesc = createEngineDescription(
+                DictionaryComplianceChecker.class,
+                DictionaryComplianceChecker.PARAM_OUT_FILE, outFile,
+                DictionaryComplianceChecker.PARAM_TARGET_POS_CATEGORIES, posCategories);
+        //
+        ExternalResourceDescription morphDictDesc = getMorphDictionaryAPI()
+                .getResourceDescriptionForCachedInstance();
+        ExternalResourceFactory.bindResource(dcCheckerDesc,
+                DictionaryComplianceChecker.RESOURCE_DICTIONARY, morphDictDesc);
+        // make AGGREGATE
+        AnalysisEngineDescription aggregateDesc = createEngineDescription(dcCheckerDesc);
+        //
+        SimplePipeline.runPipeline(colReaderDesc, aggregateDesc);
+    }
+}
