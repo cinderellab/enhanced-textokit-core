@@ -62,4 +62,27 @@
             <groupId>com.textocat.textokit.core</groupId>
             <artifactId>textokit-tokenizer-simple</artifactId>
             <scope>test</scope>
-        </depe
+        </dependency>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-sentence-splitter-heuristic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-morph-dictionary-opencorpora</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.textocat.textokit.core</groupId>
+            <artifactId>textokit-dictionary-opencorpora-resource</artifactId>
+            <classifier>rnc</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
