@@ -39,4 +39,12 @@ public class String2StringFeatureEncoder implements FeatureEncoder<String> {
             sb.append(feature.getName()).append(VALUE_DELIMITER);
         }
         sb.append(feature.getValue());
-        return 
+        return ImmutableList.of(sb.toString());
+    }
+
+    @Override
+    public boolean encodes(Feature feature) {
+        return feature.getValue() instanceof String;
+    }
+
+}
