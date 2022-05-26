@@ -25,4 +25,64 @@ import com.textocat.textokit.tokenizer.fstype.Token;
 import opennlp.tools.util.BeamSearchContextGenerator;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
-import org.cleartk.ml
+import org.cleartk.ml.Feature;
+import org.cleartk.ml.encoder.CleartkEncoderException;
+import org.cleartk.ml.encoder.features.FeatureEncoderChain;
+import org.cleartk.ml.feature.extractor.CleartkExtractor;
+import org.cleartk.ml.feature.extractor.FeatureExtractor1;
+
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author Rinat Gareev
+ */
+public class FeatureExtractorsBasedContextGenerator implements BeamSearchContextGenerator<Token> {
+
+    private final int prevTagsInHistory;
+    private List<FeatureExtractor1> featureExtractors;
+    private FeatureEncoderChain<String> featureEncoders = new DefaultFeatureToStringEncoderChain();
+    private Set<String> targetGramCategories;
+    private MorphDictionary morphDict;
+    //
+    private DictionaryBasedContextGenerator dictContextGen;
+
+    public FeatureExtractorsBasedContextGenerator(int prevTagsInHistory,
+                                                  List<FeatureExtractor1> featureExtractors,
+                                                  Iterable<String> targetGramCategories,
+                                                  MorphDictionary morphDict) {
+        this.prevTagsInHistory = prevTagsInHistory;
+        this.featureExtractors = ImmutableList.copyOf(featureExtractors);
+        this.targetGramCategories = Sets.newLinkedHashSet(targetGramCategories);
+        this.morphDict = morphDict;
+        if (this.morphDict != null) {
+            dictContextGen = new DictionaryBasedContextGenerator(targetGramCategories, morphDict);
+        }
+    }
+
+    public int getPrevTagsInHistory() {
+        return prevTagsInHistory;
+    }
+
+    public Iterable<String> getTargetGramCategories() {
+        return targetGramCategories;
+    }
+
+    public MorphDictionary getMorphDict() {
+        return morphDict;
+    }
+
+    @Override
+    public String[] getContext(int index, Token[] sequence, String[] priorDecisions,
+                               Object[] additionalContext) {
+        if (additionalContext == null || additionalContext.length < 1) {
+            throw sentenceExpected();
+        }
+        if (!(additionalContext[0] instanceof Annotation)) {
+            throw sentenceExpected();
+        }
+        Annotation sent = (Annotation) additionalContext[0];
+        // TODO cache features that does not dependent on prev tags
+        Token curToken = sequence[index];
+        List<Feature> features = Lists.newLinkedList();
+     
