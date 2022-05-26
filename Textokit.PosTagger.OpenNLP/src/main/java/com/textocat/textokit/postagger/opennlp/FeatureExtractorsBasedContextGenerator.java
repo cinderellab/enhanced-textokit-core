@@ -85,4 +85,39 @@ public class FeatureExtractorsBasedContextGenerator implements BeamSearchContext
         // TODO cache features that does not dependent on prev tags
         Token curToken = sequence[index];
         List<Feature> features = Lists.newLinkedList();
-     
+        try {
+            JCas jCas = curToken.getCAS().getJCas();
+            for (FeatureExtractor1 fe : featureExtractors) {
+                if (fe instanceof CleartkExtractor) {
+                    features.addAll(((CleartkExtractor) fe).extractBetween(jCas, curToken, sent));
+                } else {
+                    features.addAll(fe.extract(jCas, curToken));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        // encode
+        Set<String> contexts = Sets.newLinkedHashSetWithExpectedSize(
+                features.size() + prevTagsInHistory);
+        // TODO move to utils
+        for (Feature f : features) {
+            try {
+                contexts.addAll(featureEncoders.encode(f));
+            } catch (CleartkEncoderException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        ContextGeneratorUtils.addPreviousTags(index, priorDecisions, prevTagsInHistory, contexts);
+        if (dictContextGen != null) {
+            String prevTag = ContextGeneratorUtils.getPreviousTag(index, priorDecisions);
+            contexts.addAll(dictContextGen.extract(curToken, prevTag));
+        }
+        return contexts.toArray(new String[contexts.size()]);
+    }
+
+    private RuntimeException sentenceExpected() {
+        return new IllegalArgumentException(
+                "Sentence annotation is expected to be provided in 'additionalContext' arg");
+    }
+}
