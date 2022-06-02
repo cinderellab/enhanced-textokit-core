@@ -96,4 +96,32 @@ public class OpenNLPPosTaggerTrainer {
             throw new IllegalStateException("training parameters are not set");
         }
         if (sentenceStream == null) {
-            thro
+            throw new IllegalStateException("sentence stream is not configured");
+        }
+        if (taggerFactory == null) {
+            throw new IllegalStateException("tagger factory is not configured");
+        }
+        Map<String, String> manifestInfoEntries = new HashMap<>();
+        BeamSearchContextGenerator<Token> contextGenerator = taggerFactory.getContextGenerator();
+
+        MaxentModel posModel;
+        try {
+            if (TrainerFactory.TrainerType.EVENT_MODEL_TRAINER.equals(
+                    TrainerFactory.getTrainerType(trainParams.getSettings()))) {
+
+                ObjectStream<Event> es = new POSTokenEventStream<>(sentenceStream, contextGenerator);
+                EventTrainer trainer = TrainerFactory.getEventTrainer(trainParams.getSettings(), manifestInfoEntries);
+                posModel = trainer.train(es);
+            } else {
+                throw new UnsupportedOperationException("Sequence training");
+                //POSSampleSequenceStream ss = new POSSampleSequenceStream(samples, contextGenerator);
+                // posModel = TrainUtil.train(ss, trainParams.getSettings(), manifestInfoEntries);
+            }
+        } finally {
+            sentenceStream.close();
+        }
+        POSModel modelAggregate = new POSModel(languageCode,
+                posModel, manifestInfoEntries, taggerFactory);
+        CmdLineUtil.writeModel("PoS-tagger", modelOutFile, modelAggregate);
+    }
+}
