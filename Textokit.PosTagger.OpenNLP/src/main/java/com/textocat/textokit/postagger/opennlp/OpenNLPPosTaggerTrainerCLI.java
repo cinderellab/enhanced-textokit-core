@@ -78,4 +78,49 @@ public class OpenNLPPosTaggerTrainerCLI {
         }
         // feature extractors
         {
-            FileInputStream fis = FileUtils
+            FileInputStream fis = FileUtils.openInputStream(cli.extractorParams);
+            Properties props = new Properties();
+            try {
+                props.load(fis);
+            } finally {
+                IOUtils.closeQuietly(fis);
+            }
+            MorphDictionary morphDict = getMorphDictionaryAPI().getCachedInstance().getResource();
+            trainer.setTaggerFactory(new POSTaggerFactory(DefaultFeatureExtractors.from(props, morphDict)));
+        }
+        // input sentence stream
+        {
+            ExternalResourceDescription morphDictDesc = getMorphDictionaryAPI()
+                    .getResourceDescriptionForCachedInstance();
+            TypeSystemDescription tsd = createTypeSystemDescription(
+                    "com.textocat.textokit.commons.Commons-TypeSystem",
+                    TokenizerAPI.TYPESYSTEM_TOKENIZER,
+                    SentenceSplitterAPI.TYPESYSTEM_SENTENCES,
+                    PosTaggerAPI.TYPESYSTEM_POSTAGGER);
+            CollectionReaderDescription colReaderDesc = CollectionReaderFactory.createReaderDescription(
+                    XmiCollectionReader.class, tsd,
+                    XmiCollectionReader.PARAM_INPUTDIR, cli.trainingXmiDir);
+            AnalysisEngineDescription posTrimmerDesc = PosTrimmingAnnotator.createDescription(
+                    cli.gramCategories.toArray(new String[cli.gramCategories.size()]));
+            bindExternalResource(posTrimmerDesc,
+                    PosTrimmingAnnotator.RESOURCE_GRAM_MODEL, morphDictDesc);
+            AnalysisEngineDescription tagAssemblerDesc = TagAssembler.createDescription();
+            bindExternalResource(tagAssemblerDesc,
+                    GramModelBasedTagMapper.RESOURCE_GRAM_MODEL, morphDictDesc);
+            AnalysisEngineDescription aeDesc = createEngineDescription(
+                    posTrimmerDesc, tagAssemblerDesc);
+            Iterator<Sentence> sentIter = AnnotationIteratorOverCollection.createIterator(
+                    Sentence.class, colReaderDesc, aeDesc);
+            SpanStreamOverCollection<Sentence> sentStream = new SpanStreamOverCollection<Sentence>(
+                    sentIter);
+            trainer.setSentenceStream(sentStream);
+        }
+        trainer.train();
+    }
+
+    @Parameter(names = "-l")
+    private String languageCode = "RU";
+    @Parameter(names = {"-o", "--output-file"}, required = true)
+    private File modelOutFile;
+    @Parameter(names = "--train-params", required = true)
+    private
