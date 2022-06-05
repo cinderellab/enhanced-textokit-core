@@ -43,4 +43,28 @@ public class PackageModelZipAsArtifact {
             System.err.println(inputZipPath + " is not an existing file.");
             System.exit(1);
         }
-        POSModelJarManifestBean manifestBean = new POSModelJarMani
+        POSModelJarManifestBean manifestBean = new POSModelJarManifestBean(cli.languageCode, cli.modelVariant);
+        Path outputJarPath = inputZipPath.resolveSibling(
+                FilenameUtils.getBaseName(inputZipPath.getFileName().toString()) + ".jar");
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(outputJarPath))) {
+            JarOutputStream jout = new JarOutputStream(out, manifestBean.toManifest());
+            jout.putNextEntry(new ZipEntry(
+                    ClasspathPOSModelHolder.getClassPath(
+                            manifestBean.getLanguageCode(),
+                            manifestBean.getModelVariant())));
+            FileUtils.copyFile(inputZipPath.toFile(), jout);
+            jout.closeEntry();
+            jout.close();
+        }
+    }
+
+    private PackageModelZipAsArtifact() {
+    }
+
+    @Parameter(names = "-i", required = true)
+    private String inputZipPathStr;
+    @Parameter(names = "--model-lang-code", required = true)
+    private String languageCode;
+    @Parameter(names = "--model-variant", required = true)
+    private String modelVariant;
+}
