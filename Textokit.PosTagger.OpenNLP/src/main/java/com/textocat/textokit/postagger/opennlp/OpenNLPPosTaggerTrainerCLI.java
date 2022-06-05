@@ -123,4 +123,15 @@ public class OpenNLPPosTaggerTrainerCLI {
     @Parameter(names = {"-o", "--output-file"}, required = true)
     private File modelOutFile;
     @Parameter(names = "--train-params", required = true)
-    private
+    private File trainParamsFile;
+    @Parameter(names = "--extractor-params", required = true)
+    private File extractorParams;
+    // input PoS-stream config fields
+    @Parameter(names = "--gram-categories", required = true)
+    private List<String> gramCategories;
+    @Parameter(names = {"-c", "--corpus-dir"}, required = true)
+    private File trainingXmiDir;
+
+    private OpenNLPPosTaggerTrainerCLI() {
+    }
+}
