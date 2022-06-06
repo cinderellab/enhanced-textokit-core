@@ -44,4 +44,14 @@ public class SpanStreamOverCollection<ST extends Annotation> implements ObjectSt
 
     @Override
     public void reset() throws IOException, UnsupportedOperationException {
-        throw new Unsupp
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (spanIter instanceof Closeable) {
+            ((Closeable) spanIter).close();
+        }
+    }
+
+}
