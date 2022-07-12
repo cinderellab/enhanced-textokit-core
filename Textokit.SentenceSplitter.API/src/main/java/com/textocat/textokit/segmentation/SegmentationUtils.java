@@ -41,4 +41,25 @@ public class SegmentationUtils {
 
     public static boolean isRightQuoted(Token token) {
         Token tokenAfter = getTokenAfter(token);
-        return tokenAfter != nu
+        return tokenAfter != null && isRightQM(tokenAfter);
+    }
+
+    public static boolean isLeftQM(AnnotationFS anno) {
+        String chars = anno.getCoveredText();
+        return undirectedQMs.contains(chars) || leftQMs.contains(chars);
+    }
+
+    public static boolean isRightQM(AnnotationFS anno) {
+        String chars = anno.getCoveredText();
+        return undirectedQMs.contains(chars) || rightQMs.contains(chars);
+    }
+
+    private SegmentationUtils() {
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Undirected:\n" + undirectedQMs);
+        System.out.println("Left:\n" + leftQMs);
+        System.out.println("Right:\n" + rightQMs);
+    }
+}
