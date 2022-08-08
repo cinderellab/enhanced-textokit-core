@@ -111,4 +111,37 @@ public class Sentence extends Annotation {
      */
     public void setFirstToken(TokenBase v) {
         if (Sentence_Type.featOkTst && ((Sentence_Type) jcasType).casFeat_firstToken == null)
-            jcasType.jcas.throwFeatMissing("firstToken", "com.text
+            jcasType.jcas.throwFeatMissing("firstToken", "com.textocat.textokit.segmentation.fstype.Sentence");
+        jcasType.ll_cas.ll_setRefValue(addr, ((Sentence_Type) jcasType).casFeatCode_firstToken, jcasType.ll_cas.ll_getFSRef(v));
+    }
+
+
+    //*--------------*
+    //* Feature: lastToken
+
+    /**
+     * getter for lastToken - gets the last token of a sentence
+     *
+     * @return value of the feature
+     * @generated
+     */
+    public TokenBase getLastToken() {
+        if (Sentence_Type.featOkTst && ((Sentence_Type) jcasType).casFeat_lastToken == null)
+            jcasType.jcas.throwFeatMissing("lastToken", "com.textocat.textokit.segmentation.fstype.Sentence");
+        return (TokenBase) (jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type) jcasType).casFeatCode_lastToken)));
+    }
+
+    /**
+     * setter for lastToken - sets the last token of a sentence
+     *
+     * @param v value to set into the feature
+     * @generated
+     */
+    public void setLastToken(TokenBase v) {
+        if (Sentence_Type.featOkTst && ((Sentence_Type) jcasType).casFeat_lastToken == null)
+            jcasType.jcas.throwFeatMissing("lastToken", "com.textocat.textokit.segmentation.fstype.Sentence");
+        jcasType.ll_cas.ll_setRefValue(addr, ((Sentence_Type) jcasType).casFeatCode_lastToken, jcasType.ll_cas.ll_getFSRef(v));
+    }
+}
+
+    
