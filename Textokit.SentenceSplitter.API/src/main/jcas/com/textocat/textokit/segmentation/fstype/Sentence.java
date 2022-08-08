@@ -25,4 +25,90 @@ public class Sentence extends Annotation {
      * @generated
      * @ordered
      */
-    @SuppressWarn
+    @SuppressWarnings("hiding")
+    public final static int type = typeIndexID;
+
+    /**
+     * @return index of the type
+     * @generated
+     */
+    @Override
+    public int getTypeIndexID() {
+        return typeIndexID;
+    }
+
+    /**
+     * Never called.  Disable default constructor
+     *
+     * @generated
+     */
+    protected Sentence() {/* intentionally empty block */}
+
+    /**
+     * Internal - constructor used by generator
+     *
+     * @param addr low level Feature Structure reference
+     * @param type the type of this Feature Structure
+     * @generated
+     */
+    public Sentence(int addr, TOP_Type type) {
+        super(addr, type);
+        readObject();
+    }
+
+    /**
+     * @param jcas JCas to which this Feature Structure belongs
+     * @generated
+     */
+    public Sentence(JCas jcas) {
+        super(jcas);
+        readObject();
+    }
+
+    /**
+     * @param jcas  JCas to which this Feature Structure belongs
+     * @param begin offset to the begin spot in the SofA
+     * @param end   offset to the end spot in the SofA
+     * @generated
+     */
+    public Sentence(JCas jcas, int begin, int end) {
+        super(jcas);
+        setBegin(begin);
+        setEnd(end);
+        readObject();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * Write your own initialization here
+     * <!-- end-user-doc -->
+     *
+     * @generated modifiable
+     */
+    private void readObject() {/*default - does nothing empty block */}
+
+
+    //*--------------*
+    //* Feature: firstToken
+
+    /**
+     * getter for firstToken - gets the first token of a sentence
+     *
+     * @return value of the feature
+     * @generated
+     */
+    public TokenBase getFirstToken() {
+        if (Sentence_Type.featOkTst && ((Sentence_Type) jcasType).casFeat_firstToken == null)
+            jcasType.jcas.throwFeatMissing("firstToken", "com.textocat.textokit.segmentation.fstype.Sentence");
+        return (TokenBase) (jcasType.ll_cas.ll_getFSForRef(jcasType.ll_cas.ll_getRefValue(addr, ((Sentence_Type) jcasType).casFeatCode_firstToken)));
+    }
+
+    /**
+     * setter for firstToken - sets the first token of a sentence
+     *
+     * @param v value to set into the feature
+     * @generated
+     */
+    public void setFirstToken(TokenBase v) {
+        if (Sentence_Type.featOkTst && ((Sentence_Type) jcasType).casFeat_firstToken == null)
+            jcasType.jcas.throwFeatMissing("firstToken", "com.text
