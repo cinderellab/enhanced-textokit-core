@@ -22,4 +22,37 @@ import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.FSIterator;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.AnnotationFactory;
+import org.apache.uima.jcas.JCas;
+import org.apache.uima.resource.ResourceInitializationException;
+
+/**
+ * This annotator always make a single {@link com.textocat.textokit.segmentation.fstype.Sentence} covering
+ * a whole document text.
+ *
+ * @author Rinat Gareev
+ */
+public class SingleSentenceAnnotator extends JCasAnnotator_ImplBase {
+
+    public static AnalysisEngineDescription createDescription() throws ResourceInitializationException {
+        return AnalysisEngineFactory.createEngineDescription(SingleSentenceAnnotator.class,
+                SentenceSplitterAPI.getTypeSystemDescription());
+    }
+
+    @Override
+    public void process(JCas jCas) throws AnalysisEngineProcessException {
+        Sentence sent = AnnotationFactory.createAnnotation(jCas, 0, jCas.getDocumentText().length(), Sentence.class);
+        FSIterator<Token> tokenIter = jCas.getAnnotationIndex(Token.class).iterator();
+        Token firstToken = null;
+        Token lastToken = null;
+        tokenIter.moveToFirst();
+        if (tokenIter.isValid()) {
+            firstToken = tokenIter.get();
+            tokenIter.moveToLast();
+            lastToken = tokenIter.get();
+        }
+        sent.setFirstToken(firstToken);
+        sent.setLastToken(lastToken);
+    }
+}
