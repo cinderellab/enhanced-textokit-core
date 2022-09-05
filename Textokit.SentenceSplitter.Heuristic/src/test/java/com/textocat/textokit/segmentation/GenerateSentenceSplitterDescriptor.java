@@ -16,7 +16,7 @@
 
 package com.textocat.textokit.segmentation;
 
-import com.textocat.textokit.segmentation.heur.ParagraphSplitter;
+import com.textocat.textokit.segmentation.heur.SentenceSplitter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.uima.UIMAException;
@@ -33,17 +33,10 @@ import static org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDesc
 /**
  * @author Rinat Gareev
  */
-public class GenerateParagraphSplitterDescriptor {
+public class GenerateSentenceSplitterDescriptor {
 
     public static void main(String[] args) throws UIMAException, IOException, SAXException {
-        String outputPath = "src/main/resources/" + ParagraphSplitter.class.getName().replace('.', '/') + ".xml";
+        String outputPath = "src/main/resources/" + SentenceSplitterAPI.AE_SENTENCE_SPLITTER.replace('.', '/') + ".xml";
         TypeSystemDescription tsDesc = SentenceSplitterAPI.getTypeSystemDescription();
-        AnalysisEngineDescription desc = createEngineDescription(ParagraphSplitter.class, tsDesc);
-        FileOutputStream out = FileUtils.openOutputStream(new File(outputPath));
-        try {
-            desc.toXML(out);
-        } finally {
-            IOUtils.closeQuietly(out);
-        }
-    }
-}
+        AnalysisEngineDescription desc = createEngineDescription(SentenceSplitter.class, tsDesc);
+        FileOutputStream out = FileUtils.openOutput
