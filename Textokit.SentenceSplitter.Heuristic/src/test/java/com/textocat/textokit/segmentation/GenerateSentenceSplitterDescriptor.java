@@ -39,4 +39,11 @@ public class GenerateSentenceSplitterDescriptor {
         String outputPath = "src/main/resources/" + SentenceSplitterAPI.AE_SENTENCE_SPLITTER.replace('.', '/') + ".xml";
         TypeSystemDescription tsDesc = SentenceSplitterAPI.getTypeSystemDescription();
         AnalysisEngineDescription desc = createEngineDescription(SentenceSplitter.class, tsDesc);
-        FileOutputStream out = FileUtils.openOutput
+        FileOutputStream out = FileUtils.openOutputStream(new File(outputPath));
+        try {
+            desc.toXML(out);
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+    }
+}
