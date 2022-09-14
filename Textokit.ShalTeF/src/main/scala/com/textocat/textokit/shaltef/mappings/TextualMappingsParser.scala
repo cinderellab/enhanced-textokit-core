@@ -83,4 +83,72 @@ private[mappings] class TextualMappingsParser(config: MappingsParserConfig) exte
     private def slotMapping: Parser[SlotMapping] =
       slotPattern ~ slotMappingOptionality ~ (templateFeatureName | templateFeatureStub) ^^ {
         case pattern ~ optionality ~ slotFeatureOpt =>
-         
+          SlotMapping(pattern, optionality, slotFeatureOpt)
+      }
+
+    private def slotMappingOptionality: Parser[Boolean] = ("=>" | "?=>") ^^ {
+      case "=>" => false
+      case "?=>" => true
+    }
+
+    private def templateFeatureName: Parser[Option[Feature]] = ident ^?( {
+      case featName if templateType.getFeatureByBaseName(featName) != null =>
+        Some(templateType.getFeatureByBaseName(featName))
+    }, "Type %s does not have feature '%s'".format(templateType, _))
+
+    private def templateFeatureStub: Parser[Option[Feature]] = "_" ^^ { _ => None }
+
+    private def slotPattern = rep1sep(slotConstraint, "&") ^^ {
+      new ConstraintConjunctionPhrasePattern(_)
+    }
+
+    private def slotConstraint = slotConstraintBinOp | slotConstraintUnOp
+
+    private def slotConstraintBinOp = constraintTarget ~ constraintBinOp ~ constraintValue ^^ {
+      case target ~ op ~ value => constraintFactory.phraseConstraint(target, op, value)
+    }
+
+    private def slotConstraintUnOp = unOpConstraint(headPathOp, constantMatrix)
+
+    import constraintTargetFactory._
+    import constraintValueFactory._
+
+    private def constraintTarget: Parser[ConstraintTarget] = rep1sep(ident, ".") ^?( {
+      case List("head", gramCat) => headFeature(gramCat)
+      case List("prep") => prepositionTarget
+    }, "Unknown constraint target: %s".format(_))
+
+    private def constraintBinOp: Parser[BinaryConstraintOperator] =
+      "=" ^^ { _ => Equals }
+
+    private def unOpConstraint(
+                                unOpParser: Parser[UnaryConstraintOperator],
+                                valueParser: Parser[ConstraintValue]): Parser[PhraseConstraint] =
+      (unOpParser <~ "(") ~ valueParser <~ ")" ^^ {
+        case unOp ~ value => constraintFactory.phraseConstraint(unOp, value)
+      }
+
+    private def headPathOp: Parser[UnaryConstraintOperator] = "headPath" ^^ {
+      _ => HasHeadsPath
+    }
+
+    private def constraintValue: Parser[ConstraintValue] = (constantValue
+      | triggerValueRef
+      | constantList
+      | constantMatrix)
+
+    private def constantValue = constantParser ^^ {
+      str => constant(str)
+    }
+
+    private def constantParser = stringLiteral ^^ {
+      str => str.substring(1, str.length() - 1)
+    }
+
+    private def triggerValueRef = "$trigger." ~> ident ^^ triggerFeatureReference
+
+    private def constantList = rep1sep(constantParser, ",") ^^ {
+      constantCollection(_)
+    }
+
+    private def constantMatrix = r
