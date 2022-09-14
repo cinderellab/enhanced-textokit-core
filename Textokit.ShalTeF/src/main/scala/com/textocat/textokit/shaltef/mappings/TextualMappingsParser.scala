@@ -21,4 +21,66 @@ import java.net.URL
 
 import com.textocat.textokit.shaltef.mappings.impl.DefaultDepToArgMapping
 import com.textocat.textokit.shaltef.mappings.pattern._
-impo
+import org.apache.uima.cas.{Feature, Type}
+
+import scala.collection.JavaConversions.iterableAsScalaIterable
+import scala.util.parsing.combinator.JavaTokenParsers
+
+/**
+ * @author Rinat Gareev
+ */
+private[mappings] class TextualMappingsParser(config: MappingsParserConfig) extends MappingsParser {
+
+  import config._
+
+  override def parse(url: URL, templateAnnoType: Type, mappingsHolder: DepToArgMappingsBuilder) {
+    val is = url.openStream()
+    val reader = new BufferedReader(new InputStreamReader(is, "utf-8"))
+    try {
+      val mappings = new DocParsers(templateAnnoType, url).parseDoc(reader)
+      mappings.foreach(mappingsHolder.add)
+    } finally {
+      reader.close()
+    }
+  }
+
+  private class DocParsers(templateType: Type, url: URL) extends JavaTokenParsers {
+    def parseDoc(reader: Reader): List[DepToArgMapping] = parseAll(mappingsDoc, reader) match {
+      case Success(mappings, _) => mappings
+      case NoSuccess(msg, remainingInput) => throw new IllegalStateException(
+        "Unsuccessful parsing of %s at line %s & column %s:\n%s".format(
+          url, remainingInput.pos.line, remainingInput.pos.column, msg))
+    }
+
+    private def mappingsDoc: Parser[List[DepToArgMapping]] =
+      rep(rep(comment) ~> mappingDecl <~ rep(comment))
+
+    private def comment: Parser[String] = """#[^\n]*""".r
+
+    private def mappingDecl: Parser[DepToArgMapping] = triggerDecl ~ rep1(slotMapping) ^^ {
+      case lemmaIdSet ~ slotMappings => new DefaultDepToArgMapping(templateType,
+        lemmaIdSet, slotMappings)
+    }
+
+    private def triggerDecl = "[" ~> triggerConstraint <~ "]"
+
+    private def triggerConstraint = "lemma(" ~> rep1sep(identifiedWordformLiteral, ",") <~ ")" ^^ {
+      _.toSet.flatten
+    }
+
+    private def identifiedWordformLiteral = stringLiteral ^? {
+      case strLiteral =>
+        val str = strLiteral.substring(1, strLiteral.length - 1)
+        val lemmaIdSet = morphDict.getEntries(str) match {
+          case null => Set.empty[Int]
+          case wfSet => wfSet.filter(_.getLemmaId >= 0).map(_.getLemmaId).toSet
+        }
+        if (lemmaIdSet.isEmpty)
+          throw new IllegalArgumentException("Can't find lemmaId for word '%s'".format(str))
+        else lemmaIdSet
+    }
+
+    private def slotMapping: Parser[SlotMapping] =
+      slotPattern ~ slotMappingOptionality ~ (templateFeatureName | templateFeatureStub) ^^ {
+        case pattern ~ optionality ~ slotFeatureOpt =>
+         
