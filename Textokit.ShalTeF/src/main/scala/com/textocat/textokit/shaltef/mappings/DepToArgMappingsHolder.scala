@@ -16,22 +16,28 @@
 
 package com.textocat.textokit.shaltef.mappings
 
-import com.textocat.textokit.shaltef.mappings.pattern.PhrasePattern
-import org.apache.commons.lang3.builder.{HashCodeBuilder, ToStringBuilder, ToStringStyle}
-import org.apache.uima.cas.{Feature, Type}
-
-import scala.collection.immutable.Iterable
+import com.textocat.textokit.morph.fs.Wordform
+import com.textocat.textokit.shaltef.mappings.impl.DefaultDepToArgMappingsBuilder
 
 /**
  * @author Rinat Gareev
  */
-trait DepToArgMapping {
+trait DepToArgMappingsHolder {
 
-  val triggerLemmaIds: Set[Int]
+  def containsTriggerLemma(lemmaId: Int): Boolean
 
-  val templateAnnoType: Type
-
-  val slotMappings: Iterable[SlotMapping]
+  def getMappingsTriggeredBy(wf: Wordform): Iterable[DepToArgMapping]
 }
 
-case class SlotMapping(pattern: PhrasePattern, isOptional: Boolean, slotFeatureOpt: Option[Feature])
+trait DepToArgMappingsBuilder {
+
+  def add(mp: DepToArgMapping)
+
+  /**
+   * Return defensive copy of current mapping collection
+   */
+  def getMappings(): Iterable[DepToArgMapping]
+
+  def replace(old: DepToArgMapping, newMp: DepToArgMapping)
+
+  def build(): De
