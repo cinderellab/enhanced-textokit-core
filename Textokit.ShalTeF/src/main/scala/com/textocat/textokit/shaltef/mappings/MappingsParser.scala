@@ -16,34 +16,22 @@
 
 package com.textocat.textokit.shaltef.mappings
 
-import com.textocat.textokit.morph.fs.Wordform
-import com.textocat.textokit.shaltef.mappings.impl.DefaultDepToArgMappingsBuilder
+import java.net.URL
+
+import com.textocat.textokit.morph.dictionary.resource.MorphDictionary
+import com.textocat.textokit.shaltef.mappings.pattern.{ConstraintTargetFactory, ConstraintValueFactory, PhraseConstraintFactory}
+import org.apache.uima.cas.Type
 
 /**
  * @author Rinat Gareev
  */
-trait DepToArgMappingsHolder {
-
-  def containsTriggerLemma(lemmaId: Int): Boolean
-
-  def getMappingsTriggeredBy(wf: Wordform): Iterable[DepToArgMapping]
+trait MappingsParser {
+  def parse(url: URL, templateAnnoType: Type, mappingsHolder: DepToArgMappingsBuilder)
 }
 
-trait DepToArgMappingsBuilder {
-
-  def add(mp: DepToArgMapping)
-
-  /**
-   * Return defensive copy of current mapping collection
-   */
-  def getMappings(): Iterable[DepToArgMapping]
-
-  def replace(old: DepToArgMapping, newMp: DepToArgMapping)
-
-  def build(): DepToArgMappingsHolder
-
-}
-
-object DepToArgMappingsBuilder {
-  def apply(): DepToArgMappingsBuilder = new DefaultDepToArgMappingsBuilder
+class MappingsParserConfig(val morphDict: MorphDictionary) {
+  val gramModel = morphDict.getGramModel
+  val constraintValueFactory = new ConstraintValueFactory(gramModel)
+  val constraintTargetFactory = new ConstraintTargetFactory(gramModel)
+  val constraintFactory = new PhraseConstraintFactory
 }
