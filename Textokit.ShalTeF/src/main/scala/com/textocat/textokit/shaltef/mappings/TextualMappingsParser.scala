@@ -151,4 +151,13 @@ private[mappings] class TextualMappingsParser(config: MappingsParserConfig) exte
       constantCollection(_)
     }
 
-    private def constantMatrix = r
+    private def constantMatrix = rep1sep(rep1sep(constantParser, ","), "|") ^^ {
+      listList => constraintValueFactory.constantCollectionAlternatives(listList.toSet)
+    }
+  }
+
+}
+
+object TextualMappingsParser {
+  def apply(config: MappingsParserConfig): MappingsParser = new TextualMappingsParser(config)
+}
