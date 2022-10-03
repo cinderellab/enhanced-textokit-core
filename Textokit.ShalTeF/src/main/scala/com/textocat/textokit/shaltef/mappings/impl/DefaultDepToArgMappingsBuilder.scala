@@ -79,3 +79,13 @@ private[mappings] class DefaultDepToArgMappingsBuilder extends DepToArgMappingsB
         .toMap)
 }
 
+private[mappings] class DefaultDepToArgMappingsHolder(
+                                                       val triggerLemmaId2Mappings: Map[Int, List[DepToArgMapping]])
+  extends DepToArgMappingsHolder {
+
+  def containsTriggerLemma(lemmaId: Int): Boolean =
+    triggerLemmaId2Mappings.contains(lemmaId)
+
+  def getMappingsTriggeredBy(wf: Wordform): Iterable[DepToArgMapping] =
+    triggerLemmaId2Mappings.getOrElse(wf.getLemmaId(), Nil)
+}
