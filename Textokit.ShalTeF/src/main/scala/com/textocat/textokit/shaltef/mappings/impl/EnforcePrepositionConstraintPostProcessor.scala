@@ -56,4 +56,17 @@ with StrictLogging {
     p match {
       case conj: ConstraintConjunctionPhrasePattern =>
         if (conj.constraints.exists(isPrepositionConstraint))
-          con
+          conj
+        else
+          new ConstraintConjunctionPhrasePattern(phraseConstraint(
+            prepositionTarget, Equals, constant(null))
+            :: conj.constraints.toList)
+      case _ => throw new UnsupportedOperationException("Can't post-process pattern: %s".format(p))
+    }
+
+  private def isPrepositionConstraint(pc: PhraseConstraint) =
+    pc match {
+      case BinOpPhraseConstraint(target, _, _) => target == PrepositionTarget
+      case _ => false
+    }
+}
