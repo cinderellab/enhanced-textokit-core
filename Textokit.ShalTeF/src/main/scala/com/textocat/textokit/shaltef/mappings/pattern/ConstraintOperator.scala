@@ -38,4 +38,24 @@ case object Equals extends BinaryConstraintOperator {
 }
 
 case object HasHeadsPath extends UnaryConstraintOperator {
-  def apply(phr: Phrase, a
+  def apply(phr: Phrase, arg: Any): Boolean =
+    arg match {
+      case paths: Set[Iterable[String]] => paths.exists(apply(phr, _))
+      case path: Iterable[String] => matches(phr, path.toList)
+      case u => throw new IllegalStateException("Can't apply HasHeadsPath to arg %s".format(u))
+    }
+
+  private def matches(phr: Phrase, expectedHeads: List[String]): Boolean =
+    if (expectedHeads.isEmpty) true
+    else if (phr == null) false
+    else if (getHeadLemma(phr) == expectedHeads.head) {
+      val depPhrases = fsArrayToTraversable(phr.getDependentPhrases, classOf[Phrase])
+      if (depPhrases.isEmpty) matches(null, expectedHeads.tail)
+      else depPhrases.exists(matches(_, expectedHeads.tail))
+    } else false
+
+  private def getHeadLemma(phr: Phrase): String = phr.getHead.getLemma match {
+    case null => phr.getHead.getWord.getCoveredText
+    case str => str
+  }
+}
