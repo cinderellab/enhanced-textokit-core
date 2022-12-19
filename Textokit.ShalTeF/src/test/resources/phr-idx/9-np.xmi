@@ -64,4 +64,10 @@
     <fs:Wordform xmi:id="323" lemmaId="0" word="317"/>
     <fs:Wordform xmi:id="343" lemmaId="0" word="337"/>
     <fs:Wordform xmi:id="363" lemmaId="0" word="357"/>
-   
+    <fs:Wordform xmi:id="383" lemmaId="0" word="377"/>
+    <cas2:NounPhrase xmi:id="408" sofa="1" begin="16" end="26" head="63" dependentPhrases="399"/>
+    <cas2:NounPhrase xmi:id="399" sofa="1" begin="27" end="31" head="83"/>
+    <cas2:NounPhrase xmi:id="456" sofa="1" begin="77" end="85" head="243" dependentWords="223"/>
+    <cas2:NounPhrase xmi:id="468" sofa="1" begin="88" end="94" head="283"/>
+    <cas:View sofa="1" members="8 13 33 53 73 93 113 133 153 173 193 213 233 253 273 293 313 333 353 373 17 37 57 77 97 117 137 157 177 197 217 237 257 277 297 317 337 357 377 393 420 435 444 477 490"/>
+</xmi:XMI>
