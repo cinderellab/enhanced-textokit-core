@@ -52,4 +52,13 @@
     <fs:Wordform xmi:id="183" lemmaId="0" word="177"/>
     <fs:Wordform xmi:id="203" lemmaId="0" word="197"/>
     <fs:Wordform xmi:id="223" lemmaId="0" word="217"/>
-    <fs:Wordform 
+    <fs:Wordform xmi:id="243" lemmaId="0" word="237"/>
+    <fs:Wordform xmi:id="263" lemmaId="0" word="257"/>
+    <fs:Wordform xmi:id="283" lemmaId="0" word="277"/>
+    <fs:Wordform xmi:id="303" lemmaId="0" word="297"/>
+    <fs:Wordform xmi:id="323" lemmaId="0" word="317"/>
+    <fs:Wordform xmi:id="343" lemmaId="0" word="337"/>
+    <fs:Wordform xmi:id="363" lemmaId="0" word="357"/>
+    <fs:Wordform xmi:id="383" lemmaId="0" word="377"/>
+    <cas:View sofa="1" members="8 13 33 53 73 93 113 133 153 173 193 213 233 253 273 293 313 333 353 373 17 37 57 77 97 117 137 157 177 197 217 237 257 277 297 317 337 357 377 393"/>
+</xmi:XMI>
