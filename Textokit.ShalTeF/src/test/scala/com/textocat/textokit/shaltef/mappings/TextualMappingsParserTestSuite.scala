@@ -90,4 +90,32 @@ class TextualMappingsParserTestSuite extends FunSuite with MockitoSugar with Cas
     assert(mappings.triggerLemmaId2Mappings(100) === new DefaultDepToArgMapping(
       templateAnnoType, Set(100),
       SlotMapping(pattern1, false, Some(subjFeat)) ::
-       
+        SlotMapping(pattern2, false, Some(objFeat)) ::
+        SlotMapping(pattern3, true, Some(dateFeat)) :: Nil)
+      :: Nil)
+
+    val pattern4 = new ConstraintConjunctionPhrasePattern(
+      phraseConstraint(headFeature("case"), Equals, constant("nomn")) ::
+        phraseConstraint(headFeature("gndr"), Equals, triggerFeatureReference("gndr")) :: Nil)
+    val pattern5 = new ConstraintConjunctionPhrasePattern(
+      phraseConstraint(prepositionTarget, Equals, constant("в")) ::
+        phraseConstraint(HasHeadsPath, constantCollectionAlternatives(
+          Set(List("год"))))
+        :: Nil)
+    val pattern6 = new ConstraintConjunctionPhrasePattern(
+      phraseConstraint(HasHeadsPath, constantCollectionAlternatives(
+        Set(List("пресс-релиз"), List("сообщение", "сайт"))))
+        :: Nil)
+    val pattern7 = new ConstraintConjunctionPhrasePattern(
+      phraseConstraint(prepositionTarget, Equals, constant("на"))
+        :: Nil)
+    assert(mappings.triggerLemmaId2Mappings(200) === new DefaultDepToArgMapping(
+      templateAnnoType, Set(200),
+      SlotMapping(pattern4, false, Some(objFeat)) ::
+        SlotMapping(pattern5, false, Some(dateFeat)) ::
+        SlotMapping(pattern6, false, Some(subjFeat)) ::
+        SlotMapping(pattern7, false, None) :: Nil)
+      :: Nil)
+  }
+
+}
