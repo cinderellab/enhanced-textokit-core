@@ -85,4 +85,16 @@ class EnforcePrepositionConstraintPostProcessorTestSuite extends FunSuite with M
     val pattern1Fixed = new ConstraintConjunctionPhrasePattern(
       phraseConstraint(prepositionTarget, Equals, constant(null)) ::
         phraseConstraint(headFeature("someGr"), Equals, constant("someGrValue")) :: Nil)
-    assert(rmIter.next() === new DefaultDepToArgMapping(type
+    assert(rmIter.next() === new DefaultDepToArgMapping(type1, Set(1, 3, 5),
+      SlotMapping(pattern1Fixed, false, Some(feat1)) :: SlotMapping(pattern2, false, None) :: Nil))
+
+    val pattern3Fixed = new ConstraintConjunctionPhrasePattern(
+      phraseConstraint(prepositionTarget, Equals, constant(null)) ::
+        phraseConstraint(HasHeadsPath, constantCollectionAlternatives(
+          Set(List("oneHead"), List("anotherHead")))) :: Nil)
+
+    assert(rmIter.next() === new DefaultDepToArgMapping(type2, Set(2, 4, 5),
+      SlotMapping(pattern3Fixed, false, Some(feat2)) :: Nil))
+  }
+
+}
