@@ -46,3 +46,8 @@ class PhrasePatternTestSuite extends FunSuite with MockitoSugar {
     when(pc3.matches(np1, ctx)).thenReturn(true)
 
     assert(!new ConstraintConjunctionPhrasePattern(pc1 :: pc2 :: pc3 :: Nil).matches(np1, ctx))
+    assert(new ConstraintConjunctionPhrasePattern(pc1 :: pc3 :: Nil).matches(np1, ctx))
+    assert(new ConstraintConjunctionPhrasePattern(pc3 :: Nil).matches(np1, ctx))
+  }
+
+}
