@@ -95,4 +95,54 @@ class NprCasBuilder(val text: String, additionalTypeSystemNames: List[String]) {
     if (depWordIds.nonEmpty)
       npAnno.setDependentWords(createFSArray(jCas, depWordIds.map(w)))
     if (depNPs.nonEmpty)
-      npAnno.setDependentPhrases(createFSArray(jCas, de
+      npAnno.setDependentPhrases(createFSArray(jCas, depNPs))
+    if (index)
+      npAnno.addToIndexes()
+    npAnno
+  }
+
+  def sent(begin: Int, end: Int): Sentence = {
+    val sentAnno = new Sentence(jCas)
+    sentAnno.setBegin(begin)
+    sentAnno.setEnd(end)
+    sentAnno.addToIndexes()
+    sentAnno
+  }
+
+  def serialize(outPath: String) {
+    val os = new BufferedOutputStream(new FileOutputStream(outPath))
+    try {
+      XmiCasSerializer.serialize(cas, null, os, true, null)
+    } finally {
+      os.close()
+    }
+  }
+
+  implicit def wf2GrammemeBuilder(wf: Wordform): GrammemeBuilder = new GrammemeBuilder(wf)
+
+  class GrammemeBuilder(wf: Wordform) {
+    def addGrammems(grs: String*): Wordform =
+      if (grs.isEmpty) wf
+      else {
+        wf.getWord.removeFromIndexes()
+        val oldGrs = FSUtils.toSet(wf.getGrammems)
+        wf.setGrammems(createStringArray(oldGrs ++ grs))
+        wf.getWord.addToIndexes()
+        wf
+      }
+  }
+
+  private def createStringArray(strs: Iterable[String]): StringArray =
+    NprCasBuilder.createStringArray(jCas, strs)
+}
+
+object NprCasBuilder {
+  // TODO move to util package
+  def createStringArray(jCas: JCas, strs: Iterable[String]): StringArray = {
+    val result = new StringArray(jCas, strs.size)
+    val strIter = strs.iterator
+    for (i <- 0 until strs.size)
+      result.set(i, strIter.next())
+    result
+  }
+}
