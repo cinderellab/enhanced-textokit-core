@@ -82,4 +82,35 @@ public class AnnotationToTokenFitter<ST extends Annotation> extends JCasAnnotato
             Token lastOT = overlappingTokens.getLast();
             // check the first overlapping token
             if (firstOT.getBegin() != spanOffsets.getBegin()) {
-                spanOffsets 
+                spanOffsets = new Offsets(firstOT.getBegin(), spanOffsets.getEnd());
+            }
+            // check the last overlapping token
+            if (lastOT.getEnd() != spanOffsets.getEnd()) {
+                spanOffsets = new Offsets(spanOffsets.getBegin(), lastOT.getEnd());
+            }
+            //
+            if (!spanOffsets.isIdenticalWith(span)) {
+                // fix
+                anno2Fix.put(span, spanOffsets);
+            }
+        }
+        // remove empty spans
+        for (ST span : anno2Remove) {
+            span.removeFromIndexes();
+        }
+        // fix span offsets
+        for (Map.Entry<ST, Offsets> e : anno2Fix.entrySet()) {
+            ST span = e.getKey();
+            String oldText = span.getCoveredText();
+            Offsets fixedOffsets = e.getValue();
+            span.removeFromIndexes();
+            span.setBegin(fixedOffsets.getBegin());
+            span.setEnd(fixedOffsets.getEnd());
+            span.addToIndexes();
+            String newText = span.getCoveredText();
+            getLogger().debug(format(
+                    "Annotation offsets are fixed: '%s' => '%s'",
+                    oldText, newText));
+        }
+    }
+}
