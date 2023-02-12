@@ -106,4 +106,27 @@ public class TokenUtils {
                 return new NUM(jCas, begin, end);
             } else {
                 // no digits, no letters
-                // check for Punctuation Mark (P
+                // check for Punctuation Mark (PM)
+                if (PUNCTUATION_CHARACTER_CATEGORIES.contains(
+                        (byte) Character.getType(str.charAt(0))))
+                    return new PM(jCas, begin, end);
+                else
+                    return new SPECIAL(jCas, begin, end);
+            }
+        }
+        char firstLetter = str.charAt(firstLetterIdx);
+        if (Character.isUpperCase(firstLetter)) {
+            // check for CAP
+            boolean allCap = true;
+            for (int i = 0; i < str.length() && allCap; i++) {
+                char ch = str.charAt(i);
+                if (Character.isLetter(ch) && !Character.isUpperCase(ch)) {
+                    allCap = false;
+                }
+            }
+            return allCap ? new CAP(jCas, begin, end) : new CW(jCas, begin, end);
+        } else {
+            return new SW(jCas, begin, end);
+        }
+    }
+}
