@@ -1,3 +1,4 @@
+
 /* First created by JCasGen Thu Nov 12 00:10:20 MSK 2015 */
 package com.textocat.textokit.tokenizer.fstype;
 
@@ -12,13 +13,13 @@ import org.apache.uima.jcas.cas.TOP_Type;
  *
  * @generated
  */
-public class CAP extends CW {
+public class COLON extends PM {
     /**
      * @generated
      * @ordered
      */
     @SuppressWarnings("hiding")
-    public final static int typeIndexID = JCasRegistry.register(CAP.class);
+    public final static int typeIndexID = JCasRegistry.register(COLON.class);
     /**
      * @generated
      * @ordered
@@ -31,7 +32,7 @@ public class CAP extends CW {
      *
      * @generated
      */
-    protected CAP() {/* intentionally empty block */}
+    protected COLON() {/* intentionally empty block */}
 
     /**
      * Internal - constructor used by generator
@@ -40,7 +41,7 @@ public class CAP extends CW {
      * @param type the type of this Feature Structure
      * @generated
      */
-    public CAP(int addr, TOP_Type type) {
+    public COLON(int addr, TOP_Type type) {
         super(addr, type);
         readObject();
     }
@@ -49,7 +50,7 @@ public class CAP extends CW {
      * @param jcas JCas to which this Feature Structure belongs
      * @generated
      */
-    public CAP(JCas jcas) {
+    public COLON(JCas jcas) {
         super(jcas);
         readObject();
     }
@@ -60,7 +61,7 @@ public class CAP extends CW {
      * @param end   offset to the end spot in the SofA
      * @generated
      */
-    public CAP(JCas jcas, int begin, int end) {
+    public COLON(JCas jcas, int begin, int end) {
         super(jcas);
         setBegin(begin);
         setEnd(end);
