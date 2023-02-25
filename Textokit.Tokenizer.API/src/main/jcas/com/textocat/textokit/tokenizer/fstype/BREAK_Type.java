@@ -47,4 +47,26 @@ public class BREAK_Type extends WhiteSpace_Type {
     /**
      * initialize variables to correspond with Cas Type and Features
      *
-     * @param jcas
+     * @param jcas    JCas
+     * @param casType Type
+     * @generated
+     */
+    public BREAK_Type(JCas jcas, Type casType) {
+        super(jcas, casType);
+        casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl) this.casType, getFSGenerator());
+
+    }
+
+    /**
+     * @return the generator for this type
+     * @generated
+     */
+    @Override
+    protected FSGenerator getFSGenerator() {
+        return fsGenerator;
+    }
+}
+
+
+
+    
