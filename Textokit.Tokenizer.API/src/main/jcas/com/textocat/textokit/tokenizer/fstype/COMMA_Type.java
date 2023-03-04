@@ -1,3 +1,4 @@
+
 /* First created by JCasGen Thu Nov 12 00:10:20 MSK 2015 */
 package com.textocat.textokit.tokenizer.fstype;
 
@@ -14,34 +15,34 @@ import org.apache.uima.jcas.JCasRegistry;
  *
  * @generated
  */
-public class COLON_Type extends PM_Type {
+public class COMMA_Type extends PM_Type {
     /**
      * @generated
      */
     @SuppressWarnings("hiding")
-    public final static int typeIndexID = COLON.typeIndexID;
+    public final static int typeIndexID = COMMA.typeIndexID;
     /**
      * @generated
      * @modifiable
      */
     @SuppressWarnings("hiding")
-    public final static boolean featOkTst = JCasRegistry.getFeatOkTst("com.textocat.textokit.tokenizer.fstype.COLON");
+    public final static boolean featOkTst = JCasRegistry.getFeatOkTst("com.textocat.textokit.tokenizer.fstype.COMMA");
     /**
      * @generated
      */
     private final FSGenerator fsGenerator =
             new FSGenerator() {
                 public FeatureStructure createFS(int addr, CASImpl cas) {
-                    if (COLON_Type.this.useExistingInstance) {
+                    if (COMMA_Type.this.useExistingInstance) {
                         // Return eq fs instance if already created
-                        FeatureStructure fs = COLON_Type.this.jcas.getJfsFromCaddr(addr);
+                        FeatureStructure fs = COMMA_Type.this.jcas.getJfsFromCaddr(addr);
                         if (null == fs) {
-                            fs = new COLON(addr, COLON_Type.this);
-                            COLON_Type.this.jcas.putJfsFromCaddr(addr, fs);
+                            fs = new COMMA(addr, COMMA_Type.this);
+                            COMMA_Type.this.jcas.putJfsFromCaddr(addr, fs);
                             return fs;
                         }
                         return fs;
-                    } else return new COLON(addr, COLON_Type.this);
+                    } else return new COMMA(addr, COMMA_Type.this);
                 }
             };
     /**
@@ -51,7 +52,7 @@ public class COLON_Type extends PM_Type {
      * @param casType Type
      * @generated
      */
-    public COLON_Type(JCas jcas, Type casType) {
+    public COMMA_Type(JCas jcas, Type casType) {
         super(jcas, casType);
         casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl) this.casType, getFSGenerator());
 
