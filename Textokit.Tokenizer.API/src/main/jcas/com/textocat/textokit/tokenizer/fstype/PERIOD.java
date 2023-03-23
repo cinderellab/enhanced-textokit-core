@@ -81,4 +81,10 @@ public class PERIOD extends PM {
      * Write your own initialization here
      * <!-- end-user-doc -->
      *
-     * @
+     * @generated modifiable
+     */
+    private void readObject() {/*default - does nothing empty block */}
+
+}
+
+    
