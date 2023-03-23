@@ -13,13 +13,13 @@ import org.apache.uima.jcas.cas.TOP_Type;
  *
  * @generated
  */
-public class EXCLAMATION extends PM {
+public class NUM extends Token {
     /**
      * @generated
      * @ordered
      */
     @SuppressWarnings("hiding")
-    public final static int typeIndexID = JCasRegistry.register(EXCLAMATION.class);
+    public final static int typeIndexID = JCasRegistry.register(NUM.class);
     /**
      * @generated
      * @ordered
@@ -32,7 +32,7 @@ public class EXCLAMATION extends PM {
      *
      * @generated
      */
-    protected EXCLAMATION() {/* intentionally empty block */}
+    protected NUM() {/* intentionally empty block */}
 
     /**
      * Internal - constructor used by generator
@@ -41,7 +41,7 @@ public class EXCLAMATION extends PM {
      * @param type the type of this Feature Structure
      * @generated
      */
-    public EXCLAMATION(int addr, TOP_Type type) {
+    public NUM(int addr, TOP_Type type) {
         super(addr, type);
         readObject();
     }
@@ -50,7 +50,7 @@ public class EXCLAMATION extends PM {
      * @param jcas JCas to which this Feature Structure belongs
      * @generated
      */
-    public EXCLAMATION(JCas jcas) {
+    public NUM(JCas jcas) {
         super(jcas);
         readObject();
     }
@@ -61,7 +61,7 @@ public class EXCLAMATION extends PM {
      * @param end   offset to the end spot in the SofA
      * @generated
      */
-    public EXCLAMATION(JCas jcas, int begin, int end) {
+    public NUM(JCas jcas, int begin, int end) {
         super(jcas);
         setBegin(begin);
         setEnd(end);

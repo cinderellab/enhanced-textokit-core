@@ -1,4 +1,3 @@
-
 /* First created by JCasGen Thu Nov 12 00:10:20 MSK 2015 */
 package com.textocat.textokit.tokenizer.fstype;
 
@@ -13,13 +12,13 @@ import org.apache.uima.jcas.cas.TOP_Type;
  *
  * @generated
  */
-public class EXCLAMATION extends PM {
+public class PERIOD extends PM {
     /**
      * @generated
      * @ordered
      */
     @SuppressWarnings("hiding")
-    public final static int typeIndexID = JCasRegistry.register(EXCLAMATION.class);
+    public final static int typeIndexID = JCasRegistry.register(PERIOD.class);
     /**
      * @generated
      * @ordered
@@ -32,7 +31,7 @@ public class EXCLAMATION extends PM {
      *
      * @generated
      */
-    protected EXCLAMATION() {/* intentionally empty block */}
+    protected PERIOD() {/* intentionally empty block */}
 
     /**
      * Internal - constructor used by generator
@@ -41,7 +40,7 @@ public class EXCLAMATION extends PM {
      * @param type the type of this Feature Structure
      * @generated
      */
-    public EXCLAMATION(int addr, TOP_Type type) {
+    public PERIOD(int addr, TOP_Type type) {
         super(addr, type);
         readObject();
     }
@@ -50,7 +49,7 @@ public class EXCLAMATION extends PM {
      * @param jcas JCas to which this Feature Structure belongs
      * @generated
      */
-    public EXCLAMATION(JCas jcas) {
+    public PERIOD(JCas jcas) {
         super(jcas);
         readObject();
     }
@@ -61,7 +60,7 @@ public class EXCLAMATION extends PM {
      * @param end   offset to the end spot in the SofA
      * @generated
      */
-    public EXCLAMATION(JCas jcas, int begin, int end) {
+    public PERIOD(JCas jcas, int begin, int end) {
         super(jcas);
         setBegin(begin);
         setEnd(end);
@@ -82,10 +81,4 @@ public class EXCLAMATION extends PM {
      * Write your own initialization here
      * <!-- end-user-doc -->
      *
-     * @generated modifiable
-     */
-    private void readObject() {/*default - does nothing empty block */}
-
-}
-
-    
+     * @
