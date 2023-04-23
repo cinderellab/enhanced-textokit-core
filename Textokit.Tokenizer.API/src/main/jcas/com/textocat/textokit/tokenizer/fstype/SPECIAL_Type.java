@@ -36,4 +36,37 @@ public class SPECIAL_Type extends Token_Type {
                         // Return eq fs instance if already created
                         FeatureStructure fs = SPECIAL_Type.this.jcas.getJfsFromCaddr(addr);
                         if (null == fs) {
-                            fs = new 
+                            fs = new SPECIAL(addr, SPECIAL_Type.this);
+                            SPECIAL_Type.this.jcas.putJfsFromCaddr(addr, fs);
+                            return fs;
+                        }
+                        return fs;
+                    } else return new SPECIAL(addr, SPECIAL_Type.this);
+                }
+            };
+    /**
+     * initialize variables to correspond with Cas Type and Features
+     *
+     * @param jcas    JCas
+     * @param casType Type
+     * @generated
+     */
+    public SPECIAL_Type(JCas jcas, Type casType) {
+        super(jcas, casType);
+        casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl) this.casType, getFSGenerator());
+
+    }
+
+    /**
+     * @return the generator for this type
+     * @generated
+     */
+    @Override
+    protected FSGenerator getFSGenerator() {
+        return fsGenerator;
+    }
+}
+
+
+
+    
