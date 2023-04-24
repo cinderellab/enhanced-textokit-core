@@ -40,4 +40,33 @@ public class SW_Type extends W_Type {
                             SW_Type.this.jcas.putJfsFromCaddr(addr, fs);
                             return fs;
                         }
-                 
+                        return fs;
+                    } else return new SW(addr, SW_Type.this);
+                }
+            };
+    /**
+     * initialize variables to correspond with Cas Type and Features
+     *
+     * @param jcas    JCas
+     * @param casType Type
+     * @generated
+     */
+    public SW_Type(JCas jcas, Type casType) {
+        super(jcas, casType);
+        casImpl.getFSClassRegistry().addGeneratorForType((TypeImpl) this.casType, getFSGenerator());
+
+    }
+
+    /**
+     * @return the generator for this type
+     * @generated
+     */
+    @Override
+    protected FSGenerator getFSGenerator() {
+        return fsGenerator;
+    }
+}
+
+
+
+    
