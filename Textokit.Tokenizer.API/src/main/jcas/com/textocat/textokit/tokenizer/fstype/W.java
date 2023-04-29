@@ -83,4 +83,8 @@ public class W extends Token {
      *
      * @generated modifiable
      */
-  
+    private void readObject() {/*default - does nothing empty block */}
+
+}
+
+    
