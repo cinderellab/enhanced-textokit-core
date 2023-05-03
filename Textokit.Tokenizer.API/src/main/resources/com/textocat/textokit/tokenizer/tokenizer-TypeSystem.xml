@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>Textokit Tokenizer type system</name>
+    <description/>
+    <version>1.0</version>
+    <vendor>Textocat</vendor>
+    <types>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.TokenBase</name>
+            <description/>
+            <supertypeName>uima.tcas.Annotation</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.Token</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.TokenBase</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.WhiteSpace</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.TokenBase</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.W</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.Token</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.CW</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.W</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.SW</name>
+            <description/>
+            <supertypeName>com.textocat.textok
