@@ -86,4 +86,19 @@
             <supertypeName>com.textocat.textokit.tokenizer.fstype.Token</supertypeName>
         </typeDescription>
         <typeDescription>
-        
+            <name>com.textocat.textokit.tokenizer.fstype.SPACE</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.WhiteSpace</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.BREAK</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.WhiteSpace</supertypeName>
+        </typeDescription>
+        <typeDescription>
+            <name>com.textocat.textokit.tokenizer.fstype.NBSP</name>
+            <description/>
+            <supertypeName>com.textocat.textokit.tokenizer.fstype.WhiteSpace</supertypeName>
+        </typeDescription>
+    </types>
+</typeSystemDescription>
