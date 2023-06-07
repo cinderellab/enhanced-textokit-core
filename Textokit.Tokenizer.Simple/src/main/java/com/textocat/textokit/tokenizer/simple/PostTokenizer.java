@@ -53,4 +53,59 @@ public class PostTokenizer extends JCasAnnotator_ImplBase {
     public void process(JCas jCas) throws AnalysisEngineProcessException {
         CAS cas = jCas.getCas();
         mergedMap = Maps.newHashMap();
-     
+        wordType = jCas.getCasType(W.type);
+        numType = jCas.getCasType(NUM.type);
+        try {
+            AnnotationIndex<Annotation> tokenBases = jCas.getAnnotationIndex(TokenBase.typeIndexID);
+            // sequence of tokens that does not contain whitespace
+            List<Token> curTokenSeq = Lists.newLinkedList();
+            for (Annotation tokenBase : tokenBases) {
+                if (tokenBase instanceof WhiteSpace) {
+                    handle(cas, ImmutableList.copyOf(curTokenSeq));
+                    curTokenSeq.clear();
+                } else {
+                    // it's Token
+                    curTokenSeq.add((Token) tokenBase);
+                }
+            }
+            // handle last seq
+            handle(cas, ImmutableList.copyOf(curTokenSeq));
+            curTokenSeq.clear();
+            // index/unindex
+            Set<String> mergedTokenStrings = Sets.newHashSet();
+            for (Map.Entry<AnnotationFS, Collection<? extends AnnotationFS>> entry : mergedMap
+                    .entrySet()) {
+                jCas.addFsToIndexes(entry.getKey());
+                mergedTokenStrings.add(entry.getKey().getCoveredText());
+                for (AnnotationFS anno : entry.getValue()) {
+                    jCas.removeFsFromIndexes(anno);
+                }
+            }
+            getLogger().debug("Merged tokens: " + mergedTokenStrings);
+        } finally {
+            mergedMap.clear();
+        }
+    }
+
+    private boolean handle(CAS cas, List<Token> tokens) {
+        if (tokens.size() <= 1) {
+            return false;
+        } else if (tokens.size() == 2) {
+            // check abbreviation dictionary
+            if (isWord(tokens.get(0)) && isDot(tokens.get(1))
+                    && isAbbreviation(getCoveredText(tokens))) {
+                makeAnnotation(cas, tokens.get(0).getType(), tokens);
+                return true;
+            }
+            if (!hasPMOrSpecial(tokens)) {
+                makeAnnotation(cas,
+                        isWord(tokens.get(0)) ? tokens.get(0).getType() : wordType,
+                        tokens);
+            }
+        } else if (tokens.size() == 3) {
+            Token t0 = tokens.get(0);
+            Token t1 = tokens.get(1);
+            Token t2 = tokens.get(2);
+            if (isPossibleInnerPM(t1) && hasWord(t0, t2)) {
+                makeAnnotation(cas, isWord(t0) ? t0.getType() : wordType, tokens);
+ 
