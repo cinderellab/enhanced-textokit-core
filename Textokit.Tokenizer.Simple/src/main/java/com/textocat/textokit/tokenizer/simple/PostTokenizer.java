@@ -108,4 +108,85 @@ public class PostTokenizer extends JCasAnnotator_ImplBase {
             Token t2 = tokens.get(2);
             if (isPossibleInnerPM(t1) && hasWord(t0, t2)) {
                 makeAnnotation(cas, isWord(t0) ? t0.getType() : wordType, tokens);
- 
+                return true;
+            }
+            // TODO may be RANGE is better as target type, e.g. "12-14"
+            if (isNumInternalPM(t1) && isNum(t0) && isNum(t2)) {
+                makeAnnotation(cas, numType, tokens);
+            }
+        } else {
+            // tokens size >= 4
+            LinkedList<Token> cleaned = Lists.newLinkedList(tokens);
+            while (!cleaned.isEmpty() && isPMOrSpecial(cleaned.getFirst())) {
+                cleaned.removeFirst();
+            }
+            while (!cleaned.isEmpty() && isPMOrSpecial(cleaned.getLast())) {
+                cleaned.removeLast();
+            }
+            // to avoid infinite recursion
+            if (tokens.size() != cleaned.size()) {
+                return handle(cas, cleaned);
+            }
+        }
+        return false;
+    }
+
+    private static final Set<String> abbreviations = ImmutableSet.of("г.");
+
+    // TODO use external dictionary
+    private boolean isAbbreviation(String str) {
+        return abbreviations.contains(str);
+    }
+
+    private static final Set<String> POSSIBLE_INNER_PM = ImmutableSet.of("'", "-", "`");
+
+    private boolean isPossibleInnerPM(Token tkn) {
+        return POSSIBLE_INNER_PM.contains(tkn.getCoveredText());
+    }
+
+    private boolean isPMOrSpecial(Token tkn) {
+        return tkn instanceof PM || tkn instanceof SPECIAL;
+    }
+
+    private boolean hasWord(Token... tkns) {
+        for (Token tkn : tkns) {
+            if (isWord(tkn)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasPMOrSpecial(Iterable<Token> tkns) {
+        for (Token tkn : tkns) {
+            if (isPMOrSpecial(tkn)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unused")
+    private boolean isHyphen(Token tkn) {
+        return "-".equals(tkn.getCoveredText());
+    }
+
+    private boolean isDot(Token tkn) {
+        return ".".equals(tkn.getCoveredText());
+    }
+
+    private static final Set<String> NUM_INTERNAL_PM = ImmutableSet.of(",", ".", "-");
+
+    private boolean isNumInternalPM(Token tkn) {
+        return NUM_INTERNAL_PM.contains((tkn.getCoveredText()));
+    }
+
+    private boolean isWord(Token tkn) {
+        return tkn instanceof W;
+    }
+
+    private boolean isNum(Token tkn) {
+        return tkn instanceof NUM;
+    }
+
+    private String getCoveredText(Iterable<? e
