@@ -189,4 +189,17 @@ public class PostTokenizer extends JCasAnnotator_ImplBase {
         return tkn instanceof NUM;
     }
 
-    private String getCoveredText(Iterable<? e
+    private String getCoveredText(Iterable<? extends AnnotationFS> iter) {
+        StringBuilder sb = new StringBuilder();
+        for (AnnotationFS anno : iter) {
+            sb.append(anno.getCoveredText());
+        }
+        return sb.toString();
+    }
+
+    private void makeAnnotation(CAS cas, Type targetType, List<? extends AnnotationFS> rangeAnnos) {
+        int begin = rangeAnnos.get(0).getBegin();
+        int end = rangeAnnos.get(rangeAnnos.size() - 1).getEnd();
+        mergedMap.put(cas.createAnnotation(targetType, begin, end), rangeAnnos);
+    }
+}
