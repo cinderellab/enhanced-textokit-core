@@ -30,4 +30,37 @@ public class ListWhitespaceChars {
     }
 
     private static String getCharType(int ch) {
-        int chType = Character.getType(ch)
+        int chType = Character.getType(ch);
+        switch (chType) {
+            case Character.SPACE_SEPARATOR:
+                return "SPACE_SEPARATOR";
+            case Character.LINE_SEPARATOR:
+                return "LINE_SEPARATOR";
+            case Character.PARAGRAPH_SEPARATOR:
+                return "PARAGRAPH_SEPARATOR";
+            default:
+                return String.valueOf(chType);
+        }
+    }
+
+    private static boolean isControl(int ch) {
+        return Character.CONTROL == Character.getType(ch);
+    }
+
+    private static boolean isSep(int ch) {
+        switch (Character.getType(ch)) {
+            case Character.SPACE_SEPARATOR:
+            case Character.LINE_SEPARATOR:
+            case Character.PARAGRAPH_SEPARATOR:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static String format(int codePoint) {
+        return String.format("U%04x\t%s\t%s", codePoint,
+                Character.isWhitespace(codePoint),
+                getCharType(codePoint));
+    }
+}
