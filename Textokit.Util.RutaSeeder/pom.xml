@@ -34,4 +34,32 @@
             <artifactId>textokit-tokenizer-api</artifactId>
         </dependency>
         <dependency>
-            <gr
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimaj-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimafit-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.uima</groupId>
+            <artifactId>ruta-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
+</project>
